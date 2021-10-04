@@ -112,17 +112,18 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
         defor_data[np.where(in_data == 1)] = 1
         win_defor = scipy.ndimage.filters.uniform_filter(
             defor_data, size=win_size, mode="constant", cval=0,
-            output=np.float64)
+            output=float)
         # for (start of first period)
         for_data = np.zeros(in_data.shape, int)
         w = np.where(in_data > 0)
         for_data[w] = 1
         win_for = scipy.ndimage.filters.uniform_filter(
             for_data, size=win_size, mode="constant", cval=0,
-            output=np.float64)
+            output=float)
         # percentage
         out_data = np.ones(in_data.shape, int)*65535
-        # w = np.where(win_for > 0)
+        # w = np.where(win_for >= (1 / win_size ** 2))
+        # w = np.where(win_for > np.finfo(float).eps)
         out_data[w] = np.rint(10000 * (1 - (1 - win_defor[w] / win_for[w]) **
                                        time_interval)).astype(int)
 
