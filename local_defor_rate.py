@@ -10,10 +10,6 @@
 # ==============================================================================
 
 
-# Python virtual environment
-# conda create --name jnr-vcs -c conda-forge python gdal numpy
-# matplotlib pip scipy pandas --yes
-
 # Third party imports
 import numpy as np
 from osgeo import gdal
@@ -26,15 +22,16 @@ from misc import progress_bar
 # local_defor_rate
 def local_defor_rate(input_file, output_file, win_size, time_interval,
                      blk_rows=128):
-    """Compute the local deforestation rate using a moving window.
+    """Computing the local deforestation rate using a moving window.
 
-    Compute the local deforestation rate using a moving window. SciPy
-    is used for the focal analysis. The ``uniform_filter`` is used
-    over the ``generic_filter``. The ``generic_filter`` is 40 times
-    slower than the strides implemented in the ``uniform_filter``. For
-    cells on the edge of the raster, the local deforestation rate is
-    computed from a lower number of existing cells in the moving
-    window using ``mode='constant'`` and ``cval=0``.
+    This function computes the local deforestation rate using a moving
+    window. SciPy is used for the focal analysis. The
+    ``uniform_filter`` is used over the ``generic_filter``. The
+    ``generic_filter`` is 40 times slower than the strides implemented
+    in the ``uniform_filter``. For cells on the edge of the raster,
+    the local deforestation rate is computed from a lower number of
+    existing cells in the moving window using ``mode='constant'`` and
+    ``cval=0``.
 
     :param input_file: Input raster file of forest cover change at
         three dates (123). 1: first period deforestation, 2: second
