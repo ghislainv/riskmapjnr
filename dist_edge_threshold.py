@@ -9,15 +9,14 @@
 # license         :GPLv3
 # ==============================================================================
 
-
 # Python virtual environment
 # conda create --name jnr-vcs -c conda-forge python gdal numpy
 # matplotlib pip scipy pandas --yes
 
 # Third party imports
+import pandas as pd
 import numpy as np
 from osgeo import gdal
-import pandas as pd
 
 # Local application imports
 from misc import progress_bar, makeblock
@@ -29,6 +28,10 @@ def dist_value(input_file,
                value=0):
     """Computing the shortest distance to a pixel with a specific value in
     a raster file.
+
+    This function computes the shortest distance to a pixel with a
+    specific value in a raster file. Distances generated are in
+    georeferenced coordinates.
 
     :param input_file: Input raster file.
 
@@ -73,7 +76,7 @@ def dist_value(input_file,
 # dist_edge_threshold
 def dist_edge_threshold(input_file,
                         dist_file,
-                        bins,
+                        bins=np.arange(0, 1080, step=30),
                         blk_rows=128):
     """Computing the percentage of total deforestation as a function of
     the distance to forest edge.
@@ -97,20 +100,24 @@ def dist_edge_threshold(input_file,
     :param dist_file: Path to the distance raster file that will be
         created.
 
-    :param bins: Distance bins (in m). See parameter `bins` of the
-        `pandas.cut()` function
-        `here<https://pandas.pydata.org/docs/reference/api/pandas.cut.html>`_\\
-        . Default to np.arange(0, 1080, step=30).
+    :param bins: Array of bins for distances. It has to be
+    1-dimensional and monotonic. Default to np.arange(0, 1080,
+    step=30).
 
-    :param blk_rows: Number of rows for block. Must be greater or
-        equal to ``win_size``. This is used to break lage raster files
-        in several blocks of data that can be hold in memory.
+    :param blk_rows: Number of rows for block. This is used to break
+        lage raster files in several blocks of data that can be hold
+        in memory.
 
     :return: A dictionary. With dist_thresh: the distance threshold,
         perc: the percentage of deforestation for pixels with distance
         <= dist_thresh.
 
     """
+
+    # Create a table to save the results
+    data = {"distance": bins, "npix": 0, "ha": 0,
+            "cum": 0, "perc": 0}
+    res_df = pd.DataFrame(data)
 
     # Compute the distance to the forest edge
     print("Compute the distance to forest edge")
@@ -145,10 +152,16 @@ def dist_edge_threshold(input_file,
         # Data for one block of the stack (shape = (nband,nrow,ncol))
         dist_data = dist_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
         fcc_data = fcc_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
-        # Deforested pixels
+        # Number of deforested pixels
         npix_def += (fcc_data == 1).sum()
+        # Consider only deforested pixels for distances
+        dist_def = dist_data * (fcc_data == 1)
+        dist_def = dist_def[dist_def > 0]
         # Categorize distance
-        dist_cat = pd.cut(dist_data, bins, right=True, retbins=True)
+        dist_cat = pd.cut(dist_def.flatten(), bins, right=True)
+        # Sum by category
+        df = pd.DataFrame({"dist": dist_cat, "count": 1})
+        df.groupby(df.dist).sum()
 
     # Compute deforested area
     print("Compute the deforested area in ha")
@@ -164,5 +177,16 @@ def dist_edge_threshold(input_file,
 dist_value(input_file="data/fcc123.tif",
            dist_file="outputs/dist_edge.tif",
            value=0)
+
+
+A = np.random.uniform(0, 100, 20).reshape(5, 4)
+B = pd.cut(A.flatten(), bins=np.arange(0, 110, 10))
+B
+
+input_file = "data/fcc123.tif"
+dist_file = "outputs/dist_edge.tif"
+blk_rows = 128
+b = 200
+bins = np.arange(0, 1080, step=30)
 
 # End
