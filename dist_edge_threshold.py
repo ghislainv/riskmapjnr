@@ -14,9 +14,10 @@
 # matplotlib pip scipy pandas --yes
 
 # Third party imports
-import pandas as pd
+from matplotlib import pyplot as plt
 import numpy as np
 from osgeo import gdal
+import pandas as pd
 
 # Local application imports
 from misc import progress_bar, makeblock
@@ -76,6 +77,8 @@ def dist_value(input_file,
 # dist_edge_threshold
 def dist_edge_threshold(input_file,
                         dist_file,
+                        tab_file,
+                        plot_file,
                         bins=np.arange(0, 1080, step=30),
                         blk_rows=128):
     """Computing the percentage of total deforestation as a function of
@@ -93,35 +96,52 @@ def dist_edge_threshold(input_file,
     unit will be the one of the input file.
 
     :param input_file: Input raster file of forest cover change at
-        three dates(123). 1: first period deforestation, 2: second
+        three dates (123). 1: first period deforestation, 2: second
         period deforestation, 3: remaining forest at the end of the
         second period. No data value must be 0 (zero).
 
     :param dist_file: Path to the distance raster file that will be
         created.
 
+    :param tab_file: Path to the table `.csv` file that will be
+        created. This table includes the following variables:
+
+        * `distance`: bins of distance to forest edge (in m).
+        * `npix`: the number of deforested pixels in each bin.
+        * `area`: the corresponding area (in ha).
+        * `cum`: the cumulative sum of the deforested area (in ha).
+        * `perc`: the corresponding percentage of total deforestation.
+
+    :param plot_file: Path to the plot file that will be created. This plot
+        represents the cumulative deforestation percentage as the
+        distance to forest edge increases.
+
     :param bins: Array of bins for distances. It has to be
-    1-dimensional and monotonic. Default to np.arange(0, 1080,
-    step=30).
+        1-dimensional and monotonic. The array must also include zero
+        as the first value. Default to `np.arange(0, 1080, step=30)`.
 
     :param blk_rows: Number of rows for block. This is used to break
         lage raster files in several blocks of data that can be hold
         in memory.
 
-    :return: A dictionary. With dist_thresh: the distance threshold,
-        perc: the percentage of deforestation for pixels with distance
-        <= dist_thresh.
+    :return: A dictionary. With `tot_def`: total deforestation (in
+        ha), `dist_thresh`: the distance threshold, `perc`: the
+        percentage of deforestation for pixels with distance <=
+        dist_thresh.
 
     """
-
-    # Create a table to save the results
-    data = {"distance": bins, "npix": 0, "ha": 0,
-            "cum": 0, "perc": 0}
-    res_df = pd.DataFrame(data)
 
     # Compute the distance to the forest edge
     print("Compute the distance to forest edge")
     dist_value(input_file, dist_file, value=0)
+
+    # Create a table to save the results
+    data = {"distance": bins[1:], "npix": 0, "area": 0,
+            "cum": 0, "perc": 0}
+    res_df = pd.DataFrame(data)
+
+    # Total deforested pixels
+    npix_def = 0
 
     # Make blocks
     blockinfo = makeblock(dist_file, blk_rows=blk_rows)
@@ -138,9 +158,6 @@ def dist_edge_threshold(input_file,
     dist_band = dist_ds.GetRasterBand(1)
     fcc_ds = gdal.Open(input_file)
     fcc_band = fcc_ds.GetRasterBand(1)
-
-    # Total deforested pixels
-    npix_def = 0
 
     # Loop on blocks of data
     for b in range(nblock):
@@ -160,33 +177,49 @@ def dist_edge_threshold(input_file,
         # Categorize distance
         dist_cat = pd.cut(dist_def.flatten(), bins, right=True)
         # Sum by category
-        df = pd.DataFrame({"dist": dist_cat, "count": 1})
-        df.groupby(df.dist).sum()
+        df = pd.DataFrame({"dist": dist_cat})
+        counts = df.groupby(df.dist).size()
+        # Update data-frame
+        res_df.loc[:, "npix"] += counts.values
 
-    # Compute deforested area
-    print("Compute the deforested area in ha")
-    gt = fcc_ds.GetGeoTransform()
+    # Compute deforested areas
+    print("Compute deforested areas in ha")
+    gt = dist_ds.GetGeoTransform()
     pix_area = gt[1] * (-gt[5])
-    area_def = pix_area * npix_def / 10000
+    res_df.loc[:, "area"] = res_df["npix"].values * pix_area / 10000
+    tot_area_def = npix_def * pix_area / 10000
+    # Cumulated deforestation
+    res_df.loc[:, "cum"] = res_df["area"].cumsum().values
+    # Percentage of total deforestation
+    res_df.loc[:, "perc"] = 100 * res_df["cum"].values / tot_area_def
 
+    # Export the table of results
+    res_df.to_csv(tab_file, sep=",", header=True,
+                  index=False, index_label=False)
+
+    # Distance and percentage for 99% threshold
+    index_thresh = np.nonzero(res_df["perc"].values > 99)[0][0]
+    dist_thresh = res_df.loc[index_thresh, "distance"]
+    perc_thresh = np.around(res_df.loc[index_thresh, "perc"], 2)
+
+    # Plot
+    fig, axes = plt.figure()
+    plt.subplot(111)
+    plt.plot(res_df["distance"], res_df["perc"], "b-")
+    plt.vlines(dist_thresh, ymin=0, ymax=100, colors="k", linestyles="dashed")
+    plt.show()
+    
     # Results
-    return {'npix_def': npix_def, 'area_def': area_def}
+    return {'tot_def': tot_area_def, 'dist_thresh': dist_thresh,
+            'perc_thresh': perc_thresh}
 
 
 # Test
-dist_value(input_file="data/fcc123.tif",
-           dist_file="outputs/dist_edge.tif",
-           value=0)
-
-
-A = np.random.uniform(0, 100, 20).reshape(5, 4)
-B = pd.cut(A.flatten(), bins=np.arange(0, 110, 10))
-B
-
-input_file = "data/fcc123.tif"
-dist_file = "outputs/dist_edge.tif"
-blk_rows = 128
-b = 200
-bins = np.arange(0, 1080, step=30)
+dist_edge_threshold(input_file="data/fcc123.tif",
+                    dist_file="outputs/dist_edge.tif",
+                    tab_file="outputs/plot_dist.tif",
+                    plot_file="outputs/tab_dist.csv",
+                    bins=np.arange(0, 1080, step=30),
+                    blk_rows=128)
 
 # End
