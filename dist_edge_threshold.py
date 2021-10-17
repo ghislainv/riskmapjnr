@@ -79,6 +79,8 @@ def dist_edge_threshold(input_file,
                         dist_file,
                         tab_file,
                         plot_file,
+                        figsize=(6.4, 4.8),
+                        dpi=100,
                         bins=np.arange(0, 1080, step=30),
                         blk_rows=128):
     """Computing the percentage of total deforestation as a function of
@@ -112,9 +114,13 @@ def dist_edge_threshold(input_file,
         * `cum`: the cumulative sum of the deforested area (in ha).
         * `perc`: the corresponding percentage of total deforestation.
 
-    :param plot_file: Path to the plot file that will be created. This plot
-        represents the cumulative deforestation percentage as the
+    :param plot_file: Path to the plot file that will be created. This
+        plot represents the cumulative deforestation percentage as the
         distance to forest edge increases.
+
+    :param figsize: Figure size.
+
+    :param dpi: Resolution for output image.
 
     :param bins: Array of bins for distances. It has to be
         1-dimensional and monotonic. The array must also include zero
@@ -203,23 +209,42 @@ def dist_edge_threshold(input_file,
     perc_thresh = np.around(res_df.loc[index_thresh, "perc"], 2)
 
     # Plot
-    fig, axes = plt.figure()
-    plt.subplot(111)
+    fig = plt.figure(figsize=figsize, dpi=dpi)
+    ax = plt.subplot(111)
     plt.plot(res_df["distance"], res_df["perc"], "b-")
-    plt.vlines(dist_thresh, ymin=0, ymax=100, colors="k", linestyles="dashed")
-    plt.show()
-    
+    plt.vlines(dist_thresh,
+               ymin=np.min(res_df["perc"]),
+               ymax=perc_thresh,
+               colors="k", linestyles="dashed")
+    plt.hlines(perc_thresh,
+               xmin=0,
+               xmax=dist_thresh,
+               colors="k", linestyles="dashed")
+    plt.xlabel("Distance to forest edge (m)")
+    plt.ylabel("Percentage of total deforestation (%)")
+    # Text distance
+    t1 = str(dist_thresh) + " m"
+    x1_text = dist_thresh - 0.01 * np.max(bins)
+    y1_text = np.min(res_df["perc"])
+    plt.text(x1_text, y1_text, t1, ha="right", va="bottom")
+    # Text percentage
+    t2 = str(perc_thresh) + " %"
+    x2_text = 0
+    y2_text = perc_thresh - 0.01 * (100 - np.min(res_df["perc"]))
+    plt.text(x2_text, y2_text, t2, ha="left", va="top")
+    fig.savefig(plot_file)
+
     # Results
     return {'tot_def': tot_area_def, 'dist_thresh': dist_thresh,
             'perc_thresh': perc_thresh}
 
 
-# Test
-dist_edge_threshold(input_file="data/fcc123.tif",
-                    dist_file="outputs/dist_edge.tif",
-                    tab_file="outputs/plot_dist.tif",
-                    plot_file="outputs/tab_dist.csv",
-                    bins=np.arange(0, 1080, step=30),
-                    blk_rows=128)
+# # Test
+# dist_edge_threshold(input_file="data/fcc123.tif",
+#                     dist_file="outputs/dist_edge.tif",
+#                     tab_file="outputs/tab_dist.csv",
+#                     plot_file="outputs/plot_dist.png",
+#                     bins=np.arange(0, 1080, step=30),
+#                     blk_rows=128)
 
 # End

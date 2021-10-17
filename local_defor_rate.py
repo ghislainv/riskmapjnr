@@ -135,12 +135,12 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
     del out_ds, in_ds
 
 
-# Test
-ws = 7
-local_defor_rate(input_file="data/fcc123.tif",
-                 output_file="outputs/ldefrate_ws{}.tif".format(ws),
-                 win_size=ws,
-                 time_interval=5,
-                 blk_rows=100)
+# # Test
+# ws = 7
+# local_defor_rate(input_file="data/fcc123.tif",
+#                  output_file="outputs/ldefrate_ws{}.tif".format(ws),
+#                  win_size=ws,
+#                  time_interval=5,
+#                  blk_rows=100)
 
 # End
