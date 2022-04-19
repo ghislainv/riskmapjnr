@@ -50,7 +50,10 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
         equal to ``win_size``. This is used to break lage raster files
         in several blocks of data that can be hold in memory.
 
-    :return: A raster with the local deforestation rate.
+    :return: None. A raster with the local deforestation rate will be
+        created (see ``output_file``). Data range from 0 to
+        10000. Raster type is UInt16 ([0, 65535]). NoData value is set
+        to 65535.
 
     """
 
@@ -70,7 +73,7 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
     ysize = in_band.YSize
 
     # Create output raster file
-    driver = gdal.GetDriverByName('GTiff')
+    driver = gdal.GetDriverByName("GTiff")
     out_ds = driver.Create(output_file, xsize, ysize, 1,
                            gdal.GDT_UInt16,
                            ["COMPRESS=LZW", "PREDICTOR=2", "BIGTIFF=YES"])
@@ -118,7 +121,7 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
             for_data, size=win_size, mode="constant", cval=0,
             output=float)
         # percentage
-        out_data = np.ones(in_data.shape, int)*65535
+        out_data = np.ones(in_data.shape, int) * 65535
         # w = np.where(win_for >= (1 / win_size ** 2))
         # w = np.where(win_for > np.finfo(float).eps)
         out_data[w] = np.rint(10000 * (1 - (1 - win_defor[w] / win_for[w]) **
@@ -130,9 +133,11 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
             out_band.WriteArray(out_data[(extra_lines):], 0,
                                 yoff + extra_lines)
 
+    # Closing
     out_band.FlushCache()
     out_band.ComputeStatistics(False)
     del out_ds, in_ds
+    return None
 
 
 # # Test

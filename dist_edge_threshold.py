@@ -102,8 +102,7 @@ def dist_edge_threshold(input_file,
         period deforestation, 3: remaining forest at the end of the
         second period. No data value must be 0 (zero).
 
-    :param dist_file: Path to the distance raster file that will be
-        created.
+    :param dist_file: Path to the distance raster file.
 
     :param tab_file: Path to the table `.csv` file that will be
         created. This table includes the following variables:
@@ -210,7 +209,7 @@ def dist_edge_threshold(input_file,
 
     # Plot
     fig = plt.figure(figsize=figsize, dpi=dpi)
-    ax = plt.subplot(111)
+    plt.subplot(111)
     plt.plot(res_df["distance"], res_df["perc"], "b-")
     plt.vlines(dist_thresh,
                ymin=np.min(res_df["perc"]),
