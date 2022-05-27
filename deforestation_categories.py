@@ -15,6 +15,7 @@ import os
 # Third party imports
 import numpy as np
 from osgeo import gdal
+import pandas as pd
 
 # Local application imports
 from misc import progress_bar, makeblock
@@ -149,16 +150,49 @@ def deforestation_categories(input_file,
     cat_band.SetNoDataValue(255)
 
     # -----------------
-    # Compute histogram
+    # Categorize
     # -----------------
 
-    nvalues = 10000 + 1
-    counts = catzero_band.GetHistogram(-0.5, 10000.5, nvalues, 0, 0)
+    # Equal Interval
+    if method == "Equal Interval":
+        nbins = 30
+        bin_size = round(10000 / nbins)
+        bins = [i * bin_size for i in range(nbins)] + [10000, 10001]
+        
+    # Equal area
+    if method == "Equal Area":
+        # Compute histogram
+        nvalues = 10000 + 1
+        counts = catzero_band.GetHistogram(-0.5, 10000.5, nvalues, 0, 0)
+        npix = sum(counts)
+        npix_per_bin = round(npix / 30)
 
+    # Loop on blocks of data
+    for b in range(nblock):
+        # Progress bar
+        progress_bar(nblock, b + 1)
+        # Position
+        px = b % nblock_x
+        py = b // nblock_x
+        # Data
+        catzero_data = catzero_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
+        # Categorize
+        cat_data = pd.cut(catzero_data.flatten(), bins=bins,
+                          labels=False, include_lowest=True)
+        cat_data = cat_data + 1
+        cat_data[np.isnan(cat_data)] = 255
+        cat_data[cat_data == 31] = 0
+        cat_data = cat_data.reshape(catzero_data.shape)
+        # Write to file
+        cat_band.WriteArray(cat_data, x[px], y[py])
+        
     # Closing
-    out_band.FlushCache()
-    out_band.ComputeStatistics(False)
-    del out_ds, in_ds
+    cat_band.FlushCache()
+    cat_band.ComputeStatistics(False)
+    cat_band = None
+    del cat_ds, catzero_ds
+
+
     return None
 
 
