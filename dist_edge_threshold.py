@@ -36,11 +36,15 @@ def dist_value(input_file,
 
     :param input_file: Input raster file.
 
-    :param dist_file: Path to the distance raster file that will be
+    :param dist_file: Path to the distance raster file that is
         created.
 
     :param value: Value of the raster to compute the distance
         to. Default to 0.
+
+    :return: None. A distance raster file is created (see
+        ``dist_file``). Raster data type is UInt32 ([0,
+        4294967295]). NoData is set to zero.
 
     """
 
