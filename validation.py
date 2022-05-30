@@ -19,12 +19,12 @@ import pandas as pd
 from misc import progress_bar, makeblock
 
 
-# defor_cat
-def defor_cat(input_file,
-              output_file="defor_cat.tif",
-              nbins=30,
-              method="Equal Area",
-              blk_rows=128):
+# validation
+def validation(input_file,
+               output_file="defor_cat.tif",
+               nbins=30,
+               method="Equal Area",
+               blk_rows=128):
     """Categorizing local deforestation rates.
 
     This function categorizes the deforestation risk from the map of

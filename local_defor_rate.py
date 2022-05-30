@@ -76,7 +76,8 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
     driver = gdal.GetDriverByName("GTiff")
     out_ds = driver.Create(output_file, xsize, ysize, 1,
                            gdal.GDT_UInt16,
-                           ["COMPRESS=LZW", "PREDICTOR=2", "BIGTIFF=YES"])
+                           ["COMPRESS=LZW", "PREDICTOR=2",
+                            "BIGTIFF=YES"])
     out_ds.SetProjection(in_ds.GetProjection())
     out_ds.SetGeoTransform(in_ds.GetGeoTransform())
     out_band = out_ds.GetRasterBand(1)

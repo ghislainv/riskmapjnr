@@ -42,12 +42,12 @@ def set_defor_cat_zero(input_file,
 
     :param output_file: Output raster file. Default to
         "defor_cat_zero.tif" in the current working directory. Pixels
-        with zero deforestation risk are assigned value 10001.
+        with zero deforestation risk are assigned a value of 10001.
 
     :param blk_rows: If > 0, number of rows for computation by block.
 
     :param verbose: Logical. Whether to print messages or not. Default
-        to True.
+        to ``True``.
 
     :return: None. A raster file identifying pixels with zero risk of
         deforestation (value 10001) will be created (see
@@ -66,7 +66,7 @@ def set_defor_cat_zero(input_file,
     xsize = ldefrate_band.XSize
     ysize = ldefrate_band.YSize
 
-    # Get distance to edge (dist) raster data
+    # Get distance to forest edge (dist) raster data
     dist_ds = gdal.Open(dist_file)
     dist_band = dist_ds.GetRasterBand(1)
 
