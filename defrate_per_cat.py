@@ -11,7 +11,6 @@
 
 
 # Third party imports
-import numpy as np
 from osgeo import gdal
 import pandas as pd
 
@@ -21,7 +20,7 @@ from misc import progress_bar, makeblock
 
 # defrate_per_cat
 def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
-                    output_file="defrate_per_cat.csv",
+                    tab_file="defrate_per_cat.csv",
                     blk_rows=128):
     """Compute deforestation rates per category of deforestation risk.
 
@@ -40,13 +39,13 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
     :param time_interval: Time interval (in years) for forest cover
         change observations.
 
-    :param output_file: Path to the `.csv` output file with estimates of
+    :param tab_file: Path to the `.csv` output file with estimates of
         deforestation rates per category of deforestation risk.
 
     :param blk_rows: If > 0, number of rows for computation by block.
 
     :return: None. A `.csv` file with deforestation rates per category
-        of deforestation risk will be created (see ``output_file``).
+        of deforestation risk will be created (see ``tab_file``).
 
     """
 
@@ -77,11 +76,13 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
     # ==============================================
 
     # Number of deforestation categories
+    print("Compute statistics")
     stats = defor_cat_band.ComputeStatistics(False)
     n_cat = int(stats[1])  # Get the maximum
+    cat = [c + 1 for c in range(n_cat)]
 
     # Create a table to save the results
-    data = {"cat": [x + 1 for x in range(n_cat)], "nfor": 0, "ndefor": 0,
+    data = {"cat": cat, "nfor": 0, "ndefor": 0,
             "rate": 0}
     df = pd.DataFrame(data)
 
@@ -96,19 +97,20 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
         fcc_data = fcc_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
         defor_cat_data = defor_cat_band.ReadAsArray(
             x[px], y[py], nx[px], ny[py])
-        # Deforestation rates
-        for i in range(n_cat):
-            c = i + 1
-            df.loc[df["cat"] == c, "nfor"] += np.sum((fcc_data > 0) &
-                                                     (defor_cat_data == c))
-            df.loc[df["cat"] == c, "ndefor"] += np.sum((fcc_data == 1) &
-                                                       (defor_cat_data == c))
+        # nfor_per_cat
+        data_for = defor_cat_data[fcc_data > 0]
+        cat_for = pd.Categorical(data_for.flatten(), categories=cat)
+        df["nfor"] += cat_for.value_counts().values
+        # ndefor_per_cat
+        data_defor = defor_cat_data[fcc_data == 1]
+        cat_defor = pd.Categorical(data_defor.flatten(), categories=cat)
+        df["ndefor"] += cat_defor.value_counts().values
 
     # Annual deforestation rates per category
     df["rate"] = 1 - (1 - df["ndefor"] / df["nfor"]) ** time_interval
 
     # Export the table of results
-    df.to_csv(output_file, sep=",", header=True,
+    df.to_csv(tab_file, sep=",", header=True,
               index=False, index_label=False)
 
     # Dereference drivers
@@ -117,17 +119,17 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
     return None
 
 
-# Test
-fcc_file = "data/fcc123.tif"
-defor_cat_file = "outputs/defor_cat.tif"
-time_interval = 10
-output_file = "outputs/defrate_per_cat.csv"
-blk_rows = 128
+# # Test
+# fcc_file = "data/fcc123.tif"
+# defor_cat_file = "outputs/defor_cat.tif"
+# time_interval = 10
+# tab_file = "outputs/defrate_per_cat.csv"
+# blk_rows = 128
 
-defrate_per_cat(fcc_file,
-                defor_cat_file,
-                time_interval,
-                output_file,
-                blk_rows=128)
+# defrate_per_cat(fcc_file,
+#                 defor_cat_file,
+#                 time_interval,
+#                 tab_file,
+#                 blk_rows=128)
 
 # End
