@@ -95,7 +95,7 @@ def validation(fcc_file, time_interval,
     if not np.array_equal(cat_csv, cat_raster):
         msg = ("Categories in the 'defrate_per_cat_file' csv file do not"
                "correspond to categories in the 'defor_cat_file' raster"
-               "file")
+               "file.")
         raise ValueError(msg)
     else:
         cat = cat_csv
@@ -143,8 +143,9 @@ def validation(fcc_file, time_interval,
     # Select cells with forest cover > 0
     df = df[df["nfor_obs"] > 0]
     if df.shape[0] < 1000:
-        msg = ("Number of cells with forest cover > 0 ha is < 1000."
-               "Please decrease the spatial cell size 'csize'.")
+        msg = ("Number of cells with forest cover > 0 ha is < 1000. "
+               "Please decrease the spatial cell size 'csize' to get"
+               "more cells.")
         raise ValueError(msg)
 
     # Compute areas in ha
