@@ -159,7 +159,6 @@ def validation(fcc_file, time_interval,
     # cell_data = np.repeat(cell_id, repeats=csize*csize)[:nelement]
     # cell_data = cell_data.reshape(blk_shape, order="F")
 
-    tic = time.perf_counter()
     # Loop on squares
     for s in range(nblock):
         # Progress bar
@@ -189,8 +188,6 @@ def validation(fcc_file, time_interval,
                 defor_cat_count *
                 defrate_per_cat["rate"].values
             )
-    toc = time.perf_counter()
-    print(f"Computation in {toc - tic:0.4f} seconds")
 
     # Dereference drivers
     del fcc_ds, defor_cat_ds
@@ -221,7 +218,14 @@ time_interval = 10
 defor_cat_file = "outputs/defor_cat.tif"
 defrate_per_cat_file = "outputs/defrate_per_cat.csv"
 csize = 300
-tab_file = "outputs/validation_data.csv"
+tab_file = "outputs/validation_data_block.csv"
 fig_file = "outputs/pred_obs.png"
+
+import time
+tic = time.perf_counter()
+validation(fcc_file, time_interval, defor_cat_file, defrate_per_cat_file,
+           csize, tab_file, fig_file)
+toc = time.perf_counter()
+print(f"Computation in {toc - tic:0.4f} seconds")
 
 # End

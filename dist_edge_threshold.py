@@ -82,7 +82,7 @@ def dist_value(input_file,
 def dist_edge_threshold(input_file,
                         dist_file,
                         tab_file,
-                        plot_file,
+                        fig_file,
                         figsize=(6.4, 4.8),
                         dpi=100,
                         bins=np.arange(0, 1080, step=30),
@@ -117,7 +117,7 @@ def dist_edge_threshold(input_file,
         * `cum`: the cumulative sum of the deforested area (in ha).
         * `perc`: the corresponding percentage of total deforestation.
 
-    :param plot_file: Path to the plot file that will be created. This
+    :param fig_file: Path to the plot file that will be created. This
         plot represents the cumulative deforestation percentage as the
         distance to forest edge increases.
 
@@ -235,7 +235,7 @@ def dist_edge_threshold(input_file,
     x2_text = 0
     y2_text = perc_thresh - 0.01 * (100 - np.min(res_df["perc"]))
     plt.text(x2_text, y2_text, t2, ha="left", va="top")
-    fig.savefig(plot_file)
+    fig.savefig(fig_file)
 
     # Results
     return {'tot_def': tot_area_def, 'dist_thresh': dist_thresh,
@@ -246,7 +246,7 @@ def dist_edge_threshold(input_file,
 # dist_edge_threshold(input_file="data/fcc123.tif",
 #                     dist_file="outputs/dist_edge.tif",
 #                     tab_file="outputs/tab_dist.csv",
-#                     plot_file="outputs/plot_dist.png",
+#                     fig_file="outputs/plot_dist.png",
 #                     bins=np.arange(0, 1080, step=30),
 #                     blk_rows=128)
 

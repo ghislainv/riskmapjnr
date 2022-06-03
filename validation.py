@@ -11,6 +11,7 @@
 
 
 # Third party imports
+import matplotlib.pyplot as plt
 import numpy as np
 from osgeo import gdal
 import pandas as pd
@@ -24,7 +25,9 @@ def validation(fcc_file, time_interval,
                defor_cat_file, defrate_per_cat_file,
                csize=300,
                tab_file="validation_data.csv",
-               fig_file="pred_obs.png"):
+               fig_file="pred_obs.png",
+               figsize=(6.4, 4.8),
+               dpi=100):
     """Validation of the deforestation risk map.
 
     This function computes the observed and predicted deforestion (in
@@ -64,13 +67,20 @@ def validation(fcc_file, time_interval,
     :param fig_file: Path to the `.png` output file for the
         predictions vs. observations plot.
 
-    :return: the weighted Root Mean Squared Error (in hectares) of the
-        deforestation predictions.
+    :param figsize: Figure size.
+
+    :param dpi: Resolution for output image.
+
+    :return: A dictionary. With `wRMSE`: weighted Root Mean Squared
+        Error (in hectares) for the deforestation predictions,
+        `ncell`: the number of grid cells with forest cover > 0 at the
+        beginning of the validation period, `csize`: the cell size in
+        number of pixels, `csize_km`: the cell size in kilometers.
 
     """
 
     # ==============================================================
-    # Input raster
+    # Input data
     # ==============================================================
 
     # Get fcc raster data
@@ -86,8 +96,7 @@ def validation(fcc_file, time_interval,
     cat_csv = defrate_per_cat["cat"].values
 
     # Number of deforestation categories
-    print("Compute statistics")
-    stats = defor_cat_band.ComputeStatistics(False)
+    stats = defor_cat_band.GetStatistics(False, True)
     n_cat = int(stats[1])  # Get the maximum
     cat_raster = np.array([c + 1 for c in range(n_cat)])
 
@@ -114,10 +123,17 @@ def validation(fcc_file, time_interval,
     ny = squareinfo[6]
     print("Divide region in {} square cells".format(nsquare))
 
+    # Cell size in km
+    csize_km = round(csize * gt[1] / 1000)
+
     # Create a table to save the results
     data = {"cell": list(range(nsquare)), "nfor_obs": 0,
             "ndefor_obs": 0, "ndefor_pred": 0}
     df = pd.DataFrame(data)
+
+    # ==============================================================
+    # Loop on grid cells
+    # ==============================================================
 
     # Loop on squares
     for s in range(nsquare):
@@ -137,12 +153,18 @@ def validation(fcc_file, time_interval,
         defor_cat_count = defor_cat.value_counts().values
         df.loc[s, "ndefor_pred"] = np.sum(defor_cat_count *
                                           defrate_per_cat["rate"].values)
+
     # Dereference drivers
     del fcc_ds, defor_cat_ds
 
+    # ==============================================================
+    # wRMSE and plot
+    # ==============================================================
+
     # Select cells with forest cover > 0
     df = df[df["nfor_obs"] > 0]
-    if df.shape[0] < 1000:
+    ncell = df.shape[0]
+    if ncell < 1000:
         msg = ("Number of cells with forest cover > 0 ha is < 1000. "
                "Please decrease the spatial cell size 'csize' to get"
                "more cells.")
@@ -157,16 +179,53 @@ def validation(fcc_file, time_interval,
     df.to_csv(tab_file, sep=",", header=True,
               index=False, index_label=False)
 
-    return None
+    # Compute wRMSE
+    w = df["nfor_obs_ha"] / df["nfor_obs_ha"].sum()
+    error_pred = df["ndefor_pred_ha"] - df["ndefor_obs_ha"]
+    squared_error = (error_pred) ** 2
+    wRMSE = round(np.sqrt(sum(squared_error * w)))
+
+    # Plot title
+    title = ("Predicted vs. observed deforestation (ha) "
+             "in " + str(csize_km) + " x " + str(csize_km) +
+             " km grid cells")
+
+    # Points or identity line
+    p = [df["ndefor_obs_ha"].min(), df["ndefor_obs_ha"].max()]
+
+    # Plot predictions vs. observations
+    fig = plt.figure(figsize=figsize, dpi=dpi)
+    plt.subplot(111)
+    plt.scatter(df["ndefor_obs_ha"], df["ndefor_pred_ha"],
+                color=None, marker="o", edgecolor="k")
+    plt.plot(p, p, "r-")
+    plt.title(title)
+    plt.xlabel("Observed deforestation (ha)")
+    plt.ylabel("Predicted deforestation (ha)")
+    # Text wRMSE and ncell
+    t = "wRMSE = " + str(wRMSE) + " ha\n n = " + str(ncell)
+    x_text = df["ndefor_obs_ha"].max()
+    y_text = 0
+    plt.text(x_text, y_text, t, ha="right", va="bottom")
+    fig.savefig(fig_file)
+
+    # Results
+    return {'wRMSE': wRMSE, 'ncell': ncell,
+            'csize': csize, 'csize_km': csize_km}
 
 
-# Test
-fcc_file = "data/fcc123.tif"
-time_interval = 10
-defor_cat_file = "outputs/defor_cat.tif"
-defrate_per_cat_file = "outputs/defrate_per_cat.csv"
-csize = 300
-tab_file = "outputs/validation_data.csv"
-fig_file = "outputs/pred_obs.png"
+# # Test
+# fcc_file = "data/fcc123.tif"
+# time_interval = 10
+# defor_cat_file = "outputs/defor_cat.tif"
+# defrate_per_cat_file = "outputs/defrate_per_cat.csv"
+# csize = 500
+# tab_file = "outputs/validation_data.csv"
+# fig_file = "outputs/pred_obs.png"
+# figsize = (6.4, 4.8)
+# dpi = 100
+
+# validation(fcc_file, time_interval, defor_cat_file, defrate_per_cat_file,
+#            csize, tab_file, fig_file)
 
 # End
