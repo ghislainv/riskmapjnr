@@ -1,0 +1,5 @@
+gdal
+matplotlib
+numpy
+pandas
+scipy
