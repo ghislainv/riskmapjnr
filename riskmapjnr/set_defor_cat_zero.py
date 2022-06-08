@@ -11,11 +11,10 @@
 
 
 # Third party imports
-import numpy as np
 from osgeo import gdal
 
 # Local application imports
-from misc import progress_bar, makeblock
+from .misc import progress_bar, makeblock
 
 
 # set_defor_cat_zero

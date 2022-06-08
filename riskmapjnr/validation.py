@@ -17,7 +17,7 @@ from osgeo import gdal
 import pandas as pd
 
 # Local application imports
-from misc import progress_bar, make_square
+from .misc import progress_bar, make_square
 
 
 # validation
@@ -35,7 +35,7 @@ def validation(fcc_file, time_interval,
     spatial grid cells of a maximum size of 10km. Deforestation rate
     estimates obtained with the ``defrate_per_cat`` function are used
     to compute the predicted deforestation in each grid cell. The
-    function creates both a `.csv` file with the validation data and a
+    function creates both a ``.csv`` file with the validation data and a
     plot comparing predictions vs. observations. The function returns
     the weighted Root Mean Squared Error (wRMSE, in hectares)
     associated with the deforestation predictions.
@@ -52,7 +52,7 @@ def validation(fcc_file, time_interval,
         spatial deforestation risk. This file is typically obtained
         with function ``defor_cat()``.
 
-    :param defrate_per_cat_file: Path to the `.csv` input file with
+    :param defrate_per_cat_file: Path to the ``.csv`` input file with
         estimates of deforestation rates per category of deforestation
         risk. This file is typically obtained with function
         ``defrate_per_cat()``.
@@ -61,21 +61,22 @@ def validation(fcc_file, time_interval,
         correspond to a distance < 10 km. Default to 300 corresponding
         to 9 km for a 30 m resolution raster.
 
-    :param tab_file: Path to the `.csv` output file with validation
+    :param tab_file: Path to the ``.csv`` output file with validation
         data.
 
-    :param fig_file: Path to the `.png` output file for the
+    :param fig_file: Path to the ``.png`` output file for the
         predictions vs. observations plot.
 
     :param figsize: Figure size.
 
     :param dpi: Resolution for output image.
 
-    :return: A dictionary. With `wRMSE`: weighted Root Mean Squared
+    :return: A dictionary. With ``wRMSE``: weighted Root Mean Squared
         Error (in hectares) for the deforestation predictions,
-        `ncell`: the number of grid cells with forest cover > 0 at the
-        beginning of the validation period, `csize`: the cell size in
-        number of pixels, `csize_km`: the cell size in kilometers.
+        ``ncell``: the number of grid cells with forest cover > 0 at
+        the beginning of the validation period, `csize`: the cell size
+        in number of pixels, ``csize_km``: the cell size in
+        kilometers.
 
     """
 

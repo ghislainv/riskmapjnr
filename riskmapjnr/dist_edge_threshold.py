@@ -20,7 +20,7 @@ from osgeo import gdal
 import pandas as pd
 
 # Local application imports
-from misc import progress_bar, makeblock
+from .misc import progress_bar, makeblock
 
 
 # dist_value
@@ -108,14 +108,14 @@ def dist_edge_threshold(input_file,
 
     :param dist_file: Path to the distance raster file.
 
-    :param tab_file: Path to the table `.csv` file that will be
+    :param tab_file: Path to the table ``.csv`` file that will be
         created. This table includes the following variables:
 
-        * `distance`: bins of distance to forest edge (in m).
-        * `npix`: the number of deforested pixels in each bin.
-        * `area`: the corresponding area (in ha).
-        * `cum`: the cumulative sum of the deforested area (in ha).
-        * `perc`: the corresponding percentage of total deforestation.
+        * ``distance``: bins of distance to forest edge (in m).
+        * ``npix``: the number of deforested pixels in each bin.
+        * ``area``: the corresponding area (in ha).
+        * ``cum``: the cumulative sum of the deforested area (in ha).
+        * ``perc``: the corresponding percentage of total deforestation.
 
     :param fig_file: Path to the plot file that will be created. This
         plot represents the cumulative deforestation percentage as the
@@ -127,14 +127,15 @@ def dist_edge_threshold(input_file,
 
     :param bins: Array of bins for distances. It has to be
         1-dimensional and monotonic. The array must also include zero
-        as the first value. Default to `np.arange(0, 1080, step=30)`.
+        as the first value. Default to ``np.arange(0, 1080,
+        step=30)``.
 
     :param blk_rows: Number of rows for block. This is used to break
         lage raster files in several blocks of data that can be hold
         in memory.
 
-    :return: A dictionary. With `tot_def`: total deforestation (in
-        ha), `dist_thresh`: the distance threshold, `perc`: the
+    :return: A dictionary. With ``tot_def``: total deforestation (in
+        ha), ``dist_thresh``: the distance threshold, ``perc``: the
         percentage of deforestation for pixels with distance <=
         dist_thresh.
 

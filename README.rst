@@ -112,11 +112,11 @@ and install the ``riskmapjnr`` package with the following commands:
 
 .. code-block:: shell
 		
-   conda create --name conda-rmj -c conda-forge python=3.9 gdal numpy matplotlib pandas pip scipy --yes
+   conda create --name conda-rmj -c conda-forge python=3 gdal numpy matplotlib pandas pip scipy --yes
    conda activate conda-rmj
    pip install riskmapjnr # For PyPI version
    # pip install https://github.com/ghislainv/riskmapjnr/archive/master.zip # For GitHub dev version
-   # conda install -c conda-forge jupyter --yes  # Optional additional packages
+   # conda install -c conda-forge jupyter geopandas descartes folium --yes  # Optional additional packages
 
 To deactivate and delete the conda environment:
 
@@ -146,7 +146,7 @@ package with the following commands:
    pip install --global-option=build_ext --global-option="-I/usr/include/gdal" gdal==$(gdal-config --version)
    pip install riskmapjnr # For PyPI version, this will install all other dependencies
    # pip install https://github.com/ghislainv/riskmapjnr/archive/master.zip # For GitHub dev version
-   pip install jupyter # Optional additional packages
+   pip install jupyter geopandas descartes folium # Optional additional packages
 
 To deactivate and delete the virtual environment:
 
@@ -170,7 +170,7 @@ and the version number:
 
 .. code-block:: shell
 
-  # riskmapjnr: modelling and forecasting deforestation in the tropics.
+  # riskmapjnr: Map of deforestation risk following JNR methodology.
   # https://ecology.ghislainv.fr/riskmapjnr/
   # riskmapjnr version x.x.
 

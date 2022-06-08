@@ -17,7 +17,7 @@ import pandas as pd
 import time
 
 # Local application imports
-from misc import progress_bar, makeblock, make_square
+from .misc import progress_bar, makeblock, make_square
 
 
 # validation
@@ -221,7 +221,6 @@ csize = 300
 tab_file = "outputs/validation_data_block.csv"
 fig_file = "outputs/pred_obs.png"
 
-import time
 tic = time.perf_counter()
 validation(fcc_file, time_interval, defor_cat_file, defrate_per_cat_file,
            csize, tab_file, fig_file)

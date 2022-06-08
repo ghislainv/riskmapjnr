@@ -181,23 +181,4 @@ def progress_bar(niter, i):
     return None
 
 
-# Rescale
-def rescale(value):
-    """Rescale probability values to 1-65535.
-
-    This function rescales probability values (float in [0, 1]) to
-    integer values in [1, 65535]. Raster data can then be of type
-    UInt16 with 0 as nodata value.
-
-    :param value: Numpy array of float values in [0, 1].
-
-    :return: Rescaled numpy array of integer values in [1, 65535].
-
-    """
-
-    # Avoid nodata value (0) for low proba
-    value[value < 1e-06] = 1e-06
-    # Rescale and round to nearest integer
-    return (np.int_(((value * 1e6 - 1) * 65534 / 999999) + 1))
-
 # End

@@ -16,7 +16,7 @@ from osgeo import gdal
 import scipy.ndimage
 
 # Local application imports
-from misc import progress_bar
+from .misc import progress_bar
 
 
 # local_defor_rate

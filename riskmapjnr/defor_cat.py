@@ -16,7 +16,7 @@ from osgeo import gdal
 import pandas as pd
 
 # Local application imports
-from misc import progress_bar, makeblock
+from .misc import progress_bar, makeblock
 
 
 # defor_cat

@@ -15,7 +15,7 @@ from osgeo import gdal
 import pandas as pd
 
 # Local application imports
-from misc import progress_bar, makeblock
+from .misc import progress_bar, makeblock
 
 
 # defrate_per_cat
@@ -39,12 +39,12 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
     :param time_interval: Time interval (in years) for forest cover
         change observations.
 
-    :param tab_file: Path to the `.csv` output file with estimates of
+    :param tab_file: Path to the ``.csv`` output file with estimates of
         deforestation rates per category of deforestation risk.
 
     :param blk_rows: If > 0, number of rows for computation by block.
 
-    :return: None. A `.csv` file with deforestation rates per category
+    :return: None. A ``.csv`` file with deforestation rates per category
         of deforestation risk will be created (see ``tab_file``).
 
     """
