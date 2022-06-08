@@ -32,7 +32,7 @@ REDD+ (`JNR`_).
 .. image:: https://ecology.ghislainv.fr/riskmapjnr/_static/riskmapjnr.png
    :align: center
    :target: https://ecology.ghislainv.fr/riskmapjnr
-   :alt: prob_AFR
+   :alt: riskmapjnr_example
    :width: 800px
 
 

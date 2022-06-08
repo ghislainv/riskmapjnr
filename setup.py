@@ -56,8 +56,8 @@ setup(name="riskmapjnr",
                    "Programming Language :: Python :: 3",
                    "Operating System :: OS Independent",
                    "Topic :: Scientific/Engineering :: Bio-Informatics"],
-      keywords="deforestation forests jnr map probability redd"
-               "risk tropics",
+      keywords="carbon deforestation emissions forests jnr map probability"
+               "redd risk tropics vcs",
       python_requires=">=3.6",
       packages=find_packages(),
       package_dir={"riskmapjnr": "./riskmapjnr"},

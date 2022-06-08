@@ -1,0 +1,112 @@
+# -*- mode: org -*-
+# -*- coding: utf-8 -*-
+# -*- org-src-preserve-indentation: t; org-edit-src-content: 0; -*-
+# ==============================================================================
+# author          :Ghislain Vieilledent
+# email           :ghislain.vieilledent@cirad.fr, ghislainv@gmail.com
+# web             :https://ecology.ghislainv.fr
+# license         :GPLv3
+# ==============================================================================
+
+#+title: Get Started
+#+author:
+# #+author: Ghislain Vieilledent
+# #+email: ghislain.vieilledent@cirad.fr
+
+#+LANGUAGE: en
+#+TAGS: Blog(B) noexport(n) Stats(S)
+#+TAGS: Ecology(E) R(R) OrgMode(O) Python(P)
+#+EXPORT_SELECT_TAGS: Blog
+#+OPTIONS: H:3 num:t toc:nil \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+#+OPTIONS: html-postamble:nil
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+HTML_DOCTYPE: html5
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
+
+# For math display
+#+LATEX_HEADER: \usepackage{amsfonts}
+#+LATEX_HEADER: \usepackage{unicode-math}
+
+#+PROPERTY: header-args :eval never-export
+
+* Version information    :noexport:
+
+#+begin_src emacs-lisp -n :exports both
+(princ (concat
+        (format "Emacs version: %s\n"
+                (emacs-version))
+        (format "org version: %s\n"
+                (org-version))))        
+#+end_src
+
+#+RESULTS:
+: Emacs version: GNU Emacs 27.1 (build 1, x86_64-pc-linux-gnu, GTK+ Version 3.24.30, cairo version 1.16.0)
+:  of 2021-11-27, modified by Debian
+: org version: 9.5.3
+
+* Introduction
+
+** Importing Python modules
+
+We import the Python modules needed for running the analysis.
+
+#+begin_src python :results output :session :exports both
+# Imports
+import os
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+import riskmapjnr as rmj
+#+end_src
+
+#+RESULTS:
+
+We create some directories to hold the data and the ouputs with the
+function =rmj.make_dir()=.
+
+#+begin_src python :results output :session :exports both
+rmj.make_dir("outputs")
+#+end_src
+
+#+RESULTS:
+
+We increase the cache for GDAL to increase computational speed.
+
+#+begin_src python :results output :session :exports both
+# GDAL
+os.environ["GDAL_CACHEMAX"] = "1024"
+#+end_src
+
+#+RESULTS:
+
+* Environment setup and test :noexport:
+
+#+BEGIN_SRC python :results value
+import sys
+return(sys.executable)
+#+END_SRC
+
+#+RESULTS:
+: /home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-far/bin/python
+
+
+These definitions are necessary for having babel use the correct
+virtual environment.
+
+Before using the anaconda python distribution I was a heavy user of python
+virtualenv. I do not use this much any more, but these are the relevant
+options:
+- python-shell-virtualenv-path: only affects sessions via the run-python function
+- org-babel-python-command: defines executable for non-session src blocks
+
+# python-shell-virtualenv-path: "/home/dfeich/py-virtualenv/notebook"
+# org-babel-python-command: "/home/dfeich/py-virtualenv/notebook/bin/python"
+
+Local Variables:
+org-babel-python-command: "/home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/bin/python"
+org-babel-sh-command: "/bin/bash"
+End:
+

@@ -17,7 +17,7 @@ def main():
 
     Running ``riskmapjnr`` in the terminal prints riskmapjnr
     description and version. Can be used to check that the
-    ``riskmapjnr`` Python package can be correctly imported.
+    ``riskmapjnr`` Python package has been correctly imported.
 
     """
     print("# riskmapjnr: Map of deforestation risk following JNR methodology.")
