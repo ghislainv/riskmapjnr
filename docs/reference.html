@@ -1,0 +1,476 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Python API &#8212; riskmapjnr — Map of deforestation risk following JNR methodology</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Indices and tables" href="indices.html" />
+    <link rel="prev" title="Get Started" href="notebooks/get_started.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logo-riskmapjnr.svg" alt="Logo"/>
+    
+    <h1 class="logo logo-name">riskmapjnr</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Map of deforestation risk following JNR methodology</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=ghislainv&repo=riskmapjnr&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/get_started.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Python API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#main-functions">Main functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#miscellaneous-functions">Miscellaneous functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="indices.html">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="notebooks/get_started.html" title="previous chapter">Get Started</a></li>
+      <li>Next: <a href="indices.html" title="next chapter">Indices and tables</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="python-api">
+<h1>Python API<a class="headerlink" href="#python-api" title="Permalink to this heading">¶</a></h1>
+<section id="main-functions">
+<h2>Main functions<a class="headerlink" href="#main-functions" title="Permalink to this heading">¶</a></h2>
+<section id="module-riskmapjnr.dist_edge_threshold">
+<span id="dist-edge-threshold"></span><h3>dist_edge_threshold()<a class="headerlink" href="#module-riskmapjnr.dist_edge_threshold" title="Permalink to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.dist_edge_threshold.dist_edge_threshold">
+<span class="sig-name descname"><span class="pre">dist_edge_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6.4,</span> <span class="pre">4.8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0,</span> <span class="pre">30,</span> <span class="pre">60,</span> <span class="pre">90,</span> <span class="pre">120,</span> <span class="pre">150,</span> <span class="pre">180,</span> <span class="pre">210,</span> <span class="pre">240,</span> <span class="pre">270,</span> <span class="pre">300,</span> <span class="pre">330,</span> <span class="pre">360,</span> <span class="pre">390,</span> <span class="pre">420,</span> <span class="pre">450,</span> <span class="pre">480,</span> <span class="pre">510,</span> <span class="pre">540,</span> <span class="pre">570,</span> <span class="pre">600,</span> <span class="pre">630,</span> <span class="pre">660,</span> <span class="pre">690,</span> <span class="pre">720,</span> <span class="pre">750,</span> <span class="pre">780,</span> <span class="pre">810,</span> <span class="pre">840,</span> <span class="pre">870,</span> <span class="pre">900,</span> <span class="pre">930,</span> <span class="pre">960,</span> <span class="pre">990,</span> <span class="pre">1020,</span> <span class="pre">1050])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/dist_edge_threshold.html#dist_edge_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.dist_edge_threshold.dist_edge_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computing the percentage of total deforestation as a function of
+the distance to forest edge.</p>
+<p>This function computes the percentage of total deforestation as a
+function of the distance to forest edge. It returns a table with
+the cumulative percentage of deforestation as distance to forest
+edge increases. It also identifies the distance threshold for the
+distance to forest edge so that the deforestation under that
+threshold is &gt;= 99 % of the total deforestation in the
+landscape. The function also plots the relationship between the
+percentage of deforestation and the distance to forest edge. A
+raster of distance to forest edge will be created. The distance
+unit will be the one of the input file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_file</strong> – Input raster file of forest cover change at
+three dates (123). 1: first period deforestation, 2: second
+period deforestation, 3: remaining forest at the end of the
+second period. No data value must be 0 (zero).</p></li>
+<li><p><strong>dist_file</strong> – Path to the distance raster file.</p></li>
+<li><p><strong>tab_file</strong> – <p>Path to the table <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file that will be
+created. This table includes the following variables:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">distance</span></code>: bins of distance to forest edge (in m).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">npix</span></code>: the number of deforested pixels in each bin.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">area</span></code>: the corresponding area (in ha).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cum</span></code>: the cumulative sum of the deforested area (in ha).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">perc</span></code>: the corresponding percentage of total deforestation.</p></li>
+</ul>
+</p></li>
+<li><p><strong>fig_file</strong> – Path to the plot file that will be created. This
+plot represents the cumulative deforestation percentage as the
+distance to forest edge increases.</p></li>
+<li><p><strong>figsize</strong> – Figure size.</p></li>
+<li><p><strong>dpi</strong> – Resolution for output image.</p></li>
+<li><p><strong>bins</strong> – Array of bins for distances. It has to be
+1-dimensional and monotonic. The array must also include zero
+as the first value. Default to <code class="docutils literal notranslate"><span class="pre">np.arange(0,</span> <span class="pre">1080,</span>
+<span class="pre">step=30)</span></code>.</p></li>
+<li><p><strong>blk_rows</strong> – Number of rows for block. This is used to break
+lage raster files in several blocks of data that can be hold
+in memory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary. With <code class="docutils literal notranslate"><span class="pre">tot_def</span></code>: total deforestation (in
+ha), <code class="docutils literal notranslate"><span class="pre">dist_thresh</span></code>: the distance threshold, <code class="docutils literal notranslate"><span class="pre">perc</span></code>: the
+percentage of deforestation for pixels with distance &lt;=
+dist_thresh.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.dist_edge_threshold.dist_value">
+<span class="sig-name descname"><span class="pre">dist_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/dist_edge_threshold.html#dist_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.dist_edge_threshold.dist_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computing the shortest distance to a pixel with a specific value in
+a raster file.</p>
+<p>This function computes the shortest distance to a pixel with a
+specific value in a raster file. Distances generated are in
+georeferenced coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_file</strong> – Input raster file.</p></li>
+<li><p><strong>dist_file</strong> – Path to the distance raster file that is
+created.</p></li>
+<li><p><strong>value</strong> – Value of the raster to compute the distance
+to. Default to 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. A distance raster file is created (see
+<code class="docutils literal notranslate"><span class="pre">dist_file</span></code>). Raster data type is UInt32 ([0,
+4294967295]). NoData is set to zero.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-riskmapjnr.local_defor_rate">
+<span id="local-defor-rate"></span><h3>local_defor_rate()<a class="headerlink" href="#module-riskmapjnr.local_defor_rate" title="Permalink to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.local_defor_rate.local_defor_rate">
+<span class="sig-name descname"><span class="pre">local_defor_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/local_defor_rate.html#local_defor_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.local_defor_rate.local_defor_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computing the local deforestation rate using a moving window.</p>
+<p>This function computes the local deforestation rate using a moving
+window. SciPy is used for the focal analysis. The
+<code class="docutils literal notranslate"><span class="pre">uniform_filter</span></code> is used over the <code class="docutils literal notranslate"><span class="pre">generic_filter</span></code>. The
+<code class="docutils literal notranslate"><span class="pre">generic_filter</span></code> is 40 times slower than the strides implemented
+in the <code class="docutils literal notranslate"><span class="pre">uniform_filter</span></code>. For cells on the edge of the raster,
+the local deforestation rate is computed from a lower number of
+existing cells in the moving window using <code class="docutils literal notranslate"><span class="pre">mode='constant'</span></code> and
+<code class="docutils literal notranslate"><span class="pre">cval=0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_file</strong> – Input raster file of forest cover change at
+three dates (123). 1: first period deforestation, 2: second
+period deforestation, 3: remaining forest at the end of the
+second period. No data value must be 0 (zero).</p></li>
+<li><p><strong>output_file</strong> – Output raster file.</p></li>
+<li><p><strong>win_size</strong> – Size of the moving window in number of
+cells. Must be an odd number lower or equal to <code class="docutils literal notranslate"><span class="pre">blk_rows</span></code>.</p></li>
+<li><p><strong>time_interval</strong> – Time interval (in years) for forest cover
+change observations.</p></li>
+<li><p><strong>blk_rows</strong> – Number of rows for block. Must be greater or
+equal to <code class="docutils literal notranslate"><span class="pre">win_size</span></code>. This is used to break lage raster files
+in several blocks of data that can be hold in memory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. A raster with the local deforestation rate will be
+created (see <code class="docutils literal notranslate"><span class="pre">output_file</span></code>). Data range from 0 to
+10000. Raster type is UInt16 ([0, 65535]). NoData value is set
+to 65535.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-riskmapjnr.set_defor_cat_zero">
+<span id="set-defor-cat-zero"></span><h3>set_defor_cat_zero()<a class="headerlink" href="#module-riskmapjnr.set_defor_cat_zero" title="Permalink to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.set_defor_cat_zero.set_defor_cat_zero">
+<span class="sig-name descname"><span class="pre">set_defor_cat_zero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_thresh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'defor_cat_zero.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/set_defor_cat_zero.html#set_defor_cat_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.set_defor_cat_zero.set_defor_cat_zero" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a value of 10001 to pixels with zero deforestation risk. A
+risk of deforestation of zero is assumed when distance to forest
+edge is greater than the distance threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_file</strong> – Input raster file of local deforestation
+rates. Deforestation rates are defined by integer values
+between 0 and 10000 (ten thousand). This file is typically
+obtained with function <code class="docutils literal notranslate"><span class="pre">local_defor_rate()</span></code>.</p></li>
+<li><p><strong>dist_file</strong> – Path to the distance to forest edge raster file.</p></li>
+<li><p><strong>dist_thresh</strong> – The distance threshold. This distance
+threshold is used to identify pixels with zero deforestation
+risk.</p></li>
+<li><p><strong>output_file</strong> – Output raster file. Default to
+“defor_cat_zero.tif” in the current working directory. Pixels
+with zero deforestation risk are assigned a value of 10001.</p></li>
+<li><p><strong>blk_rows</strong> – If &gt; 0, number of rows for computation by block.</p></li>
+<li><p><strong>verbose</strong> – Logical. Whether to print messages or not. Default
+to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. A raster file identifying pixels with zero risk of
+deforestation (value 10001) will be created (see
+<code class="docutils literal notranslate"><span class="pre">output_file</span></code>).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-riskmapjnr.defrate_per_cat">
+<span id="defrate-per-cat"></span><h3>defrate_per_cat()<a class="headerlink" href="#module-riskmapjnr.defrate_per_cat" title="Permalink to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.defrate_per_cat.defrate_per_cat">
+<span class="sig-name descname"><span class="pre">defrate_per_cat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defor_cat_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'defrate_per_cat.csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/defrate_per_cat.html#defrate_per_cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.defrate_per_cat.defrate_per_cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute deforestation rates per category of deforestation risk.</p>
+<p>This function computes the historical deforestation rates for each
+category of spatial deforestation risk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fcc_file</strong> – Input raster file of forest cover change at three
+dates (123). 1: first period deforestation, 2: second period
+deforestation, 3: remaining forest at the end of the second
+period. No data value must be 0 (zero).</p></li>
+<li><p><strong>defor_cat_file</strong> – Input raster file with categories of
+spatial deforestation risk. This file is typically obtained
+with function <code class="docutils literal notranslate"><span class="pre">defor_cat()</span></code>.</p></li>
+<li><p><strong>time_interval</strong> – Time interval (in years) for forest cover
+change observations.</p></li>
+<li><p><strong>tab_file</strong> – Path to the <code class="docutils literal notranslate"><span class="pre">.csv</span></code> output file with estimates of
+deforestation rates per category of deforestation risk.</p></li>
+<li><p><strong>blk_rows</strong> – If &gt; 0, number of rows for computation by block.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. A <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file with deforestation rates per category
+of deforestation risk will be created (see <code class="docutils literal notranslate"><span class="pre">tab_file</span></code>).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-riskmapjnr.defor_cat">
+<span id="defor-cat"></span><h3>defor_cat()<a class="headerlink" href="#module-riskmapjnr.defor_cat" title="Permalink to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.defor_cat.defor_cat">
+<span class="sig-name descname"><span class="pre">defor_cat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'defor_cat.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Equal</span> <span class="pre">Area'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/defor_cat.html#defor_cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.defor_cat.defor_cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Categorizing local deforestation rates.</p>
+<p>This function categorizes the deforestation risk from the map of
+local deforestation rates. This function assumes that pixels with
+zero deforestation risk have been previously identified (see
+function <code class="docutils literal notranslate"><span class="pre">set_defor_cat_zero()</span></code>). Three categorization methods
+can be used, either “Equal Area”, “Equal Interval”, or “Natural
+Breaks”. When “Equal Area” is used, the classes with a risk &gt; 0
+have approximately the same surface area. When “Equal Interval” is
+used, some risk classes will predominate in the risk map while
+other classes will be present only in small areas. When “Natural
+Breaks” is used, the data is normalized before running the slicing
+algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_file</strong> – Input raster file of local deforestation
+rates. Deforestation rates are defined by integer values
+between 0 and 10000 (ten thousand)). Pixels with zero
+deforestation risk (beyond a certain distance from the forest
+edge) have value 10001. This file is typically obtained with
+function <code class="docutils literal notranslate"><span class="pre">set_defor_cat_zero()</span></code>.</p></li>
+<li><p><strong>output_file</strong> – Output raster file with categories of
+deforestation risk.</p></li>
+<li><p><strong>nbins</strong> – Number of deforestation risk categories (zero
+risk class excluded). Default to 30.</p></li>
+<li><p><strong>method</strong> – Method used for categorizing. Either “Equal
+Interval”, “Equal Area”, or “Natural Breaks”.</p></li>
+<li><p><strong>blk_rows</strong> – If &gt; 0, number of rows for computation by block.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. A raster file with deforestation categories will be
+created (see <code class="docutils literal notranslate"><span class="pre">output_file</span></code>). Data range from 0 to 30. Raster
+type is Byte ([0, 255]). NoData value is set to 255.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-riskmapjnr.validation">
+<span id="validation"></span><h3>validation()<a class="headerlink" href="#module-riskmapjnr.validation" title="Permalink to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.validation.validation">
+<span class="sig-name descname"><span class="pre">validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defor_cat_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defrate_per_cat_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'validation_data.csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pred_obs.png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6.4,</span> <span class="pre">4.8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/validation.html#validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.validation.validation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validation of the deforestation risk map.</p>
+<p>This function computes the observed and predicted deforestion (in
+ha) for the validation time period. Deforestion is computed for
+spatial grid cells of a maximum size of 10km. Deforestation rate
+estimates obtained with the <code class="docutils literal notranslate"><span class="pre">defrate_per_cat</span></code> function are used
+to compute the predicted deforestation in each grid cell. The
+function creates both a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file with the validation data and a
+plot comparing predictions vs. observations. The function returns
+the weighted Root Mean Squared Error (wRMSE, in hectares)
+associated with the deforestation predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fcc_file</strong> – Input raster file of forest cover change at three
+dates (123). 1: first period deforestation, 2: second period
+deforestation, 3: remaining forest at the end of the second
+period. No data value must be 0 (zero).</p></li>
+<li><p><strong>time_interval</strong> – Time interval (in years) for forest cover
+change observations.</p></li>
+<li><p><strong>defor_cat_file</strong> – Input raster file with categories of
+spatial deforestation risk. This file is typically obtained
+with function <code class="docutils literal notranslate"><span class="pre">defor_cat()</span></code>.</p></li>
+<li><p><strong>defrate_per_cat_file</strong> – Path to the <code class="docutils literal notranslate"><span class="pre">.csv</span></code> input file with
+estimates of deforestation rates per category of deforestation
+risk. This file is typically obtained with function
+<code class="docutils literal notranslate"><span class="pre">defrate_per_cat()</span></code>.</p></li>
+<li><p><strong>csize</strong> – Spatial cell size in number of pixels. Must
+correspond to a distance &lt; 10 km. Default to 300 corresponding
+to 9 km for a 30 m resolution raster.</p></li>
+<li><p><strong>tab_file</strong> – Path to the <code class="docutils literal notranslate"><span class="pre">.csv</span></code> output file with validation
+data.</p></li>
+<li><p><strong>fig_file</strong> – Path to the <code class="docutils literal notranslate"><span class="pre">.png</span></code> output file for the
+predictions vs. observations plot.</p></li>
+<li><p><strong>figsize</strong> – Figure size.</p></li>
+<li><p><strong>dpi</strong> – Resolution for output image.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary. With <code class="docutils literal notranslate"><span class="pre">wRMSE</span></code>: weighted Root Mean Squared
+Error (in hectares) for the deforestation predictions,
+<code class="docutils literal notranslate"><span class="pre">ncell</span></code>: the number of grid cells with forest cover &gt; 0 at
+the beginning of the validation period, <cite>csize</cite>: the cell size
+in number of pixels, <code class="docutils literal notranslate"><span class="pre">csize_km</span></code>: the cell size in
+kilometers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="miscellaneous-functions">
+<h2>Miscellaneous functions<a class="headerlink" href="#miscellaneous-functions" title="Permalink to this heading">¶</a></h2>
+<section id="module-riskmapjnr.invlogit">
+<span id="invlogit"></span><h3>invlogit()<a class="headerlink" href="#module-riskmapjnr.invlogit" title="Permalink to this heading">¶</a></h3>
+<p>Compute the inverse-logit of a numpy array.</p>
+<p>We differenciate the positive and negative values to avoid
+under/overflow with the use of exp().</p>
+<dl class="field-list simple">
+<dt class="field-odd">param x<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Numpy array.</p>
+</dd>
+<dt class="field-even">return<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the inverse-logit of the array.</p>
+</dd>
+</dl>
+</section>
+<section id="module-riskmapjnr.make_dir">
+<span id="make-dir"></span><h3>make_dir()<a class="headerlink" href="#module-riskmapjnr.make_dir" title="Permalink to this heading">¶</a></h3>
+<p>Make new directory</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Already exists, silently complete</p></li>
+<li><p>Regular file in the way, raise an exception</p></li>
+<li><p>Parent directory(ies) does not exist, make them as well</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">param newdir<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Directory path to create.</p>
+</dd>
+</dl>
+</section>
+<section id="module-riskmapjnr.riskmapjnr">
+<span id="riskmapjnr"></span><h3>riskmapjnr()<a class="headerlink" href="#module-riskmapjnr.riskmapjnr" title="Permalink to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.riskmapjnr.main">
+<span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/riskmapjnr.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.riskmapjnr.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>riskmapjnr.riskmapjnr: provides entry point main().</p>
+<p>Running <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> in the terminal prints riskmapjnr
+description and version. Can be used to check that the
+<code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package has been correctly imported.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, Ghislain Vieilledent.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/reference.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -6,7 +6,7 @@
    # license         :GPLv3
    # ==============================================================================
 
-.. image:: https://ecology.ghislainv.fr/riskmapjnr/_static/logo-rmj.svg
+.. image:: https://ecology.ghislainv.fr/riskmapjnr/_static/logo-riskmapjnr.svg
    :align: right
    :target: https://ecology.ghislainv.fr/riskmapjnr
    :alt: Logo riskmapjnr
@@ -29,10 +29,10 @@ REDD+ (`JNR`_).
 .. _JNR:
    https://verra.org/project/jurisdictional-and-nested-redd-framework/
 
-.. image:: https://ecology.ghislainv.fr/riskmapjnr/_static/riskmapjnr.png
+.. image:: https://ecology.ghislainv.fr/riskmapjnr/_static/riskmapjnr-example.png
    :align: center
    :target: https://ecology.ghislainv.fr/riskmapjnr
-   :alt: riskmapjnr_example
+   :alt: riskmapjnr-example
    :width: 800px
 
 
