@@ -4,6 +4,7 @@ notes.org
 # data
 data
 outputs
+outputs_MDG
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

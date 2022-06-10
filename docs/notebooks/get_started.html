@@ -15,6 +15,8 @@
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -61,6 +63,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Get Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">1 Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deforestation-risk-and-distance-to-forest-edge">2 Deforestation risk and distance to forest edge</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference.html">Python API</a></li>
@@ -113,10 +116,12 @@
 <p>We import the Python modules needed for running the analysis.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 
 <span class="kn">import</span> <span class="nn">riskmapjnr</span> <span class="k">as</span> <span class="nn">rmj</span>
 </pre></div>
@@ -131,7 +136,128 @@ function <code class="docutils literal notranslate"><span class="pre">rmj.make_d
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;GDAL_CACHEMAX&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1024&quot;</span>
 </pre></div>
 </div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PROJ_LIB&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/share/proj&quot;</span>
+</pre></div>
+</div>
 </section>
+<section id="forest-cover-change-data">
+<h3>1.2 Forest cover change data<a class="headerlink" href="#forest-cover-change-data" title="Permalink to this heading">¶</a></h3>
+<p>We use the Guadeloupe archipelago as a case study. Recent forest cover
+change data for Guadeloupe is included in the ``riskmapjnr``
+package. The raster file (``fcc123_GLP.tif``) includes the following
+values: <strong>1</strong> for deforestation on the period 2000–2010, <strong>2</strong> for
+deforestation on the period 2010–2020, and <strong>3</strong> for the remaining
+forest in 2020. NoData value is set to <strong>0</strong>. This is the only data we
+need to derive a map of deforestation risk following the JNR
+methodology.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fcc_file</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s2">&quot;riskmapjnr&quot;</span><span class="p">,</span> <span class="s2">&quot;data/fcc123_GLP.tif&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">ghislain</span><span class="o">/</span><span class="n">Code</span><span class="o">/</span><span class="n">riskmapjnr</span><span class="o">/</span><span class="n">riskmapjnr</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">fcc123_GLP</span><span class="o">.</span><span class="n">tif</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="deforestation-risk-and-distance-to-forest-edge">
+<h2>2 Deforestation risk and distance to forest edge<a class="headerlink" href="#deforestation-risk-and-distance-to-forest-edge" title="Permalink to this heading">¶</a></h2>
+<p>The first step is to compute the distance to the forest edge after
+which the risk of deforestation becomes negligible. Indeed, it is
+known from previous studies on tropical deforestation that the
+deforestation risk decreases rapidly with the distance to the forest
+edge and that most of the deforestation occurs close to the forest
+edge (Vieilledent et al., 2013, Grinand et al., 2020, Vieilledent,
+2021, Dezécache et al., 2017). The VCS-JNR suggests identifying the
+distance to the forest edge <span class="math notranslate nohighlight">\(d\)</span>, so that at least 99% of the
+deforestation occurs within a distance <span class="math notranslate nohighlight">\(\leq d\)</span>. Forest areas located at
+a distance from the forest edge <span class="math notranslate nohighlight">\(\gt d\)</span> can be considered as having no
+risk of being deforested. As a consequence, forest pixels with a
+distance from the forest edge <span class="math notranslate nohighlight">\(\gt d\)</span> are assigned category 0 (zero) for
+the deforestation risk.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="s2">&quot;outputs/plot_dist.png&quot;</span>
+<span class="n">rmj</span><span class="o">.</span><span class="n">dist_edge_threshold</span><span class="p">(</span><span class="n">input_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
+                        <span class="n">dist_file</span><span class="o">=</span><span class="s2">&quot;outputs/dist_edge.tif&quot;</span><span class="p">,</span>
+                        <span class="n">tab_file</span><span class="o">=</span><span class="s2">&quot;outputs/tab_dist.csv&quot;</span><span class="p">,</span>
+                        <span class="n">fig_file</span><span class="o">=</span><span class="n">ofile</span><span class="p">,</span>
+                        <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
+                        <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+<span class="n">ofile</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/plot_dist.png"><img alt="../_images/plot_dist.png" src="../_images/plot_dist.png" style="width: 600px;" /></a>
+<p>A table indicating the cumulative percentage of deforestation as a function of the distance is also produced:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Distance</p></th>
+<th class="head"><p>Npixels</p></th>
+<th class="head"><p>Area</p></th>
+<th class="head"><p>Cumulation</p></th>
+<th class="head"><p>Percentage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>30</p></td>
+<td><p>25325</p></td>
+<td><p>2279.25</p></td>
+<td><p>2279.25</p></td>
+<td><p>85.2263</p></td>
+</tr>
+<tr class="row-odd"><td><p>60</p></td>
+<td><p>3134</p></td>
+<td><p>282.06</p></td>
+<td><p>2561.31</p></td>
+<td><p>95.7732</p></td>
+</tr>
+<tr class="row-even"><td><p>90</p></td>
+<td><p>869</p></td>
+<td><p>78.21</p></td>
+<td><p>2639.52</p></td>
+<td><p>98.6976</p></td>
+</tr>
+<tr class="row-odd"><td><p>120</p></td>
+<td><p>235</p></td>
+<td><p>21.15</p></td>
+<td><p>2660.67</p></td>
+<td><p>99.4885</p></td>
+</tr>
+<tr class="row-even"><td><p>150</p></td>
+<td><p>91</p></td>
+<td><p>8.19</p></td>
+<td><p>2668.86</p></td>
+<td><p>99.7947</p></td>
+</tr>
+<tr class="row-odd"><td><p>180</p></td>
+<td><p>30</p></td>
+<td><p>2.7</p></td>
+<td><p>2671.56</p></td>
+<td><p>99.8957</p></td>
+</tr>
+<tr class="row-even"><td><p>210</p></td>
+<td><p>15</p></td>
+<td><p>1.35</p></td>
+<td><p>2672.91</p></td>
+<td><p>99.9462</p></td>
+</tr>
+<tr class="row-odd"><td><p>240</p></td>
+<td><p>5</p></td>
+<td><p>0.45</p></td>
+<td><p>2673.36</p></td>
+<td><p>99.963</p></td>
+</tr>
+<tr class="row-even"><td><p>270</p></td>
+<td><p>2</p></td>
+<td><p>0.18</p></td>
+<td><p>2673.54</p></td>
+<td><p>99.9697</p></td>
+</tr>
+<tr class="row-odd"><td><p>300</p></td>
+<td><p>2</p></td>
+<td><p>0.18</p></td>
+<td><p>2673.72</p></td>
+<td><p>99.9764</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 

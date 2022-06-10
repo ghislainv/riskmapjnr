@@ -71,7 +71,8 @@ setup(name="riskmapjnr",
       install_requires=["gdal", "numpy", "matplotlib",
                         "pandas", "scipy"],
       extras_require={
-          "interactive": ["jupyter", "geopandas", "descartes", "folium"]
+          "interactive": ["jupyter", "geopandas", "descartes", "folium",
+                          "tabulate"]
       },
       zip_safe=False)
 
