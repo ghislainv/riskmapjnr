@@ -84,6 +84,8 @@ os.environ["GDAL_CACHEMAX"] = "1024"
 
 #+RESULTS:
 
+Set =PROJ_LIB= environmental variable.
+
 #+begin_src python :results output :session :exports both
 os.environ["PROJ_LIB"] = "/home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/share/proj"
 #+end_src
@@ -92,14 +94,7 @@ os.environ["PROJ_LIB"] = "/home/ghislain/.pyenv/versions/miniconda3-latest/envs/
 
 ** Forest cover change data
 
-We use the Guadeloupe archipelago as a case study. Recent forest cover
-change data for Guadeloupe is included in the ``riskmapjnr``
-package. The raster file (``fcc123_GLP.tif``) includes the following
-values: *1* for deforestation on the period 2000--2010, *2* for
-deforestation on the period 2010--2020, and *3* for the remaining
-forest in 2020. NoData value is set to *0*. This is the only data we
-need to derive a map of deforestation risk following the JNR
-methodology.
+We use the Guadeloupe archipelago as a case study. Recent forest cover change data for Guadeloupe is included in the =riskmapjnr= package. The raster file (=fcc123_GLP.tif=) includes the following values: *1* for deforestation on the period 2000--2010, *2* for deforestation on the period 2010--2020, and *3* for the remaining forest in 2020. NoData value is set to *0*. The first period (2000--2010) will be used for calibration and the second period (2010--2020) will be used for validation. This is the only data we need to derive a map of deforestation risk following the JNR methodology.
 
 #+begin_src python :results output :session :exports both
 fcc_file = pkg_resources.resource_filename("riskmapjnr", "data/fcc123_GLP.tif")
@@ -111,34 +106,35 @@ print(fcc_file)
 
 * Deforestation risk and distance to forest edge
 
-The first step is to compute the distance to the forest edge after
-which the risk of deforestation becomes negligible. Indeed, it is
-known from previous studies on tropical deforestation that the
-deforestation risk decreases rapidly with the distance to the forest
-edge and that most of the deforestation occurs close to the forest
-edge (Vieilledent et al., 2013, Grinand et al., 2020, Vieilledent,
-2021, Dezécache et al., 2017). The VCS-JNR suggests identifying the
-distance to the forest edge $d$, so that at least 99% of the
-deforestation occurs within a distance $\leq d$. Forest areas located at
-a distance from the forest edge $\gt d$ can be considered as having no
-risk of being deforested. As a consequence, forest pixels with a
-distance from the forest edge $\gt d$ are assigned category 0 (zero) for
-the deforestation risk.
+The first step is to compute the distance to the forest edge after which the risk of deforestation becomes negligible. Indeed, it is known from previous studies on tropical deforestation that the deforestation risk decreases rapidly with the distance to the forest edge and that most of the deforestation occurs close to the forest edge (Vieilledent et al., 2013, Grinand et al., 2020, Vieilledent, 2021, Dezécache et al., 2017). The JNR methodology suggests identifying the distance to the forest edge $d$, so that at least 99% of the deforestation occurs within a distance $\leq d$. Forest areas located at a distance from the forest edge $\gt d$ can be considered as having no risk of being deforested. As a consequence, forest pixels with a distance from the forest edge $\gt d$ are assigned category 0 (zero) for the deforestation risk.
 
 #+begin_src python :results file :session :exports both
 ofile = "outputs/plot_dist.png"
-rmj.dist_edge_threshold(input_file=fcc_file,
-                        dist_file="outputs/dist_edge.tif",
-                        tab_file="outputs/tab_dist.csv",
-                        fig_file=ofile,
-                        bins=np.arange(0, 1080, step=30),
-                        blk_rows=128)
+dist_edge_thres = rmj.dist_edge_threshold(
+    input_file=fcc_file,
+    dist_file="outputs/dist_edge.tif",
+    tab_file="outputs/tab_dist.csv",
+    fig_file=ofile,
+    bins=np.arange(0, 1080, step=30),
+    blk_rows=128)
 ofile
 #+end_src
 
+#+NAME: fig:dist_edge
 #+ATTR_RST: :width 600
+#+CAPTION: *Identifying areas for which the risk of deforestation is negligible.* Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge ≤ 120 m. Forest areas located at a distance > 120 m from the forest edge can be considered as having no risk of being deforested.
 #+RESULTS:
 [[file:outputs/plot_dist.png]]
+
+The function returns a dictionnary including the distance threshold.
+
+#+begin_src python :results output :session :exports both
+dist_thresh = dist_edge_thres["dist_thresh"]
+print(f"The distance threshold is {dist_thresh} m")
+#+end_src
+
+#+RESULTS:
+: The distance threshold is 120 m
 
 A table indicating the cumulative percentage of deforestation as a function of the distance is also produced:
 
@@ -162,6 +158,123 @@ tabulate(perc_df.head(10), headers=col_names, tablefmt="orgtbl", showindex=False
 |      270 |       2 |    0.18 |    2673.54 |    99.9697 |
 |      300 |       2 |    0.18 |    2673.72 |    99.9764 |
 
+
+* Local deforestation rate
+
+The second step is to compute a local risk of deforestation at the pixel level using a moving window made of several pixels. The deforestation risk is estimated from the deforestation rate inside the moving window. The deforestation rate $\theta$ (in %/yr) is computed from the formula $\theta=(\alpha_2/\alpha_1)^{1/\tau}-1$, with $\alpha$ the forest areas (in ha) at time $t_1$ and $t_2$, and $\tau$, the time interval (in yr) between time $t_1$ and $t_2$. Using the deforestation rate formula, the moving window and the past forest cover change map, we can derive a raster map describing the local risk of deforestation at the same resolution as the input map.
+
+To save space on disk, deforestation rates are converted to integer values between 0 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10^{-4} for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by th JNR methodology.
+
+#+begin_src python :results output :session :exports code
+# Set window size
+ws = 31
+# Compute local deforestation rate
+rmj.local_defor_rate(input_file=fcc_file,
+                     output_file="outputs/ldefrate_ws{}.tif".format(ws),
+                     win_size=ws,
+                     time_interval=10,
+                     blk_rows=100)
+#+end_src
+
+#+RESULTS:
+: 0%8%12%16%20%24%28%32%36%40%44%48%52%56%60%64%68%72%76%80%84%88%92%96%100%100%
+
+* Category zero deforestation risk
+
+This third step sets a value of 10001 to pixels with zero deforestation risk. As explained previously, a risk of deforestation of zero is assumed when distance to forest edge is greater than the distance below which more than 99% of the deforestation occurs.
+
+#+begin_src python :results output :session :exports code
+rmj.set_defor_cat_zero(
+    input_file="outputs/ldefrate_ws31.tif",
+    dist_file="outputs/dist_edge.tif",
+    dist_thresh=dist_thresh,
+    output_file="outputs/defor_cat_zero.tif",
+    blk_rows=128,
+    verbose=True)
+#+end_src
+
+#+RESULTS:
+: Divide region in 20 blocks
+: 0%10%15%20%25%30%35%40%45%50%55%60%65%70%75%80%85%90%95%100%100%
+: Compute statistics
+
+* Categories of deforestation risk
+
+The fourth step implies converting the continuous values of the raster map of deforestation risk to categorical values. The JNR methodology suggests to use 31 classes of risk from "0" to "30" including the "0" class for the forest pixels with no risk of being deforested (located at a distance to the forest edge $> d$, see first step). Following the JNR methodology, at least three slicing algorithms must be compared to derive the categorical map of deforestation risk, such as "equal area", "equal interval", and "natural breaks". With the "equal area" algorithm, each class from "1" to "30" must cover approximately the same area. With the "equal interval" algorithm, classes from "1" to "30" correspond to bins of deforestation risk of the same range. In this case, some risk classes will be in majority in the landscape compared to other classes of lower frequency. With the "natural breaks" algorithm, the continuous deforestation risk is normalized before running an "equal interval" algorithm.
+
+#+begin_src python :results output :session :exports code
+rmj.defor_cat(input_file="outputs/defor_cat_zero.tif",
+              output_file="outputs/defor_cat.tif",
+              nbins=30,
+              method="Equal Area",
+              blk_rows=128)
+#+end_src
+
+#+RESULTS:
+: Divide region in 20 blocks
+: Compute histogram
+: 0%10%15%20%25%30%35%40%45%50%55%60%65%70%75%80%85%90%95%100%100%
+: Compute statistics
+
+* Deforestation rates per category of risk
+
+Before the validation step, we need to compute the historical deforestation rates (in %/yr) for each category of spatial deforestation risk. The historical deforestation rates are computed for the calibration period (here 2000--2010). Deforestation rates provide estimates of the percentage of forest (which is then converted to an area of forest) that should be deforested inside each forest pixel which belongs to a given category of deforestation risk.
+
+#+begin_src python :results output :session :exports code
+rmj.defrate_per_cat(
+    fcc_file = fcc_file,
+    defor_cat_file = "outputs/defor_cat.tif",
+    time_interval = 10,
+    tab_file = "outputs/defrate_per_cat.csv",
+    blk_rows = 128)
+#+end_src
+
+#+RESULTS:
+: Divide region in 20 blocks
+: Compute statistics
+: 0%10%15%20%25%30%35%40%45%50%55%60%65%70%75%80%85%90%95%100%100%
+
+A table indicating the deforestation rate per category of deforestation is produced:
+
+#+begin_src python :results value raw :session :exports results
+defrate_per_cat = pd.read_csv("outputs/defrate_per_cat.csv", na_filter=False)
+col_names = ["cat", "nfor", "ndefor", "rate"]
+tabulate(defrate_per_cat, headers=col_names, tablefmt="orgtbl", showindex=False)
+#+end_src
+
+#+RESULTS:
+| cat |  nfor | ndefor |       rate |
+|-----+-------+--------+------------|
+|   1 | 39841 |      8 | 0.00200617 |
+|   2 | 13367 |     29 |  0.0214846 |
+|   3 | 13238 |     46 |  0.0342101 |
+|   4 | 13348 |     72 |    0.05265 |
+|   5 | 13290 |    105 |  0.0762562 |
+|   6 | 13309 |    150 |   0.107158 |
+|   7 | 13328 |    168 |   0.119136 |
+|   8 | 13175 |    184 |     0.1312 |
+|   9 | 13435 |    232 |   0.159864 |
+|  10 | 13272 |    268 |   0.184534 |
+|  11 | 13336 |    348 |   0.232344 |
+|  12 | 13291 |    386 |   0.255262 |
+|  13 | 13308 |    410 |     0.2687 |
+|  14 | 13296 |    491 |   0.313587 |
+|  15 | 13304 |    628 |   0.383405 |
+|  16 | 13315 |    649 |   0.393287 |
+|  17 | 13285 |    611 |   0.375516 |
+|  18 | 13333 |    763 |    0.44528 |
+|  19 | 13308 |    955 |   0.525106 |
+|  20 | 13301 |   1041 |   0.557349 |
+|  21 | 13304 |   1270 |   0.633328 |
+|  22 | 13288 |   1509 |   0.700437 |
+|  23 | 13321 |   1623 |   0.727261 |
+|  24 | 13300 |   1790 |   0.764367 |
+|  25 | 13302 |   2280 |   0.847442 |
+|  26 | 13314 |   2751 |   0.901193 |
+|  27 | 13295 |   3834 |   0.966697 |
+|  28 | 13314 |   6932 |    0.99936 |
+
+From this table, we see that except for category 1, categories have approximately the same surface area (corresponding to about 13300 pixels). Note that the number of categories might be slightly inferior to 30. Note also that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (close to 0), and category 28 represents well a category with very high deforestation risk (close to 1).
 
 * Environment setup and test :noexport:
 

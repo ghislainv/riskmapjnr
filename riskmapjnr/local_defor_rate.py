@@ -36,7 +36,7 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
     :param input_file: Input raster file of forest cover change at
         three dates (123). 1: first period deforestation, 2: second
         period deforestation, 3: remaining forest at the end of the
-        second period. No data value must be 0 (zero).
+        second period. NoData value must be 0 (zero).
 
     :param output_file: Output raster file.
 
@@ -146,7 +146,7 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
 # local_defor_rate(input_file="data/fcc123.tif",
 #                  output_file="outputs/ldefrate_ws{}.tif".format(ws),
 #                  win_size=ws,
-#                  time_interval=5,
+#                  time_interval=10,
 #                  blk_rows=100)
 
 # End
