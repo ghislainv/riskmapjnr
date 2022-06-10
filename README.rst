@@ -205,8 +205,8 @@ contributor must agree to follow the project's `Code of conduct
    :target: https://pypi.org/project/riskmapjnr
    :alt: PyPI version
 
-.. |GitHub Actions| image:: https://github.com/ghislainv/riskmapjnr/workflows/PyPkg/badge.svg
-   :target: https://github.com/ghislainv/riskmapjnr/actions
+.. |GitHub Actions| image:: https://github.com/ghislainv/riskmapjnr/actions/workflows/python-package.yml/badge.svg
+   :target: https://github.com/ghislainv/riskmapjnr/actions/workflows/python-package.yml
    :alt: GitHub Actions
 	 
 .. |License| image:: https://img.shields.io/badge/licence-GPLv3-8f10cb.svg
