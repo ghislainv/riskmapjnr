@@ -33,7 +33,7 @@ REDD+ (`JNR`_).
    :align: center
    :target: https://ecology.ghislainv.fr/riskmapjnr
    :alt: riskmapjnr-example
-   :width: 800px
+   :width: 1300px
 
 
 Statement of Need
@@ -182,7 +182,7 @@ tutorial.
 Main functionalities
 ====================
 
-TODO
+To be detailed.
 
 Contributing
 ============
