@@ -21,10 +21,10 @@
 Overview
 ========
 
-The ``riskmapjnr`` Python package can be used to obtain maps of the
-spatial risk of deforestation and forest degradation following the
+The ``riskmapjnr`` Python package can be used to obtain **maps of the
+spatial risk of deforestation and forest degradation** following the
 methodology developed in the context of the Jurisdictional and Nested
-REDD+ (`JNR`_).
+REDD+ (`JNR`_) and using only a forest cover change map as input.
 
 .. _JNR:
    https://verra.org/project/jurisdictional-and-nested-redd-framework/
@@ -39,20 +39,20 @@ REDD+ (`JNR`_).
 Statement of Need
 =================
 
-The VCS (Verified Carbon Standard) program allows certified projects
-to turn their greenhouse gas (GHG) emission reductions and removals
-into tradable carbon credits. Since its launch in 2006, the VCS
-program has grown into the world's largest voluntary GHG program.
+The `VCS`_ (Verified Carbon Standard) program allows certified
+projects to turn their greenhouse gas (GHG) emission reductions and
+removals into tradable carbon credits. Since its launch in 2006, the
+VCS program has grown into the world's largest voluntary GHG program.
 
 In the forest sector, programs to mitigate GHG emissions across entire
-national or subnational jurisdictions (called REDD+ programs,
+national or subnational jurisdictions (called `REDD+`_ programs,
 i.e. programs aiming at Reducing Emissions from Deforestation and
 Forest Degradation) can be accounted for and credited using a
-jurisdictional- scale framework, the Jurisdictional and Nested REDD+
-(JNR) framework. JNR integrates government-led and project-level REDD+
-activities and establishes a clear pathway for subnational- and
+jurisdictional-scale framework, the Jurisdictional and Nested REDD+
+(`JNR`_) framework. JNR integrates government-led and project-level
+REDD+ activities and establishes a clear pathway for subnational- and
 project-level activities to be incorporated within broader REDD+
-programs.  The JNR framework ensures all projects and other reducing
+programs. The JNR framework ensures all projects and other reducing
 emissions from deforestation and degradation activities in a given
 jurisdiction are developed using consistent baselines and crediting
 approaches. They mitigate the risk of "leakage", i.e. the displacement
@@ -77,15 +77,24 @@ the level of risk determines how the jurisdictional FREL is spatially
 distributed to nested lower-level jurisdictional programs and
 projects.
 
-While the `JNR Risk Mapping Tool`_ methodology assumes simplicity,
+While the `JNR Risk Mapping Tool`_ methodology favors simplicity,
 obtaining the risk map is not straightforward. The approach requires
 several geoprocessing steps on raster data that can be large,
 i.e. covering large spatial extent (eg. national scale) at high
-spatial resolution (eg. 30 m). The ``riskmapjnr`` Python module is a
-unique collection of functions to perform these geoprocessing steps
-and derive a risk map on any jurisdiction and at any spatial
-resolution following the `JNR Risk Mapping Tool`_ methodology.
+spatial resolution (eg. 30 m). The ``riskmapjnr`` Python package
+includes functions to perform these geoprocessing steps and derive a
+risk map on any jurisdiction and at any spatial resolution following
+the `JNR Risk Mapping Tool`_ methodology.
 
+.. _VCS:
+   https://verra.org/project/vcs-program/
+
+.. _REDD+:
+   https://redd.unfccc.int/
+
+.. _JNR:
+   https://verra.org/project/jurisdictional-and-nested-redd-framework/
+   
 .. _JNR Risk Mapping Tool:
    https://verra.org/wp-content/uploads/2021/04/DRAFT_JNR_Risk_Mapping_Tool_15APR2021.pdf
 
@@ -182,7 +191,25 @@ tutorial.
 Main functionalities
 ====================
 
-To be detailed.
+The ``riskmapjnr`` package includes functions to:
+
+1. Estimate the distance to forest edge beyond which the deforestation
+   risk is negligible: ``dist_edge_threshold()``.
+2. Compute local deforestation rates using a moving window whose size
+   can vary: ``local_defor_rate()``.
+3. Transform local deforestation rates into categories of
+   deforestation risks using several slicing algorithms:
+   ``set_defor_cat_zero()`` and ``defor_cat()``
+4. Validate maps of deforestation risk and select the map with the
+   higher accuracy: ``defrate_per_cat()`` and ``validation()``.
+
+The ``riskmapjnr`` package uses several known Python scientific
+packages such as ``NumPy``, ``SciPy``, and ``Pandas`` for fast matrix
+and vector operations and ``gdal`` for processing georeferenced raster
+data. Raster data are divided into blocks of data for in-memory
+processing. Such an approach allow processing large raster files with
+large geographical extents (e.g. country scale) and high spatial
+resolutions (eg. 30 m).
 
 Contributing
 ============

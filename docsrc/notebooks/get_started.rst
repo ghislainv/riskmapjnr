@@ -130,7 +130,7 @@ A table indicating the cumulative percentage of deforestation as a function of t
 
 The second step is to compute a local risk of deforestation at the pixel level using a moving window made of several pixels. The deforestation risk is estimated from the deforestation rate inside the moving window. The deforestation rate :math:`\theta` (in %/yr) is computed from the formula :math:`\theta=(\alpha_2/\alpha_1)^{1/\tau}-1`, with :math:`\alpha` the forest areas (in ha) at time :math:`t_1` and :math:`t_2`, and :math:`\tau`, the time interval (in yr) between time :math:`t_1` and :math:`t_2`. Using the deforestation rate formula, the moving window and the past forest cover change map, we can derive a raster map describing the local risk of deforestation at the same resolution as the input map.
 
-To save space on disk, deforestation rates are converted to integer values between 0 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10\ :sup:`-4`\ for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by th JNR methodology.
+To save space on disk, deforestation rates are converted to integer values between 0 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10\ :sup:`-4`\ for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.
 
 .. code:: python
 
@@ -143,8 +143,8 @@ To save space on disk, deforestation rates are converted to integer values betwe
                          time_interval=10,
                          blk_rows=100)
 
-4 Category zero deforestation risk
-----------------------------------
+4 Pixels with zero risk of deforestation
+----------------------------------------
 
 This third step sets a value of 10001 to pixels with zero deforestation risk. As explained previously, a risk of deforestation of zero is assumed when distance to forest edge is greater than the distance below which more than 99% of the deforestation occurs.
 
@@ -250,3 +250,40 @@ A table indicating the deforestation rate per category of deforestation is produ
     +-----+-------+--------+------------+
 
 From this table, we see that except for category 1, categories have approximately the same surface area (corresponding to about 13300 pixels). Note that the number of categories might be slightly inferior to 30. Note also that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (close to 0), and category 28 represents well a category with very high deforestation risk (close to 1).
+
+7 Validation
+------------
+
+The fifth step focuses on comparing the map of deforestation risk with a deforestation map corresponding to the validation period. The validation period follows the calibration period and provides independent observations of deforestation.
+
+To do so, we consider a square grid of at least 1000 spatial cells containing at least one forest pixel at the beginning of the validation period. Following JNR specification, the cell size should be :math:`\leq` 10 km. Note that with the map of deforestation risk, each forest pixel at the beginning of the validation period falls into a category of deforestation risk. For each cell of the grid, we compute the predicted area of deforestation (in ha) given the map of deforestation risk and the historical deforestation rates for each category of deforestation risk computed on the calibration period (see previous step).
+
+We can then compare the predicted deforestation with the observed deforestation in that spatial cell for the validation period. Because all cells don’t have the same forest cover at the beginning of the validation period, a weight :math:`w_j` is computed for each grid cell :math:`j` such that :math:`w_j=\beta_j / B`, with :math:`\beta_j` the forest cover (in ha) in the cell :math:`j` at the beginning of the validation period and :math:`B` the total forest cover in the jurisdiction (in ha) at the same date. We then calculate the weighted root mean squared error (wRMSE) from the observed and predicted deforestation for each cell and the cell weights.
+
+.. code:: python
+
+    ofile = "outputs/pred_obs.png"
+    rmj.validation(
+        fcc_file = fcc_file,
+        time_interval = 10,
+        defor_cat_file = "outputs/defor_cat.tif",
+        defrate_per_cat_file = "outputs/defrate_per_cat.csv",
+        csize = 40,
+        tab_file = "outputs/validation_data.csv",
+        fig_file = ofile,
+        figsize = (6.4, 4.8),
+        dpi = 100)
+    ofile
+
+.. _fig:pred_obs:
+
+.. figure:: outputs/pred_obs.png
+    :width: 600
+
+
+    **Relationship between observed and predicted deforestation in 1 x 1 km grid cells**. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (:math:`n`, the number of spatial cells) are reported on the graph.
+
+8 Final risk map
+----------------
+
+The user must repeat the procedure and obtain risk maps for various window size and slicing algorithms. Following the JNR methodology, at least 25 different sizes for the moving window must be tested together with two slicing algorithms (“Equal Interval” and “Equal Area”), thus leading to a minimum of 50 different maps of deforestation risk. The map with the smallest wRMSE value is considered the best risk map. Once the best risk map is identified, with the corresponding window size and slicing algorithm, a final risk map is derived considering both the calibration and validation period.

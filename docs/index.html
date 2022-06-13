@@ -105,27 +105,27 @@
 <p><a class="reference external" href="https://pypi.org/project/riskmapjnr"><img alt="Python version" src="https://img.shields.io/pypi/pyversions/riskmapjnr?logo=python&amp;logoColor=ffd43b&amp;color=306998" /></a> <a class="reference external" href="https://pypi.org/project/riskmapjnr"><img alt="PyPI version" src="https://img.shields.io/pypi/v/riskmapjnr" /></a> <a class="reference external" href="https://github.com/ghislainv/riskmapjnr/actions/workflows/python-package.yml"><img alt="GitHub Actions" src="https://github.com/ghislainv/riskmapjnr/actions/workflows/python-package.yml/badge.svg" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.html"><img alt="License GPLv3" src="https://img.shields.io/badge/licence-GPLv3-8f10cb.svg" /></a> <a class="reference external" href="https://doi.org/10.5281/zenodo.xxxxxx"><img alt="Zenodo" src="https://zenodo.org/badge/DOI/10.5281/zenodo.xxxxxx.svg" /></a></p>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package can be used to obtain maps of the
-spatial risk of deforestation and forest degradation following the
+<p>The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package can be used to obtain <strong>maps of the
+spatial risk of deforestation and forest degradation</strong> following the
 methodology developed in the context of the Jurisdictional and Nested
-REDD+ (<a class="reference external" href="https://verra.org/project/jurisdictional-and-nested-redd-framework/">JNR</a>).</p>
+REDD+ (<a class="reference external" href="https://verra.org/project/jurisdictional-and-nested-redd-framework/">JNR</a>) and using only a forest cover change map as input.</p>
 <a class="reference external image-reference" href="https://ecology.ghislainv.fr/riskmapjnr"><img alt="riskmapjnr-example" class="align-center" src="https://ecology.ghislainv.fr/riskmapjnr/_static/riskmapjnr-example.png" style="width: 1300px;" /></a>
 </section>
 <section id="statement-of-need">
 <h2>Statement of Need<a class="headerlink" href="#statement-of-need" title="Permalink to this heading">¶</a></h2>
-<p>The VCS (Verified Carbon Standard) program allows certified projects
-to turn their greenhouse gas (GHG) emission reductions and removals
-into tradable carbon credits. Since its launch in 2006, the VCS
-program has grown into the world’s largest voluntary GHG program.</p>
+<p>The <a class="reference external" href="https://verra.org/project/vcs-program/">VCS</a> (Verified Carbon Standard) program allows certified
+projects to turn their greenhouse gas (GHG) emission reductions and
+removals into tradable carbon credits. Since its launch in 2006, the
+VCS program has grown into the world’s largest voluntary GHG program.</p>
 <p>In the forest sector, programs to mitigate GHG emissions across entire
-national or subnational jurisdictions (called REDD+ programs,
+national or subnational jurisdictions (called <a class="reference external" href="https://redd.unfccc.int/">REDD+</a> programs,
 i.e. programs aiming at Reducing Emissions from Deforestation and
 Forest Degradation) can be accounted for and credited using a
-jurisdictional- scale framework, the Jurisdictional and Nested REDD+
-(JNR) framework. JNR integrates government-led and project-level REDD+
-activities and establishes a clear pathway for subnational- and
+jurisdictional-scale framework, the Jurisdictional and Nested REDD+
+(<a class="reference external" href="https://verra.org/project/jurisdictional-and-nested-redd-framework/">JNR</a>) framework. JNR integrates government-led and project-level
+REDD+ activities and establishes a clear pathway for subnational- and
 project-level activities to be incorporated within broader REDD+
-programs.  The JNR framework ensures all projects and other reducing
+programs. The JNR framework ensures all projects and other reducing
 emissions from deforestation and degradation activities in a given
 jurisdiction are developed using consistent baselines and crediting
 approaches. They mitigate the risk of “leakage”, i.e. the displacement
@@ -147,14 +147,14 @@ jurisdictional geographical boundaries. In the <a class="reference external" hre
 the level of risk determines how the jurisdictional FREL is spatially
 distributed to nested lower-level jurisdictional programs and
 projects.</p>
-<p>While the <a class="reference external" href="https://verra.org/wp-content/uploads/2021/04/DRAFT_JNR_Risk_Mapping_Tool_15APR2021.pdf">JNR Risk Mapping Tool</a> methodology assumes simplicity,
+<p>While the <a class="reference external" href="https://verra.org/wp-content/uploads/2021/04/DRAFT_JNR_Risk_Mapping_Tool_15APR2021.pdf">JNR Risk Mapping Tool</a> methodology favors simplicity,
 obtaining the risk map is not straightforward. The approach requires
 several geoprocessing steps on raster data that can be large,
 i.e. covering large spatial extent (eg. national scale) at high
-spatial resolution (eg. 30 m). The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python module is a
-unique collection of functions to perform these geoprocessing steps
-and derive a risk map on any jurisdiction and at any spatial
-resolution following the <a class="reference external" href="https://verra.org/wp-content/uploads/2021/04/DRAFT_JNR_Risk_Mapping_Tool_15APR2021.pdf">JNR Risk Mapping Tool</a> methodology.</p>
+spatial resolution (eg. 30 m). The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package
+includes functions to perform these geoprocessing steps and derive a
+risk map on any jurisdiction and at any spatial resolution following
+the <a class="reference external" href="https://verra.org/wp-content/uploads/2021/04/DRAFT_JNR_Risk_Mapping_Tool_15APR2021.pdf">JNR Risk Mapping Tool</a> methodology.</p>
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
@@ -226,7 +226,25 @@ tutorial.</p>
 </section>
 <section id="main-functionalities">
 <h2>Main functionalities<a class="headerlink" href="#main-functionalities" title="Permalink to this heading">¶</a></h2>
-<p>To be detailed.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package includes functions to:</p>
+<ol class="arabic simple">
+<li><p>Estimate the distance to forest edge beyond which the deforestation
+risk is negligible: <code class="docutils literal notranslate"><span class="pre">dist_edge_threshold()</span></code>.</p></li>
+<li><p>Compute local deforestation rates using a moving window whose size
+can vary: <code class="docutils literal notranslate"><span class="pre">local_defor_rate()</span></code>.</p></li>
+<li><p>Transform local deforestation rates into categories of
+deforestation risks using several slicing algorithms:
+<code class="docutils literal notranslate"><span class="pre">set_defor_cat_zero()</span></code> and <code class="docutils literal notranslate"><span class="pre">defor_cat()</span></code></p></li>
+<li><p>Validate maps of deforestation risk and select the map with the
+higher accuracy: <code class="docutils literal notranslate"><span class="pre">defrate_per_cat()</span></code> and <code class="docutils literal notranslate"><span class="pre">validation()</span></code>.</p></li>
+</ol>
+<p>The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package uses several known Python scientific
+packages such as <code class="docutils literal notranslate"><span class="pre">NumPy</span></code>, <code class="docutils literal notranslate"><span class="pre">SciPy</span></code>, and <code class="docutils literal notranslate"><span class="pre">Pandas</span></code> for fast matrix
+and vector operations and <code class="docutils literal notranslate"><span class="pre">gdal</span></code> for processing georeferenced raster
+data. Raster data are divided into blocks of data for in-memory
+processing. Such an approach allow processing large raster files with
+large geographical extents (e.g. country scale) and high spatial
+resolutions (eg. 30 m).</p>
 </section>
 <section id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">¶</a></h2>
@@ -245,9 +263,11 @@ contributor must agree to follow the project’s <a class="reference external" h
 <li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#introduction">1 Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#deforestation-risk-and-distance-to-forest-edge">2 Deforestation risk and distance to forest edge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#local-deforestation-rate">3 Local deforestation rate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#category-zero-deforestation-risk">4 Category zero deforestation risk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#pixels-with-zero-risk-of-deforestation">4 Pixels with zero risk of deforestation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#categories-of-deforestation-risk">5 Categories of deforestation risk</a></li>
 <li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#deforestation-rates-per-category-of-risk">6 Deforestation rates per category of risk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#validation">7 Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#final-risk-map">8 Final risk map</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Python API</a><ul>
