@@ -19,9 +19,9 @@ from .misc import progress_bar, makeblock
 
 
 # defrate_per_cat
-def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
-                    tab_file="defrate_per_cat.csv",
-                    blk_rows=128):
+def defrate_per_cat(fcc_file, defor_values, defor_cat_file, time_interval,
+                    tab_file_defrate="defrate_per_cat.csv",
+                    blk_rows=128, verbose=True):
     """Compute deforestation rates per category of deforestation risk.
 
     This function computes the historical deforestation rates for each
@@ -32,6 +32,11 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
         deforestation, 3: remaining forest at the end of the second
         period. No data value must be 0 (zero).
 
+    :param defor_values: Raster values to consider for
+       deforestation. Must correspond to either scalar 1 if first
+       period, or list [1, 2] if both first and second period are
+       considered.
+
     :param defor_cat_file: Input raster file with categories of
         spatial deforestation risk. This file is typically obtained
         with function ``defor_cat()``.
@@ -39,13 +44,18 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
     :param time_interval: Time interval (in years) for forest cover
         change observations.
 
-    :param tab_file: Path to the ``.csv`` output file with estimates of
-        deforestation rates per category of deforestation risk.
+    :param tab_file_defrate: Path to the ``.csv`` output file with
+        estimates of deforestation rates per category of deforestation
+        risk.
 
     :param blk_rows: If > 0, number of rows for computation by block.
 
-    :return: None. A ``.csv`` file with deforestation rates per category
-        of deforestation risk will be created (see ``tab_file``).
+    :param verbose: Logical. Whether to print messages or not. Default
+        to ``True``.
+
+    :return: None. A ``.csv`` file with deforestation rates per
+        category of deforestation risk will be created (see
+        ``tab_file_defrate``).
 
     """
 
@@ -69,15 +79,14 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
     y = blockinfo[4]
     nx = blockinfo[5]
     ny = blockinfo[6]
-    print("Divide region in {} blocks".format(nblock))
 
     # ==============================================
     # Compute deforestation rates per cat
     # ==============================================
 
     # Number of deforestation categories
-    print("Compute statistics")
-    stats = defor_cat_band.ComputeStatistics(False)
+    cb = gdal.TermProgress if verbose else 0
+    stats = defor_cat_band.ComputeStatistics(False, cb)
     n_cat = int(stats[1])  # Get the maximum
     cat = [c + 1 for c in range(n_cat)]
 
@@ -89,7 +98,8 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
     # Loop on blocks of data
     for b in range(nblock):
         # Progress bar
-        progress_bar(nblock, b + 1)
+        if verbose:
+            progress_bar(nblock, b + 1)
         # Position
         px = b % nblock_x
         py = b // nblock_x
@@ -102,7 +112,7 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
         cat_for = pd.Categorical(data_for.flatten(), categories=cat)
         df["nfor"] += cat_for.value_counts().values
         # ndefor_per_cat
-        data_defor = defor_cat_data[fcc_data == 1]
+        data_defor = defor_cat_data[np.isin(fcc_data, defor_values)]
         cat_defor = pd.Categorical(data_defor.flatten(), categories=cat)
         df["ndefor"] += cat_defor.value_counts().values
 
@@ -110,7 +120,7 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
     df["rate"] = 1 - (1 - df["ndefor"] / df["nfor"]) ** time_interval
 
     # Export the table of results
-    df.to_csv(tab_file, sep=",", header=True,
+    df.to_csv(tab_file_defrate, sep=",", header=True,
               index=False, index_label=False)
 
     # Dereference drivers
@@ -123,13 +133,14 @@ def defrate_per_cat(fcc_file, defor_cat_file, time_interval,
 # fcc_file = "data/fcc123.tif"
 # defor_cat_file = "outputs/defor_cat.tif"
 # time_interval = 10
-# tab_file = "outputs/defrate_per_cat.csv"
+# tab_file_defrate = "outputs/defrate_per_cat.csv"
 # blk_rows = 128
 
 # defrate_per_cat(fcc_file,
 #                 defor_cat_file,
 #                 time_interval,
-#                 tab_file,
-#                 blk_rows=128)
+#                 tab_file_defrate,
+#                 blk_rows=128,
+#                 verbose=True)
 
 # End

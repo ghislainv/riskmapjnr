@@ -20,8 +20,8 @@ from .misc import progress_bar
 
 
 # local_defor_rate
-def local_defor_rate(input_file, output_file, win_size, time_interval,
-                     blk_rows=128):
+def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
+                     time_interval, blk_rows=128, verbose=True):
     """Computing the local deforestation rate using a moving window.
 
     This function computes the local deforestation rate using a moving
@@ -33,12 +33,17 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
     existing cells in the moving window using ``mode='constant'`` and
     ``cval=0``.
 
-    :param input_file: Input raster file of forest cover change at
+    :param fcc_file: Input raster file of forest cover change at
         three dates (123). 1: first period deforestation, 2: second
         period deforestation, 3: remaining forest at the end of the
         second period. NoData value must be 0 (zero).
 
-    :param output_file: Output raster file.
+    :param defor_values: Raster values to consider for
+       deforestation. Must correspond to either scalar 1 if first
+       period, or list [1, 2] if both first and second period are
+       considered.
+
+    :param ldefrate_file: Output raster file.
 
     :param win_size: Size of the moving window in number of
         cells. Must be an odd number lower or equal to ``blk_rows``.
@@ -50,23 +55,27 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
         equal to ``win_size``. This is used to break lage raster files
         in several blocks of data that can be hold in memory.
 
+    :param verbose: Logical. Whether to print messages or not. Default
+        to ``True``.
+
     :return: None. A raster with the local deforestation rate will be
-        created (see ``output_file``). Data range from 0 to
+        created (see ``ldefrate_file``). Data range from 0 to
         10000. Raster type is UInt16 ([0, 65535]). NoData value is set
         to 65535.
 
     """
 
     # Check win_size
+    win_size = int(win_size)  # Must be int for uniform_filter
     if (win_size % 2) == 0:
-        print("'win_size' must be an odd number.")
-        return None
+        msg = "'win_size' must be an odd number."
+        raise ValueError(msg)
     if (win_size > blk_rows):
-        print("'win_size' must be lower or equal to 'blk_rows'.")
-        return None
+        msg = "'win_size' must be lower or equal to 'blk_rows'."
+        raise ValueError(msg)
 
     # Get raster data
-    in_ds = gdal.Open(input_file)
+    in_ds = gdal.Open(fcc_file)
     in_band = in_ds.GetRasterBand(1)
     # Raster size
     xsize = in_band.XSize
@@ -74,7 +83,7 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
 
     # Create output raster file
     driver = gdal.GetDriverByName("GTiff")
-    out_ds = driver.Create(output_file, xsize, ysize, 1,
+    out_ds = driver.Create(ldefrate_file, xsize, ysize, 1,
                            gdal.GDT_UInt16,
                            ["COMPRESS=LZW", "PREDICTOR=2",
                             "BIGTIFF=YES"])
@@ -92,7 +101,8 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
         # Progress bar
         nblock = (ysize // blk_rows) + 1
         iter_block = iter_block + 1
-        progress_bar(nblock, iter_block)
+        if verbose:
+            progress_bar(nblock, iter_block)
 
         # Extra lines at the bottom and top
         extra_lines = win_size // 2
@@ -110,7 +120,7 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
         in_data = in_band.ReadAsArray(0, yoff, xsize, rows)
         # defor (during first period)
         defor_data = np.zeros(in_data.shape, int)
-        defor_data[np.where(in_data == 1)] = 1
+        defor_data[np.isin(in_data, defor_value)] = 1
         win_defor = scipy.ndimage.filters.uniform_filter(
             defor_data, size=win_size, mode="constant", cval=0,
             output=float)
@@ -136,15 +146,16 @@ def local_defor_rate(input_file, output_file, win_size, time_interval,
 
     # Closing
     out_band.FlushCache()
-    out_band.ComputeStatistics(False)
+    cb = gdal.TermProgress if verbose else 0
+    out_band.ComputeStatistics(False, cb)
     del out_ds, in_ds
     return None
 
 
 # # Test
 # ws = 7
-# local_defor_rate(input_file="data/fcc123.tif",
-#                  output_file="outputs/ldefrate_ws{}.tif".format(ws),
+# local_defor_rate(fcc_file="data/fcc123.tif",
+#                  ldefrate_file="outputs/ldefrate_ws{}.tif".format(ws),
 #                  win_size=ws,
 #                  time_interval=10,
 #                  blk_rows=100)

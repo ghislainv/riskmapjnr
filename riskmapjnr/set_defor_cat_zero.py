@@ -18,17 +18,17 @@ from .misc import progress_bar, makeblock
 
 
 # set_defor_cat_zero
-def set_defor_cat_zero(input_file,
+def set_defor_cat_zero(ldefrate_file,
                        dist_file,
                        dist_thresh,
-                       output_file="defor_cat_zero.tif",
+                       ldefrate_with_zero_file="ldefrate_with_zero.tif",
                        blk_rows=128,
                        verbose=True):
     """Set a value of 10001 to pixels with zero deforestation risk. A
     risk of deforestation of zero is assumed when distance to forest
     edge is greater than the distance threshold.
 
-    :param input_file: Input raster file of local deforestation
+    :param ldefrate_file: Input raster file of local deforestation
         rates. Deforestation rates are defined by integer values
         between 0 and 10000 (ten thousand). This file is typically
         obtained with function ``local_defor_rate()``.
@@ -39,9 +39,10 @@ def set_defor_cat_zero(input_file,
         threshold is used to identify pixels with zero deforestation
         risk.
 
-    :param output_file: Output raster file. Default to
-        "defor_cat_zero.tif" in the current working directory. Pixels
-        with zero deforestation risk are assigned a value of 10001.
+    :param ldefrate_with_zero_file: Output raster file. Default to
+        "ldefrate_with_zero.tif" in the current working
+        directory. Pixels with zero deforestation risk are assigned a
+        value of 10001.
 
     :param blk_rows: If > 0, number of rows for computation by block.
 
@@ -50,7 +51,7 @@ def set_defor_cat_zero(input_file,
 
     :return: None. A raster file identifying pixels with zero risk of
         deforestation (value 10001) will be created (see
-        ``output_file``).
+        ``ldefrate_with_zero_file``).
 
     """
 
@@ -59,7 +60,7 @@ def set_defor_cat_zero(input_file,
     # ==============================================================
 
     # Get local deforestation rate (ldefrate) raster data
-    ldefrate_ds = gdal.Open(input_file)
+    ldefrate_ds = gdal.Open(ldefrate_file)
     ldefrate_band = ldefrate_ds.GetRasterBand(1)
     # Raster size
     xsize = ldefrate_band.XSize
@@ -70,15 +71,13 @@ def set_defor_cat_zero(input_file,
     dist_band = dist_ds.GetRasterBand(1)
 
     # Make blocks
-    blockinfo = makeblock(input_file, blk_rows=blk_rows)
+    blockinfo = makeblock(ldefrate_file, blk_rows=blk_rows)
     nblock = blockinfo[0]
     nblock_x = blockinfo[1]
     x = blockinfo[3]
     y = blockinfo[4]
     nx = blockinfo[5]
     ny = blockinfo[6]
-    if verbose:
-        print("Divide region in {} blocks".format(nblock))
 
     # ==================================
     # Zero category (beyond dist_thresh)
@@ -86,10 +85,10 @@ def set_defor_cat_zero(input_file,
 
     # Create cat_zero (catzero) raster
     driver = gdal.GetDriverByName("GTiff")
-    catzero_ds = driver.Create(output_file, xsize, ysize, 1,
-                               gdal.GDT_UInt16,
-                               ["COMPRESS=LZW",
-                                "PREDICTOR=2", "BIGTIFF=YES"])
+    catzero_ds = driver.Create(
+        ldefrate_with_zero_file, xsize, ysize,
+        1, gdal.GDT_UInt16, ["COMPRESS=LZW",
+                             "PREDICTOR=2", "BIGTIFF=YES"])
     catzero_ds.SetProjection(ldefrate_ds.GetProjection())
     catzero_ds.SetGeoTransform(ldefrate_ds.GetGeoTransform())
     catzero_band = catzero_ds.GetRasterBand(1)
@@ -98,7 +97,8 @@ def set_defor_cat_zero(input_file,
     # Loop on blocks of data
     for b in range(nblock):
         # Progress bar
-        progress_bar(nblock, b + 1)
+        if verbose:
+            progress_bar(nblock, b + 1)
         # Position
         px = b % nblock_x
         py = b // nblock_x
@@ -112,10 +112,9 @@ def set_defor_cat_zero(input_file,
         catzero_band.WriteArray(catzero_data, x[px], y[py])
 
     # Compute statistics
-    if verbose:
-        print("Compute statistics")
-    catzero_band.FlushCache()  # Write cache data to disk
-    catzero_band.ComputeStatistics(False)
+    catzero_band.FlushCache()
+    cb = gdal.TermProgress if verbose else 0
+    catzero_band.ComputeStatistics(False, cb)
 
     # Dereference drivers
     catzero_band = None
@@ -126,17 +125,17 @@ def set_defor_cat_zero(input_file,
 
 
 # # Test
-# input_file = "outputs/ldefrate_ws7.tif"
+# ldefrate_file = "outputs/ldefrate_ws7.tif"
 # dist_file = "outputs/dist_edge.tif"
 # dist_thresh = 390
-# output_file = "outputs/defor_cat_zero.tif"
+# ldefrate_with_zero_file = "outputs/ldefrate_with_zero.tif"
 # blk_rows = 128
 # verbose = True
 
-# set_defor_cat_zero(input_file,
+# set_defor_cat_zero(ldefrate_file,
 #                    dist_file,
 #                    dist_thresh,
-#                    output_file,
+#                    ldefrate_with_zero_file,
 #                    blk_rows=128,
 #                    verbose=True)
 

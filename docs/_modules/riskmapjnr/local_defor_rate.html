@@ -121,8 +121,8 @@
 
 
 <span class="c1"># local_defor_rate</span>
-<div class="viewcode-block" id="local_defor_rate"><a class="viewcode-back" href="../../reference.html#riskmapjnr.local_defor_rate.local_defor_rate">[docs]</a><span class="k">def</span> <span class="nf">local_defor_rate</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
-                     <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+<div class="viewcode-block" id="local_defor_rate"><a class="viewcode-back" href="../../reference.html#riskmapjnr.local_defor_rate.local_defor_rate">[docs]</a><span class="k">def</span> <span class="nf">local_defor_rate</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">ldefrate_file</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
+                     <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computing the local deforestation rate using a moving window.</span>
 
 <span class="sd">    This function computes the local deforestation rate using a moving</span>
@@ -134,12 +134,12 @@
 <span class="sd">    existing cells in the moving window using ``mode=&#39;constant&#39;`` and</span>
 <span class="sd">    ``cval=0``.</span>
 
-<span class="sd">    :param input_file: Input raster file of forest cover change at</span>
+<span class="sd">    :param fcc_file: Input raster file of forest cover change at</span>
 <span class="sd">        three dates (123). 1: first period deforestation, 2: second</span>
 <span class="sd">        period deforestation, 3: remaining forest at the end of the</span>
 <span class="sd">        second period. NoData value must be 0 (zero).</span>
 
-<span class="sd">    :param output_file: Output raster file.</span>
+<span class="sd">    :param ldefrate_file: Output raster file.</span>
 
 <span class="sd">    :param win_size: Size of the moving window in number of</span>
 <span class="sd">        cells. Must be an odd number lower or equal to ``blk_rows``.</span>
@@ -151,8 +151,11 @@
 <span class="sd">        equal to ``win_size``. This is used to break lage raster files</span>
 <span class="sd">        in several blocks of data that can be hold in memory.</span>
 
+<span class="sd">    :param verbose: Logical. Whether to print messages or not. Default</span>
+<span class="sd">        to ``True``.</span>
+
 <span class="sd">    :return: None. A raster with the local deforestation rate will be</span>
-<span class="sd">        created (see ``output_file``). Data range from 0 to</span>
+<span class="sd">        created (see ``ldefrate_file``). Data range from 0 to</span>
 <span class="sd">        10000. Raster type is UInt16 ([0, 65535]). NoData value is set</span>
 <span class="sd">        to 65535.</span>
 
@@ -160,14 +163,14 @@
 
     <span class="c1"># Check win_size</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">win_size</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&#39;win_size&#39; must be an odd number.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;win_size&#39; must be an odd number.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">win_size</span> <span class="o">&gt;</span> <span class="n">blk_rows</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&#39;win_size&#39; must be lower or equal to &#39;blk_rows&#39;.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;win_size&#39; must be lower or equal to &#39;blk_rows&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># Get raster data</span>
-    <span class="n">in_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="n">in_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">)</span>
     <span class="n">in_band</span> <span class="o">=</span> <span class="n">in_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="c1"># Raster size</span>
     <span class="n">xsize</span> <span class="o">=</span> <span class="n">in_band</span><span class="o">.</span><span class="n">XSize</span>
@@ -175,7 +178,7 @@
 
     <span class="c1"># Create output raster file</span>
     <span class="n">driver</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="s2">&quot;GTiff&quot;</span><span class="p">)</span>
-    <span class="n">out_ds</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">out_ds</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">ldefrate_file</span><span class="p">,</span> <span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
                            <span class="n">gdal</span><span class="o">.</span><span class="n">GDT_UInt16</span><span class="p">,</span>
                            <span class="p">[</span><span class="s2">&quot;COMPRESS=LZW&quot;</span><span class="p">,</span> <span class="s2">&quot;PREDICTOR=2&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;BIGTIFF=YES&quot;</span><span class="p">])</span>
@@ -193,7 +196,8 @@
         <span class="c1"># Progress bar</span>
         <span class="n">nblock</span> <span class="o">=</span> <span class="p">(</span><span class="n">ysize</span> <span class="o">//</span> <span class="n">blk_rows</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">iter_block</span> <span class="o">=</span> <span class="n">iter_block</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">progress_bar</span><span class="p">(</span><span class="n">nblock</span><span class="p">,</span> <span class="n">iter_block</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">progress_bar</span><span class="p">(</span><span class="n">nblock</span><span class="p">,</span> <span class="n">iter_block</span><span class="p">)</span>
 
         <span class="c1"># Extra lines at the bottom and top</span>
         <span class="n">extra_lines</span> <span class="o">=</span> <span class="n">win_size</span> <span class="o">//</span> <span class="mi">2</span>
@@ -244,8 +248,8 @@
 
 <span class="c1"># # Test</span>
 <span class="c1"># ws = 7</span>
-<span class="c1"># local_defor_rate(input_file=&quot;data/fcc123.tif&quot;,</span>
-<span class="c1">#                  output_file=&quot;outputs/ldefrate_ws{}.tif&quot;.format(ws),</span>
+<span class="c1"># local_defor_rate(fcc_file=&quot;data/fcc123.tif&quot;,</span>
+<span class="c1">#                  ldefrate_file=&quot;outputs/ldefrate_ws{}.tif&quot;.format(ws),</span>
 <span class="c1">#                  win_size=ws,</span>
 <span class="c1">#                  time_interval=10,</span>
 <span class="c1">#                  blk_rows=100)</span>

@@ -20,11 +20,12 @@ from .misc import progress_bar, makeblock
 
 
 # defor_cat
-def defor_cat(input_file,
-              output_file="defor_cat.tif",
-              nbins=30,
+def defor_cat(ldefrate_with_zero_file,
+              defor_cat_file="defor_cat.tif",
+              ncat=30,
               method="Equal Area",
-              blk_rows=128):
+              blk_rows=128,
+              verbose=True):
     """Categorizing local deforestation rates.
 
     This function categorizes the deforestation risk from the map of
@@ -39,17 +40,17 @@ def defor_cat(input_file,
     Breaks" is used, the data is normalized before running the slicing
     algorithm.
 
-    :param input_file: Input raster file of local deforestation
-        rates. Deforestation rates are defined by integer values
-        between 0 and 10000 (ten thousand)). Pixels with zero
-        deforestation risk (beyond a certain distance from the forest
-        edge) have value 10001. This file is typically obtained with
-        function ``set_defor_cat_zero()``.
+    :param ldefrate_with_zero_file: Input raster file of local
+        deforestation rates. Deforestation rates are defined by
+        integer values between 0 and 10000 (ten thousand)). Pixels
+        with zero deforestation risk (beyond a given distance from the
+        forest edge) have value 10001. This file is typically obtained
+        with function ``set_defor_cat_zero()``.
 
-    :param output_file: Output raster file with categories of
+    :param defor_cat_file: Output raster file with categories of
         deforestation risk.
 
-    :param nbins: Number of deforestation risk categories (zero
+    :param ncat: Number of deforestation risk categories (zero
         risk class excluded). Default to 30.
 
     :param method: Method used for categorizing. Either "Equal
@@ -57,8 +58,11 @@ def defor_cat(input_file,
 
     :param blk_rows: If > 0, number of rows for computation by block.
 
+    :param verbose: Logical. Whether to print messages or not. Default
+        to ``True``.
+
     :return: None. A raster file with deforestation categories will be
-        created (see ``output_file``). Data range from 0 to 30. Raster
+        created (see ``defor_cat_file``). Data range from 0 to 30. Raster
         type is Byte ([0, 255]). NoData value is set to 255.
 
     """
@@ -68,21 +72,20 @@ def defor_cat(input_file,
     # ==============================================================
 
     # Get catzero (catzero) raster data
-    catzero_ds = gdal.Open(input_file)
+    catzero_ds = gdal.Open(ldefrate_with_zero_file)
     catzero_band = catzero_ds.GetRasterBand(1)
     # Raster size
     xsize = catzero_band.XSize
     ysize = catzero_band.YSize
 
     # Make blocks
-    blockinfo = makeblock(input_file, blk_rows=blk_rows)
+    blockinfo = makeblock(ldefrate_with_zero_file, blk_rows=blk_rows)
     nblock = blockinfo[0]
     nblock_x = blockinfo[1]
     x = blockinfo[3]
     y = blockinfo[4]
     nx = blockinfo[5]
     ny = blockinfo[6]
-    print("Divide region in {} blocks".format(nblock))
 
     # ==============================================
     # Categorical raster file for deforestation risk
@@ -90,7 +93,7 @@ def defor_cat(input_file,
 
     # Create categorical (cat) raster file for deforestation risk
     driver = gdal.GetDriverByName("GTiff")
-    cat_ds = driver.Create(output_file, xsize, ysize, 1,
+    cat_ds = driver.Create(defor_cat_file, xsize, ysize, 1,
                            gdal.GDT_Byte,
                            ["COMPRESS=LZW", "PREDICTOR=2",
                             "BIGTIFF=YES"])
@@ -99,20 +102,19 @@ def defor_cat(input_file,
     cat_band = cat_ds.GetRasterBand(1)
     cat_band.SetNoDataValue(255)
 
-    # -----------------
-    # Categorize
-    # -----------------
+    # =================
+    # Find categories
+    # =================
 
     # Equal Interval
     if method == "Equal Interval":
-        bin_size = round(10000 / nbins)
-        bins = [i * bin_size for i in range(nbins)]
+        bin_size = round(10000 / ncat)
+        bins = [i * bin_size for i in range(ncat)]
         bins = bins + [10000, 10001]
 
     # Equal Area
     if method == "Equal Area":
         # Compute histogram
-        print("Compute histogram")
         nvalues = 10000 + 1
         counts = catzero_band.GetHistogram(-0.5, 10000.5, nvalues, 0, 0)
         npix = sum(counts)
@@ -123,7 +125,7 @@ def defor_cat(input_file,
         # Correction of the approximation
         cum_perc[-1] = 1.0
         # Quantiles
-        q = [i * 1 / nbins for i in range(1, nbins + 1)]
+        q = [i * 1 / ncat for i in range(1, ncat + 1)]
         # Bins
         bins = [0]
         # Loop on quantiles
@@ -137,10 +139,15 @@ def defor_cat(input_file,
         # Add category 10001
         bins.append(10001)
 
+    # =================
+    # Categorizing
+    # =================
+
     # Loop on blocks of data
     for b in range(nblock):
         # Progress bar
-        progress_bar(nblock, b + 1)
+        if verbose:
+            progress_bar(nblock, b + 1)
         # Position
         px = b % nblock_x
         py = b // nblock_x
@@ -157,9 +164,9 @@ def defor_cat(input_file,
         cat_band.WriteArray(cat_data, x[px], y[py])
 
     # Compute statistics
-    print("Compute statistics")
     cat_band.FlushCache()
-    cat_band.ComputeStatistics(False)
+    cb = gdal.TermProgress if verbose else 0
+    cat_band.ComputeStatistics(False, cb)
 
     # Dereference drivers
     cat_band = None
@@ -169,21 +176,21 @@ def defor_cat(input_file,
 
 
 # # Test
-# input_file = "outputs/defor_cat_zero.tif"
-# output_file = "outputs/defor_cat.tif"
-# nbins = 30
+# ldefrate_with_zero_file = "outputs/defor_cat_zero.tif"
+# defor_cat_file = "outputs/defor_cat.tif"
+# ncat = 30
 # method = "Equal Area"
 # blk_rows = 128
 
-# defor_cat(input_file,
-#           output_file="outputs/defor_cat_equal_interval.tif",
-#           nbins=30,
+# defor_cat(ldefrate_with_zero_file,
+#           defor_cat_file="outputs/defor_cat_equal_interval.tif",
+#           ncat=30,
 #           method="Equal Interval",
 #           blk_rows=128)
 
-# defor_cat(input_file,
-#           output_file="outputs/defor_cat_equal_area.tif",
-#           nbins=30,
+# defor_cat(ldefrate_with_zero_file,
+#           defor_cat_file="outputs/defor_cat_equal_area.tif",
+#           ncat=30,
 #           method="Equal Area",
 #           blk_rows=128)
 

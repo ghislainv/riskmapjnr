@@ -180,14 +180,15 @@
 
 
 <span class="c1"># dist_edge_threshold</span>
-<div class="viewcode-block" id="dist_edge_threshold"><a class="viewcode-back" href="../../reference.html#riskmapjnr.dist_edge_threshold.dist_edge_threshold">[docs]</a><span class="k">def</span> <span class="nf">dist_edge_threshold</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
+<div class="viewcode-block" id="dist_edge_threshold"><a class="viewcode-back" href="../../reference.html#riskmapjnr.dist_edge_threshold.dist_edge_threshold">[docs]</a><span class="k">def</span> <span class="nf">dist_edge_threshold</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span>
                         <span class="n">dist_file</span><span class="p">,</span>
-                        <span class="n">tab_file</span><span class="p">,</span>
-                        <span class="n">fig_file</span><span class="p">,</span>
+                        <span class="n">dist_bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
+                        <span class="n">tab_file_dist</span><span class="o">=</span><span class="s2">&quot;perc_dist.csv&quot;</span><span class="p">,</span>
+                        <span class="n">fig_file_dist</span><span class="o">=</span><span class="s2">&quot;perc_dist.png&quot;</span><span class="p">,</span>
                         <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">),</span>
                         <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                        <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
-                        <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+                        <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+                        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computing the percentage of total deforestation as a function of</span>
 <span class="sd">    the distance to forest edge.</span>
 
@@ -202,14 +203,20 @@
 <span class="sd">    raster of distance to forest edge will be created. The distance</span>
 <span class="sd">    unit will be the one of the input file.</span>
 
-<span class="sd">    :param input_file: Input raster file of forest cover change at</span>
+<span class="sd">    :param fcc_file: Input raster file of forest cover change at</span>
 <span class="sd">        three dates (123). 1: first period deforestation, 2: second</span>
 <span class="sd">        period deforestation, 3: remaining forest at the end of the</span>
 <span class="sd">        second period. No data value must be 0 (zero).</span>
 
-<span class="sd">    :param dist_file: Path to the distance raster file.</span>
+<span class="sd">    :param dist_file: Path to the output raster file of distance to</span>
+<span class="sd">        forest edge.</span>
 
-<span class="sd">    :param tab_file: Path to the table ``.csv`` file that will be</span>
+<span class="sd">    :param dist_bins: Array of bins for distances. It has to be</span>
+<span class="sd">        1-dimensional and monotonic. The array must also include zero</span>
+<span class="sd">        as the first value. Default to ``np.arange(0, 1080,</span>
+<span class="sd">        step=30)``.</span>
+
+<span class="sd">    :param tab_file_dist: Path to the table ``.csv`` file that will be</span>
 <span class="sd">        created. This table includes the following variables:</span>
 
 <span class="sd">        * ``distance``: bins of distance to forest edge (in m).</span>
@@ -218,22 +225,20 @@
 <span class="sd">        * ``cum``: the cumulative sum of the deforested area (in ha).</span>
 <span class="sd">        * ``perc``: the corresponding percentage of total deforestation.</span>
 
-<span class="sd">    :param fig_file: Path to the plot file that will be created. This</span>
-<span class="sd">        plot represents the cumulative deforestation percentage as the</span>
-<span class="sd">        distance to forest edge increases.</span>
+<span class="sd">    :param fig_file_dist: Path to the plot file that will be</span>
+<span class="sd">        created. This plot represents the cumulative deforestation</span>
+<span class="sd">        percentage as the distance to forest edge increases.</span>
 
 <span class="sd">    :param figsize: Figure size.</span>
 
 <span class="sd">    :param dpi: Resolution for output image.</span>
 
-<span class="sd">    :param bins: Array of bins for distances. It has to be</span>
-<span class="sd">        1-dimensional and monotonic. The array must also include zero</span>
-<span class="sd">        as the first value. Default to ``np.arange(0, 1080,</span>
-<span class="sd">        step=30)``.</span>
-
 <span class="sd">    :param blk_rows: Number of rows for block. This is used to break</span>
 <span class="sd">        lage raster files in several blocks of data that can be hold</span>
 <span class="sd">        in memory.</span>
+
+<span class="sd">    :param verbose: Logical. Whether to print messages or not. Default</span>
+<span class="sd">        to ``True``.</span>
 
 <span class="sd">    :return: A dictionary. With ``tot_def``: total deforestation (in</span>
 <span class="sd">        ha), ``dist_thresh``: the distance threshold, ``perc``: the</span>
@@ -243,11 +248,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Compute the distance to the forest edge</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Compute the distance to forest edge&quot;</span><span class="p">)</span>
-    <span class="n">dist_value</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">dist_file</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dist_value</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">dist_file</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="c1"># Create a table to save the results</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;distance&quot;</span><span class="p">:</span> <span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s2">&quot;npix&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;area&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;distance&quot;</span><span class="p">:</span> <span class="n">dist_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s2">&quot;npix&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;area&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="s2">&quot;cum&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;perc&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
     <span class="n">res_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
@@ -262,18 +266,18 @@
     <span class="n">y</span> <span class="o">=</span> <span class="n">blockinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
     <span class="n">nx</span> <span class="o">=</span> <span class="n">blockinfo</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
     <span class="n">ny</span> <span class="o">=</span> <span class="n">blockinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Divide region in </span><span class="si">{}</span><span class="s2"> blocks&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nblock</span><span class="p">))</span>
 
     <span class="c1"># Read rasters</span>
     <span class="n">dist_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">dist_file</span><span class="p">)</span>
     <span class="n">dist_band</span> <span class="o">=</span> <span class="n">dist_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">fcc_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="n">fcc_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">)</span>
     <span class="n">fcc_band</span> <span class="o">=</span> <span class="n">fcc_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Loop on blocks of data</span>
     <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nblock</span><span class="p">):</span>
         <span class="c1"># Progress bar</span>
-        <span class="n">progress_bar</span><span class="p">(</span><span class="n">nblock</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">progress_bar</span><span class="p">(</span><span class="n">nblock</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="c1"># Position in 1D-arrays</span>
         <span class="n">px</span> <span class="o">=</span> <span class="n">b</span> <span class="o">%</span> <span class="n">nblock_x</span>
         <span class="n">py</span> <span class="o">=</span> <span class="n">b</span> <span class="o">//</span> <span class="n">nblock_x</span>
@@ -286,7 +290,7 @@
         <span class="n">dist_def</span> <span class="o">=</span> <span class="n">dist_data</span> <span class="o">*</span> <span class="p">(</span><span class="n">fcc_data</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">dist_def</span> <span class="o">=</span> <span class="n">dist_def</span><span class="p">[</span><span class="n">dist_def</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
         <span class="c1"># Categorize distance</span>
-        <span class="n">dist_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">dist_def</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">dist_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">dist_def</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">dist_bins</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># Sum by category</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;dist&quot;</span><span class="p">:</span> <span class="n">dist_cat</span><span class="p">})</span>
         <span class="n">counts</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">dist</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
@@ -294,7 +298,6 @@
         <span class="n">res_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;npix&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">counts</span><span class="o">.</span><span class="n">values</span>
 
     <span class="c1"># Compute deforested areas</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Compute deforested areas in ha&quot;</span><span class="p">)</span>
     <span class="n">gt</span> <span class="o">=</span> <span class="n">dist_ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()</span>
     <span class="n">pix_area</span> <span class="o">=</span> <span class="n">gt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">gt</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
     <span class="n">res_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">res_df</span><span class="p">[</span><span class="s2">&quot;npix&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">pix_area</span> <span class="o">/</span> <span class="mi">10000</span>
@@ -305,7 +308,7 @@
     <span class="n">res_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">res_df</span><span class="p">[</span><span class="s2">&quot;cum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">/</span> <span class="n">tot_area_def</span>
 
     <span class="c1"># Export the table of results</span>
-    <span class="n">res_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">tab_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">res_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">tab_file_dist</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                   <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index_label</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Distance and percentage for 99% threshold</span>
@@ -329,7 +332,7 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Percentage of total deforestation (%)&quot;</span><span class="p">)</span>
     <span class="c1"># Text distance</span>
     <span class="n">t1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">dist_thresh</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; m&quot;</span>
-    <span class="n">x1_text</span> <span class="o">=</span> <span class="n">dist_thresh</span> <span class="o">-</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+    <span class="n">x1_text</span> <span class="o">=</span> <span class="n">dist_thresh</span> <span class="o">-</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dist_bins</span><span class="p">)</span>
     <span class="n">y1_text</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res_df</span><span class="p">[</span><span class="s2">&quot;perc&quot;</span><span class="p">])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x1_text</span><span class="p">,</span> <span class="n">y1_text</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">)</span>
     <span class="c1"># Text percentage</span>
@@ -337,7 +340,7 @@
     <span class="n">x2_text</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">y2_text</span> <span class="o">=</span> <span class="n">perc_thresh</span> <span class="o">-</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res_df</span><span class="p">[</span><span class="s2">&quot;perc&quot;</span><span class="p">]))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x2_text</span><span class="p">,</span> <span class="n">y2_text</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_file</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_file_dist</span><span class="p">)</span>
 
     <span class="c1"># Results</span>
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;tot_def&#39;</span><span class="p">:</span> <span class="n">tot_area_def</span><span class="p">,</span> <span class="s1">&#39;dist_thresh&#39;</span><span class="p">:</span> <span class="n">dist_thresh</span><span class="p">,</span>
@@ -345,11 +348,11 @@
 
 
 <span class="c1"># # Test</span>
-<span class="c1"># dist_edge_threshold(input_file=&quot;data/fcc123.tif&quot;,</span>
+<span class="c1"># dist_edge_threshold(fcc_file=&quot;data/fcc123.tif&quot;,</span>
 <span class="c1">#                     dist_file=&quot;outputs/dist_edge.tif&quot;,</span>
-<span class="c1">#                     tab_file=&quot;outputs/tab_dist.csv&quot;,</span>
-<span class="c1">#                     fig_file=&quot;outputs/plot_dist.png&quot;,</span>
-<span class="c1">#                     bins=np.arange(0, 1080, step=30),</span>
+<span class="c1">#                     dist_bins=np.arange(0, 1080, step=30),</span>
+<span class="c1">#                     tab_file_dist=&quot;outputs/tab_dist.csv&quot;,</span>
+<span class="c1">#                     fig_file_dist=&quot;outputs/plot_dist.png&quot;,</span>
 <span class="c1">#                     blk_rows=128)</span>
 
 <span class="c1"># End</span>

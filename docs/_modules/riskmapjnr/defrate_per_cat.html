@@ -121,8 +121,8 @@
 
 <span class="c1"># defrate_per_cat</span>
 <div class="viewcode-block" id="defrate_per_cat"><a class="viewcode-back" href="../../reference.html#riskmapjnr.defrate_per_cat.defrate_per_cat">[docs]</a><span class="k">def</span> <span class="nf">defrate_per_cat</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">defor_cat_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
-                    <span class="n">tab_file</span><span class="o">=</span><span class="s2">&quot;defrate_per_cat.csv&quot;</span><span class="p">,</span>
-                    <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+                    <span class="n">tab_file_defrate</span><span class="o">=</span><span class="s2">&quot;defrate_per_cat.csv&quot;</span><span class="p">,</span>
+                    <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute deforestation rates per category of deforestation risk.</span>
 
 <span class="sd">    This function computes the historical deforestation rates for each</span>
@@ -140,13 +140,18 @@
 <span class="sd">    :param time_interval: Time interval (in years) for forest cover</span>
 <span class="sd">        change observations.</span>
 
-<span class="sd">    :param tab_file: Path to the ``.csv`` output file with estimates of</span>
-<span class="sd">        deforestation rates per category of deforestation risk.</span>
+<span class="sd">    :param tab_file_defrate: Path to the ``.csv`` output file with</span>
+<span class="sd">        estimates of deforestation rates per category of deforestation</span>
+<span class="sd">        risk.</span>
 
 <span class="sd">    :param blk_rows: If &gt; 0, number of rows for computation by block.</span>
 
-<span class="sd">    :return: None. A ``.csv`` file with deforestation rates per category</span>
-<span class="sd">        of deforestation risk will be created (see ``tab_file``).</span>
+<span class="sd">    :param verbose: Logical. Whether to print messages or not. Default</span>
+<span class="sd">        to ``True``.</span>
+
+<span class="sd">    :return: None. A ``.csv`` file with deforestation rates per</span>
+<span class="sd">        category of deforestation risk will be created (see</span>
+<span class="sd">        ``tab_file_defrate``).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -170,14 +175,12 @@
     <span class="n">y</span> <span class="o">=</span> <span class="n">blockinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
     <span class="n">nx</span> <span class="o">=</span> <span class="n">blockinfo</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
     <span class="n">ny</span> <span class="o">=</span> <span class="n">blockinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Divide region in </span><span class="si">{}</span><span class="s2"> blocks&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nblock</span><span class="p">))</span>
 
     <span class="c1"># ==============================================</span>
     <span class="c1"># Compute deforestation rates per cat</span>
     <span class="c1"># ==============================================</span>
 
     <span class="c1"># Number of deforestation categories</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Compute statistics&quot;</span><span class="p">)</span>
     <span class="n">stats</span> <span class="o">=</span> <span class="n">defor_cat_band</span><span class="o">.</span><span class="n">ComputeStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">n_cat</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># Get the maximum</span>
     <span class="n">cat</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cat</span><span class="p">)]</span>
@@ -190,7 +193,8 @@
     <span class="c1"># Loop on blocks of data</span>
     <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nblock</span><span class="p">):</span>
         <span class="c1"># Progress bar</span>
-        <span class="n">progress_bar</span><span class="p">(</span><span class="n">nblock</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">progress_bar</span><span class="p">(</span><span class="n">nblock</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="c1"># Position</span>
         <span class="n">px</span> <span class="o">=</span> <span class="n">b</span> <span class="o">%</span> <span class="n">nblock_x</span>
         <span class="n">py</span> <span class="o">=</span> <span class="n">b</span> <span class="o">//</span> <span class="n">nblock_x</span>
@@ -211,7 +215,7 @@
     <span class="n">df</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;nfor&quot;</span><span class="p">])</span> <span class="o">**</span> <span class="n">time_interval</span>
 
     <span class="c1"># Export the table of results</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">tab_file</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">tab_file_defrate</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
               <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index_label</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Dereference drivers</span>
@@ -224,14 +228,15 @@
 <span class="c1"># fcc_file = &quot;data/fcc123.tif&quot;</span>
 <span class="c1"># defor_cat_file = &quot;outputs/defor_cat.tif&quot;</span>
 <span class="c1"># time_interval = 10</span>
-<span class="c1"># tab_file = &quot;outputs/defrate_per_cat.csv&quot;</span>
+<span class="c1"># tab_file_defrate = &quot;outputs/defrate_per_cat.csv&quot;</span>
 <span class="c1"># blk_rows = 128</span>
 
 <span class="c1"># defrate_per_cat(fcc_file,</span>
 <span class="c1">#                 defor_cat_file,</span>
 <span class="c1">#                 time_interval,</span>
-<span class="c1">#                 tab_file,</span>
-<span class="c1">#                 blk_rows=128)</span>
+<span class="c1">#                 tab_file_defrate,</span>
+<span class="c1">#                 blk_rows=128,</span>
+<span class="c1">#                 verbose=True)</span>
 
 <span class="c1"># End</span>
 </pre></div>

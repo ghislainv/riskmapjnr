@@ -22,12 +22,12 @@ from .misc import progress_bar, make_square
 
 # validation
 def validation(fcc_file, time_interval,
-               defor_cat_file, defrate_per_cat_file,
+               defor_cat_file, tab_file_defrate,
                csize=300,
-               tab_file="validation_data.csv",
-               fig_file="pred_obs.png",
+               tab_file_pred="pred_obs.csv",
+               fig_file_pred="pred_obs.png",
                figsize=(6.4, 4.8),
-               dpi=100):
+               dpi=100, verbose=True):
     """Validation of the deforestation risk map.
 
     This function computes the observed and predicted deforestion (in
@@ -52,7 +52,7 @@ def validation(fcc_file, time_interval,
         spatial deforestation risk. This file is typically obtained
         with function ``defor_cat()``.
 
-    :param defrate_per_cat_file: Path to the ``.csv`` input file with
+    :param tab_file_defrate: Path to the ``.csv`` input file with
         estimates of deforestation rates per category of deforestation
         risk. This file is typically obtained with function
         ``defrate_per_cat()``.
@@ -61,20 +61,23 @@ def validation(fcc_file, time_interval,
         correspond to a distance < 10 km. Default to 300 corresponding
         to 9 km for a 30 m resolution raster.
 
-    :param tab_file: Path to the ``.csv`` output file with validation
+    :param tab_file_pred: Path to the ``.csv`` output file with validation
         data.
 
-    :param fig_file: Path to the ``.png`` output file for the
+    :param fig_file_pred: Path to the ``.png`` output file for the
         predictions vs. observations plot.
 
     :param figsize: Figure size.
 
     :param dpi: Resolution for output image.
 
+    :param verbose: Logical. Whether to print messages or not. Default
+        to ``True``.
+
     :return: A dictionary. With ``wRMSE``: weighted Root Mean Squared
         Error (in hectares) for the deforestation predictions,
         ``ncell``: the number of grid cells with forest cover > 0 at
-        the beginning of the validation period, `csize`: the cell size
+        the beginning of the validation period, ``csize``: the cell size
         in number of pixels, ``csize_km``: the cell size in
         kilometers.
 
@@ -93,7 +96,7 @@ def validation(fcc_file, time_interval,
     defor_cat_band = defor_cat_ds.GetRasterBand(1)
 
     # Get defrate per cat
-    defrate_per_cat = pd.read_csv(defrate_per_cat_file)
+    defrate_per_cat = pd.read_csv(tab_file_defrate)
     cat_csv = defrate_per_cat["cat"].values
 
     # Number of deforestation categories
@@ -122,7 +125,6 @@ def validation(fcc_file, time_interval,
     y = squareinfo[4]
     nx = squareinfo[5]
     ny = squareinfo[6]
-    print("Divide region in {} square cells".format(nsquare))
 
     # Cell size in km
     csize_km = round(csize * gt[1] / 1000)
@@ -139,7 +141,8 @@ def validation(fcc_file, time_interval,
     # Loop on squares
     for s in range(nsquare):
         # Progress bar
-        progress_bar(nsquare, s + 1)
+        if verbose:
+            progress_bar(nsquare, s + 1)
         # Position in 1D-arrays
         px = s % nsquare_x
         py = s // nsquare_x
@@ -152,8 +155,10 @@ def validation(fcc_file, time_interval,
             x[px], y[py], nx[px], ny[py])
         defor_cat = pd.Categorical(defor_cat_data.flatten(), categories=cat)
         defor_cat_count = defor_cat.value_counts().values
-        df.loc[s, "ndefor_pred"] = np.sum(defor_cat_count *
-                                          defrate_per_cat["rate"].values)
+        df.loc[s, "ndefor_pred"] = np.nansum(defor_cat_count *
+                                             defrate_per_cat["rate"].values)
+        # Note: np.nansum is used here as some cat might not exist and
+        # have nan for defrate (eg. in the case of Equal Interval).
 
     # Dereference drivers
     del fcc_ds, defor_cat_ds
@@ -177,7 +182,7 @@ def validation(fcc_file, time_interval,
     df["ndefor_pred_ha"] = df["ndefor_pred"] * pix_area / 10000
 
     # Export the table of results
-    df.to_csv(tab_file, sep=",", header=True,
+    df.to_csv(tab_file_pred, sep=",", header=True,
               index=False, index_label=False)
 
     # Compute wRMSE
@@ -208,7 +213,7 @@ def validation(fcc_file, time_interval,
     x_text = df["ndefor_obs_ha"].max()
     y_text = 0
     plt.text(x_text, y_text, t, ha="right", va="bottom")
-    fig.savefig(fig_file)
+    fig.savefig(fig_file_pred)
 
     # Results
     return {'wRMSE': wRMSE, 'ncell': ncell,
@@ -221,12 +226,12 @@ def validation(fcc_file, time_interval,
 # defor_cat_file = "outputs/defor_cat.tif"
 # defrate_per_cat_file = "outputs/defrate_per_cat.csv"
 # csize = 500
-# tab_file = "outputs/validation_data.csv"
-# fig_file = "outputs/pred_obs.png"
+# tab_file_pred = "outputs/validation_data.csv"
+# fig_file_pred = "outputs/pred_obs.png"
 # figsize = (6.4, 4.8)
 # dpi = 100
 
-# validation(fcc_file, time_interval, defor_cat_file, defrate_per_cat_file,
-#            csize, tab_file, fig_file)
+# validation(fcc_file, time_interval, defor_cat_file, tab_file_defrate,
+#            csize, tab_file_pred, fig_file_pred)
 
 # End
