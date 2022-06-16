@@ -11,6 +11,7 @@
 
 
 # Third party imports
+import numpy as np
 from osgeo import gdal
 import pandas as pd
 

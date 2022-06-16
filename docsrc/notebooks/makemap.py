@@ -18,27 +18,25 @@ import pandas as pd
 
 
 # Local application imports
-#from . import dist_edge_threshold, local_defor_rate, set_defor_cat_zero
-#from . import defor_cat, defrate_per_cat, validation
+# from . import dist_edge_threshold, local_defor_rate, set_defor_cat_zero
+# from . import defor_cat, defrate_per_cat, validation
 
 import riskmapjnr as rmj
-os.environ["PROJ_LIB"] = "/home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/share/proj"
+
+
+os.environ["PROJ_LIB"] = ("/home/ghislain/.pyenv/versions/miniconda3-latest/"
+                          "envs/conda-rmj/share/proj")
 
 
 # makemap
 def makemap(fcc_file, time_interval,
-            dist_file="dist_edge.tif",
+            output_dir="outputs",
+            clean=False,
             dist_bins=np.arange(0, 1080, step=30),
-            tab_file_dist="perc_dist.csv",
-            fig_file_dist="perc_dist.png",
             win_sizes=[5, 11],
             ncat=30,
             methods=["Equal Interval", "Equal Area"],
             csize=300,
-            tab_file_map_comp="map_comp.csv",
-            fig_file_map_comp="map_comp.csv",
-            tab_file_pred="pred_obs.csv",
-            fig_file_pred="pred_obs.png",
             figsize=(6.4, 4.8),
             dpi=100,
             blk_rows=128,
@@ -57,26 +55,68 @@ def makemap(fcc_file, time_interval,
         years) for forest cover change observations for the two period
         of time.
 
-    :param dist_file: Path to the output raster file of distance to
-        forest edge.
+    :param output_dir: Output directory for files (rasters, tables, and
+        figures) produced by calling the ``makemap()`` function:
+
+        * ``dist_file.tif``: Raster file of distance to forest edge at
+          the beginning of the period.
+
+        * ``tab_file_dist.csv``: Table of cumulative deforestation
+          with distance to forest edge.
+
+        * ``fig_file_dist.png``: Figure of cumulative deforestation
+          with distance to forest edge.
+
+        * ``tab_file_map_comp.csv``: Table for relationship between
+          wRMSE and window size by slicing method.
+
+        * ``fig_file_map_comp.png``: Figure for relationship between
+          wRMSE and window size by slicing method.
+
+        * ``tab_file_pred.csv``: Table for predictions
+          vs. observations on the validation period for the best
+          model.
+
+        * ``fig_file_pred.png``: Figure for predictions
+          vs. observations on the validation period for the best
+          model.
+
+        * ``calval_dir``: A directory for files produced during the
+          calibration and validation steps:
+
+            + ``dist_edge_cal.tif``: Raster of distance to forest edge
+              for the calibration period.
+
+            + ``ldefrate_ws{s}.tif``: Rasters of local deforestation
+              rates for each window size ``s``.
+
+            + ``ldefrate_ws{s}_with_zero.tif``: Rasters of local
+              deforestation rates with zero category for each window
+              size ``s``.
+
+            + ``defor_cat_ws{s}_{m}.tif``: Raster of deforestation
+              risk categories for each window size ``s`` and slicing
+              method ``m``.
+
+            + ``defrate_per_cat_ws{s}_{m}.csv``: Table of
+              deforestation rate per category of deforestation risk
+              for each window size ``s`` and slicing method ``m``.
+
+            + ``pred_obs_ws{s}_{m}.csv``: Table of predictions
+              vs. observations for each window size ``s`` and slicing
+              method ``m``.
+
+            + ``pred_obs_ws{s}_{m}.png``: Figure of predictions
+              vs. observations for each window size ``s`` and slicing
+              method ``m``.
+
+   :param clean: Logical. Delete the ``calval_dir`` directory at the
+        end of the computation. Default to False.
 
    :param dist_bins: Array of bins for distances. It has to be
         1-dimensional and monotonic. The array must also include zero
         as the first value. Default to ``np.arange(0, 1080,
         step=30)``.
-
-    :param tab_file_dist: Path to the table ``.csv`` file that will be
-        created. This table includes the following variables:
-
-        * ``distance``: bins of distance to forest edge (in m).
-        * ``npix``: the number of deforested pixels in each bin.
-        * ``area``: the corresponding area (in ha).
-        * ``cum``: the cumulative sum of the deforested area (in ha).
-        * ``perc``: the corresponding percentage of total deforestation.
-
-    :param fig_file_dist: Path to the plot file that will be
-        created. This plot represents the cumulative deforestation
-        percentage as the distance to forest edge increases.
 
     :param win_sizes: A list of numbers representing the different
         sizes of the moving window in number of cells. Must be odd
@@ -92,18 +132,6 @@ def makemap(fcc_file, time_interval,
     :param csize: Spatial cell size in number of pixels. Must
         correspond to a distance < 10 km. Default to 300 corresponding
         to 9 km for a 30 m resolution raster.
-
-    :param tab_file_map_comp: Path to the ``.csv`` output file with
-        map comparison.
-
-    :param fig_file_map_comp: Path to the ``.png`` output file with
-        plot of wRMSE as function of window size by slicing method.
-
-    :param tab_file_pred: Path to the ``.csv`` output file with validation
-        data.
-
-    :param fig_file_pred: Path to the ``.png`` output file for the
-        predictions vs. observations plot.
 
     :param figsize: Figure sizes.
 
@@ -128,7 +156,20 @@ def makemap(fcc_file, time_interval,
         * ``m_hat``: slicing method of the best risk map.
         * ``wRMSE_hat``: weighted Root Mean Squared Error (in hectares)
           of the best risk map.
+
     """
+
+    # Create output directory
+    rmj.make_dir(os.path.join(output_dir, "calval"))
+
+    # Output files
+    dist_file = os.path.join(output_dir, "dist_edge.tif")
+    tab_file_dist = os.path.join(output_dir, "perc_dist.csv")
+    fig_file_dist = os.path.join(output_dir, "perc_dist.png")
+    tab_file_map_comp = os.path.join(output_dir, "map_comp.csv")
+    fig_file_map_comp = os.path.join(output_dir, "map_comp.png")
+    tab_file_pred = os.path.join(output_dir, "pred_obs.csv")
+    fig_file_pred = os.path.join(output_dir, "pred_obs.png")
 
     # Abbreviations for methods
     meth = pd.Series(methods)
@@ -148,9 +189,10 @@ def makemap(fcc_file, time_interval,
     df = pd.DataFrame(data)
 
     # Deforestation risk and distance to forest edge
+    dist_file = os.path.join(output_dir, "dist_edge.tif")
     dist_edge_thres = rmj.dist_edge_threshold(
         fcc_file=fcc_file,
-        defor_value=1,  # First period
+        defor_values=1,  # First period
         dist_file=dist_file,
         dist_bins=dist_bins,
         tab_file_dist=tab_file_dist,
@@ -165,17 +207,19 @@ def makemap(fcc_file, time_interval,
         # Window size
         s = win_sizes[i]
         # Local deforestation rates
-        ldefrate_file = (f"ldefrate_ws{s}.tif")
+        ldefrate_file = os.path.join(output_dir, "calval",
+                                     f"ldefrate_ws{s}.tif")
         rmj.local_defor_rate(
             fcc_file=fcc_file,
-            defor_value=1,  # First period
+            defor_values=1,  # First period
             ldefrate_file=ldefrate_file,
             win_size=s,
             time_interval=time_interval[0],
             blk_rows=blk_rows,
             verbose=verbose)
         # Pixels with zero risk of deforestation
-        ldefrate_with_zero_file = (f"ldefrate_ws{s}_with_zero.tif")
+        ldefrate_with_zero_file = os.path.join(output_dir, "calval",
+                                               f"ldefrate_ws{s}_with_zero.tif")
         rmj.set_defor_cat_zero(
             ldefrate_file=ldefrate_file,
             dist_file=dist_file,
@@ -189,7 +233,8 @@ def makemap(fcc_file, time_interval,
             m = meth[j]
             mm = methods[j]
             # Categories of deforestation risk
-            defor_cat_file = (f"defor_cat_ws{s}_{m}.tif")
+            defor_cat_file = os.path.join(output_dir, "calval",
+                                          f"defor_cat_ws{s}_{m}.tif")
             rmj.defor_cat(
                 ldefrate_with_zero_file=ldefrate_with_zero_file,
                 defor_cat_file=defor_cat_file,
@@ -198,17 +243,21 @@ def makemap(fcc_file, time_interval,
                 blk_rows=blk_rows,
                 verbose=verbose)
             # Compute deforestation rates per cat
-            tab_file_defrate = (f"defrate_per_cat_ws{s}_{m}.csv")
+            tab_file_defrate = os.path.join(output_dir, "calval",
+                                            f"defrate_per_cat_ws{s}_{m}.csv")
             rmj.defrate_per_cat(
                 fcc_file,
-                defor_cat_file,
+                defor_values=1,
+                defor_cat_file=defor_cat_file,
                 time_interval=time_interval[0],
                 tab_file_defrate=tab_file_defrate,
                 blk_rows=blk_rows,
                 verbose=verbose)
             # Validation
-            tab_file_pred = (f"pred_obs_ws{s}_{m}.csv")
-            fig_file_pred = (f"pred_obs_ws{s}_{m}.png")
+            tab_file_pred = os.path.join(output_dir, "calval",
+                                         f"pred_obs_ws{s}_{m}.csv")
+            fig_file_pred = os.path.join(output_dir, "calval",
+                                         f"pred_obs_ws{s}_{m}.png")
             val = rmj.validation(
                 fcc_file=fcc_file,
                 time_interval=time_interval[1],
@@ -247,10 +296,14 @@ def makemap(fcc_file, time_interval,
     # Deriving the best risk map
     # ==========================
 
+    # Set s and m optimal values
+    s = ws_hat
+    m = m_hat
+
     # Deforestation risk and distance to forest edge
     dist_edge_thres = rmj.dist_edge_threshold(
         fcc_file=fcc_file,
-        defor_value=[1, 2],  # Two periods
+        defor_values=[1, 2],  # Two periods
         dist_file=dist_file,
         dist_bins=dist_bins,
         tab_file_dist=tab_file_dist,
@@ -261,18 +314,18 @@ def makemap(fcc_file, time_interval,
         verbose=verbose)
 
     # Local deforestation rates
-    ldefrate_file = (f"ldefrate_ws{s}.tif")
+    ldefrate_file = (f"ldefrate_ws{s}_final.tif")
     rmj.local_defor_rate(
         fcc_file=fcc_file,
-        defor_value=[1, 2],  # Two periods
+        defor_values=[1, 2],  # Two periods
         ldefrate_file=ldefrate_file,
         win_size=s,
-        time_interval=time_interval[0],
+        time_interval=np.array(time_interval).sum(),
         blk_rows=blk_rows,
         verbose=verbose)
 
     # Pixels with zero risk of deforestation
-    ldefrate_with_zero_file = (f"ldefrate_ws{s}_with_zero.tif")
+    ldefrate_with_zero_file = (f"ldefrate_ws{s}_with_zero_final.tif")
     rmj.set_defor_cat_zero(
         ldefrate_file=ldefrate_file,
         dist_file=dist_file,
@@ -282,7 +335,7 @@ def makemap(fcc_file, time_interval,
         verbose=verbose)
 
     # Categories of deforestation risk
-    defor_cat_file = (f"defor_cat_ws{s}_{m}.tif")
+    defor_cat_file = (f"defor_cat_ws{s}_{m}_final.tif")
     rmj.defor_cat(
         ldefrate_with_zero_file=ldefrate_with_zero_file,
         defor_cat_file=defor_cat_file,
@@ -292,17 +345,18 @@ def makemap(fcc_file, time_interval,
         verbose=verbose)
 
     # Compute deforestation rates per cat
-    tab_file_defrate = (f"defrate_per_cat_ws{s}_{m}.csv")
+    tab_file_defrate = (f"defrate_per_cat_ws{s}_{m}_final.csv")
     rmj.defrate_per_cat(
         fcc_file,
-        defor_cat_file,
+        defor_values=[1, 2],
+        defor_cat_file=defor_cat_file,
         time_interval=time_interval[0],
         tab_file_defrate=tab_file_defrate,
         blk_rows=blk_rows,
         verbose=verbose)
 
     # Return
-    return {'tot_def': dist_edge_thres["tot_area_def"],
+    return {'tot_def': dist_edge_thres["tot_def"],
             'dist_thresh': dist_edge_thres["dist_thresh"],
             'perc_thresh': dist_edge_thres["perc_thresh"],
             'ncell': val["ncell"], 'csize': csize,
@@ -314,17 +368,13 @@ def makemap(fcc_file, time_interval,
 # Test
 fcc_file = "data/fcc123_GLP.tif"
 time_interval = [10, 10]
-dist_file = "outputs/dist_edge.tif"
+output_dir = "outputs_makemap"
+clean = False
 dist_bins = np.arange(0, 1080, step=30)
-tab_file_dist = "outputs/perc_dist.csv"
-fig_file_dist = "outputs/perc_dist.png"
 win_sizes = np.arange(5, 50, 6)
 ncat = 30
 methods = ["Equal Interval", "Equal Area"]
 csize = 40
-tab_file_map_comp = "outputs/map_comp.csv"
-tab_file_pred = "outputs/pred_obs.csv"
-fig_file_pred = "outputs/pred_obs.png"
 figsize = (6.4, 4.8)
 dpi = 100
 blk_rows = 128

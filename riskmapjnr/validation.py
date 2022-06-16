@@ -127,7 +127,7 @@ def validation(fcc_file, time_interval,
     ny = squareinfo[6]
 
     # Cell size in km
-    csize_km = round(csize * gt[1] / 1000)
+    csize_km = round(csize * gt[1] / 1000, 1)
 
     # Create a table to save the results
     data = {"cell": list(range(nsquare)), "nfor_obs": 0,
@@ -189,7 +189,7 @@ def validation(fcc_file, time_interval,
     w = df["nfor_obs_ha"] / df["nfor_obs_ha"].sum()
     error_pred = df["ndefor_pred_ha"] - df["ndefor_obs_ha"]
     squared_error = (error_pred) ** 2
-    wRMSE = round(np.sqrt(sum(squared_error * w)))
+    wRMSE = round(np.sqrt(sum(squared_error * w)), 1)
 
     # Plot title
     title = ("Predicted vs. observed deforestation (ha) "

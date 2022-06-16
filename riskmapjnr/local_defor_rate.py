@@ -120,7 +120,7 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
         in_data = in_band.ReadAsArray(0, yoff, xsize, rows)
         # defor (during first period)
         defor_data = np.zeros(in_data.shape, int)
-        defor_data[np.isin(in_data, defor_value)] = 1
+        defor_data[np.isin(in_data, defor_values)] = 1
         win_defor = scipy.ndimage.filters.uniform_filter(
             defor_data, size=win_size, mode="constant", cval=0,
             output=float)
