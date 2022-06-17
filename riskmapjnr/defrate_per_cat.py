@@ -20,7 +20,7 @@ from .misc import progress_bar, makeblock
 
 
 # defrate_per_cat
-def defrate_per_cat(fcc_file, defor_values, defor_cat_file, time_interval,
+def defrate_per_cat(fcc_file, defor_values, riskmap_file, time_interval,
                     tab_file_defrate="defrate_per_cat.csv",
                     blk_rows=128, verbose=True):
     """Compute deforestation rates per category of deforestation risk.
@@ -38,7 +38,7 @@ def defrate_per_cat(fcc_file, defor_values, defor_cat_file, time_interval,
        period, or list [1, 2] if both first and second period are
        considered.
 
-    :param defor_cat_file: Input raster file with categories of
+    :param riskmap_file: Input raster file with categories of
         spatial deforestation risk. This file is typically obtained
         with function ``defor_cat()``.
 
@@ -69,7 +69,7 @@ def defrate_per_cat(fcc_file, defor_values, defor_cat_file, time_interval,
     fcc_band = fcc_ds.GetRasterBand(1)
 
     # Get defor_cat raster data
-    defor_cat_ds = gdal.Open(defor_cat_file)
+    defor_cat_ds = gdal.Open(riskmap_file)
     defor_cat_band = defor_cat_ds.GetRasterBand(1)
 
     # Make blocks
@@ -132,13 +132,13 @@ def defrate_per_cat(fcc_file, defor_values, defor_cat_file, time_interval,
 
 # # Test
 # fcc_file = "data/fcc123.tif"
-# defor_cat_file = "outputs/defor_cat.tif"
+# riskmap_file = "outputs/defor_cat.tif"
 # time_interval = 10
 # tab_file_defrate = "outputs/defrate_per_cat.csv"
 # blk_rows = 128
 
 # defrate_per_cat(fcc_file,
-#                 defor_cat_file,
+#                 riskmap_file,
 #                 time_interval,
 #                 tab_file_defrate,
 #                 blk_rows=128,

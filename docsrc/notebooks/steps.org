@@ -116,7 +116,7 @@ dist_edge_thres = rmj.dist_edge_threshold(
     tab_file="outputs/tab_dist.csv",
     fig_file=ofile,
     bins=np.arange(0, 1080, step=30),
-    blk_rows=128)
+    blk_rows=128, verbose=True)
 ofile
 #+end_src
 

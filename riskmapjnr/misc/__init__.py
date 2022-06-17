@@ -9,7 +9,7 @@
 # license         :GPLv3
 # ===================================================================
 
-from .miscellaneous import invlogit, make_dir
+from .miscellaneous import invlogit, make_dir, tree
 from .miscellaneous import makeblock, progress_bar
 from .miscellaneous import make_square
 

@@ -21,7 +21,7 @@ from .misc import progress_bar, makeblock
 
 # defor_cat
 def defor_cat(ldefrate_with_zero_file,
-              defor_cat_file="defor_cat.tif",
+              riskmap_file="riskmap.tif",
               ncat=30,
               method="Equal Area",
               blk_rows=128,
@@ -47,7 +47,7 @@ def defor_cat(ldefrate_with_zero_file,
         forest edge) have value 10001. This file is typically obtained
         with function ``set_defor_cat_zero()``.
 
-    :param defor_cat_file: Output raster file with categories of
+    :param riskmap_file: Output raster file with categories of
         deforestation risk.
 
     :param ncat: Number of deforestation risk categories (zero
@@ -62,7 +62,7 @@ def defor_cat(ldefrate_with_zero_file,
         to ``True``.
 
     :return: None. A raster file with deforestation categories will be
-        created (see ``defor_cat_file``). Data range from 0 to 30. Raster
+        created (see ``riskmap_file``). Data range from 0 to 30. Raster
         type is Byte ([0, 255]). NoData value is set to 255.
 
     """
@@ -93,7 +93,7 @@ def defor_cat(ldefrate_with_zero_file,
 
     # Create categorical (cat) raster file for deforestation risk
     driver = gdal.GetDriverByName("GTiff")
-    cat_ds = driver.Create(defor_cat_file, xsize, ysize, 1,
+    cat_ds = driver.Create(riskmap_file, xsize, ysize, 1,
                            gdal.GDT_Byte,
                            ["COMPRESS=LZW", "PREDICTOR=2",
                             "BIGTIFF=YES"])
@@ -177,19 +177,19 @@ def defor_cat(ldefrate_with_zero_file,
 
 # # Test
 # ldefrate_with_zero_file = "outputs/defor_cat_zero.tif"
-# defor_cat_file = "outputs/defor_cat.tif"
+# riskmap_file = "outputs/riskmap.tif"
 # ncat = 30
 # method = "Equal Area"
 # blk_rows = 128
 
 # defor_cat(ldefrate_with_zero_file,
-#           defor_cat_file="outputs/defor_cat_equal_interval.tif",
+#           riskmap_file="outputs/riskmap_equal_interval.tif",
 #           ncat=30,
 #           method="Equal Interval",
 #           blk_rows=128)
 
 # defor_cat(ldefrate_with_zero_file,
-#           defor_cat_file="outputs/defor_cat_equal_area.tif",
+#           riskmap_file="outputs/riskmap_equal_area.tif",
 #           ncat=30,
 #           method="Equal Area",
 #           blk_rows=128)

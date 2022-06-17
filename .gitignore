@@ -1,10 +1,10 @@
 # notes
 notes.org
 
-# data
-data
-outputs
-outputs_MDG
+# Notebook data and outputs
+docsrc/notebooks/data
+docsrc/notebooks/outputs_makemap
+docsrc/notebooks/outputs_MDG
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

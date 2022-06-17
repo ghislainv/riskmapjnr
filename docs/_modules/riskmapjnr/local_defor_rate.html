@@ -121,8 +121,8 @@
 
 
 <span class="c1"># local_defor_rate</span>
-<div class="viewcode-block" id="local_defor_rate"><a class="viewcode-back" href="../../reference.html#riskmapjnr.local_defor_rate.local_defor_rate">[docs]</a><span class="k">def</span> <span class="nf">local_defor_rate</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">ldefrate_file</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
-                     <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="local_defor_rate"><a class="viewcode-back" href="../../reference.html#riskmapjnr.local_defor_rate.local_defor_rate">[docs]</a><span class="k">def</span> <span class="nf">local_defor_rate</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">defor_values</span><span class="p">,</span> <span class="n">ldefrate_file</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span>
+                     <span class="n">time_interval</span><span class="p">,</span> <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computing the local deforestation rate using a moving window.</span>
 
 <span class="sd">    This function computes the local deforestation rate using a moving</span>
@@ -138,6 +138,11 @@
 <span class="sd">        three dates (123). 1: first period deforestation, 2: second</span>
 <span class="sd">        period deforestation, 3: remaining forest at the end of the</span>
 <span class="sd">        second period. NoData value must be 0 (zero).</span>
+
+<span class="sd">    :param defor_values: Raster values to consider for</span>
+<span class="sd">       deforestation. Must correspond to either scalar 1 if first</span>
+<span class="sd">       period, or list [1, 2] if both first and second period are</span>
+<span class="sd">       considered.</span>
 
 <span class="sd">    :param ldefrate_file: Output raster file.</span>
 
@@ -162,6 +167,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Check win_size</span>
+    <span class="n">win_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">win_size</span><span class="p">)</span>  <span class="c1"># Must be int for uniform_filter</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">win_size</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;win_size&#39; must be an odd number.&quot;</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -215,7 +221,7 @@
         <span class="n">in_data</span> <span class="o">=</span> <span class="n">in_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">yoff</span><span class="p">,</span> <span class="n">xsize</span><span class="p">,</span> <span class="n">rows</span><span class="p">)</span>
         <span class="c1"># defor (during first period)</span>
         <span class="n">defor_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">in_data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-        <span class="n">defor_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">in_data</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">defor_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">in_data</span><span class="p">,</span> <span class="n">defor_values</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">win_defor</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">uniform_filter</span><span class="p">(</span>
             <span class="n">defor_data</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">win_size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="n">output</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -241,7 +247,8 @@
 
     <span class="c1"># Closing</span>
     <span class="n">out_band</span><span class="o">.</span><span class="n">FlushCache</span><span class="p">()</span>
-    <span class="n">out_band</span><span class="o">.</span><span class="n">ComputeStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">out_band</span><span class="o">.</span><span class="n">ComputeStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">cb</span><span class="p">)</span>
     <span class="k">del</span> <span class="n">out_ds</span><span class="p">,</span> <span class="n">in_ds</span>
     <span class="k">return</span> <span class="kc">None</span></div>
 

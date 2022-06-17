@@ -20,13 +20,14 @@ if os.environ.get("DISPLAY", "") == "":
     matplotlib.use("Agg")
 
 # Local imports
-from .misc import invlogit, make_dir
+from .misc import invlogit, make_dir, tree
 from .dist_edge_threshold import dist_edge_threshold
 from .local_defor_rate import local_defor_rate
 from .set_defor_cat_zero import set_defor_cat_zero
 from .defrate_per_cat import defrate_per_cat
 from .defor_cat import defor_cat
 from .validation import validation
+from .makemap import makemap
 
 # # Welcome message
 # print("# riskmapjnr: Map of deforestation risk following JNR methodology.")

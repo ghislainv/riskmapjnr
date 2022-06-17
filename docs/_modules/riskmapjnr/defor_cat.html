@@ -121,8 +121,8 @@
 
 
 <span class="c1"># defor_cat</span>
-<div class="viewcode-block" id="defor_cat"><a class="viewcode-back" href="../../reference.html#riskmapjnr.defor_cat.defor_cat">[docs]</a><span class="k">def</span> <span class="nf">defor_cat</span><span class="p">(</span><span class="n">ldefrate_with_zero_file</span><span class="p">,</span>
-              <span class="n">defor_cat_file</span><span class="o">=</span><span class="s2">&quot;defor_cat.tif&quot;</span><span class="p">,</span>
+<div class="viewcode-block" id="defor_cat"><a class="viewcode-back" href="../../reference.html#riskmapjnr.defor_cat">[docs]</a><span class="k">def</span> <span class="nf">defor_cat</span><span class="p">(</span><span class="n">ldefrate_with_zero_file</span><span class="p">,</span>
+              <span class="n">riskmap_file</span><span class="o">=</span><span class="s2">&quot;riskmap.tif&quot;</span><span class="p">,</span>
               <span class="n">ncat</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
               <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Equal Area&quot;</span><span class="p">,</span>
               <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
@@ -148,7 +148,7 @@
 <span class="sd">        forest edge) have value 10001. This file is typically obtained</span>
 <span class="sd">        with function ``set_defor_cat_zero()``.</span>
 
-<span class="sd">    :param defor_cat_file: Output raster file with categories of</span>
+<span class="sd">    :param riskmap_file: Output raster file with categories of</span>
 <span class="sd">        deforestation risk.</span>
 
 <span class="sd">    :param ncat: Number of deforestation risk categories (zero</span>
@@ -163,7 +163,7 @@
 <span class="sd">        to ``True``.</span>
 
 <span class="sd">    :return: None. A raster file with deforestation categories will be</span>
-<span class="sd">        created (see ``defor_cat_file``). Data range from 0 to 30. Raster</span>
+<span class="sd">        created (see ``riskmap_file``). Data range from 0 to 30. Raster</span>
 <span class="sd">        type is Byte ([0, 255]). NoData value is set to 255.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -194,7 +194,7 @@
 
     <span class="c1"># Create categorical (cat) raster file for deforestation risk</span>
     <span class="n">driver</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="s2">&quot;GTiff&quot;</span><span class="p">)</span>
-    <span class="n">cat_ds</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">defor_cat_file</span><span class="p">,</span> <span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">cat_ds</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">riskmap_file</span><span class="p">,</span> <span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
                            <span class="n">gdal</span><span class="o">.</span><span class="n">GDT_Byte</span><span class="p">,</span>
                            <span class="p">[</span><span class="s2">&quot;COMPRESS=LZW&quot;</span><span class="p">,</span> <span class="s2">&quot;PREDICTOR=2&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;BIGTIFF=YES&quot;</span><span class="p">])</span>
@@ -266,7 +266,8 @@
 
     <span class="c1"># Compute statistics</span>
     <span class="n">cat_band</span><span class="o">.</span><span class="n">FlushCache</span><span class="p">()</span>
-    <span class="n">cat_band</span><span class="o">.</span><span class="n">ComputeStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">cat_band</span><span class="o">.</span><span class="n">ComputeStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">cb</span><span class="p">)</span>
 
     <span class="c1"># Dereference drivers</span>
     <span class="n">cat_band</span> <span class="o">=</span> <span class="kc">None</span>
@@ -277,19 +278,19 @@
 
 <span class="c1"># # Test</span>
 <span class="c1"># ldefrate_with_zero_file = &quot;outputs/defor_cat_zero.tif&quot;</span>
-<span class="c1"># defor_cat_file = &quot;outputs/defor_cat.tif&quot;</span>
+<span class="c1"># riskmap_file = &quot;outputs/riskmap.tif&quot;</span>
 <span class="c1"># ncat = 30</span>
 <span class="c1"># method = &quot;Equal Area&quot;</span>
 <span class="c1"># blk_rows = 128</span>
 
 <span class="c1"># defor_cat(ldefrate_with_zero_file,</span>
-<span class="c1">#           defor_cat_file=&quot;outputs/defor_cat_equal_interval.tif&quot;,</span>
+<span class="c1">#           riskmap_file=&quot;outputs/riskmap_equal_interval.tif&quot;,</span>
 <span class="c1">#           ncat=30,</span>
 <span class="c1">#           method=&quot;Equal Interval&quot;,</span>
 <span class="c1">#           blk_rows=128)</span>
 
 <span class="c1"># defor_cat(ldefrate_with_zero_file,</span>
-<span class="c1">#           defor_cat_file=&quot;outputs/defor_cat_equal_area.tif&quot;,</span>
+<span class="c1">#           riskmap_file=&quot;outputs/riskmap_equal_area.tif&quot;,</span>
 <span class="c1">#           ncat=30,</span>
 <span class="c1">#           method=&quot;Equal Area&quot;,</span>
 <span class="c1">#           blk_rows=128)</span>

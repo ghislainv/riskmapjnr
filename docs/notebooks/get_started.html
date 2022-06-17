@@ -63,13 +63,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Get Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">1 Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#deforestation-risk-and-distance-to-forest-edge">2 Deforestation risk and distance to forest edge</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#local-deforestation-rate">3 Local deforestation rate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pixels-with-zero-risk-of-deforestation">4 Pixels with zero risk of deforestation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#categories-of-deforestation-risk">5 Categories of deforestation risk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#deforestation-rates-per-category-of-risk">6 Deforestation rates per category of risk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#validation">7 Validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#final-risk-map">8 Final risk map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#derive-the-deforestation-risk-map">2 Derive the deforestation risk map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#results">3 Results</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference.html">Python API</a></li>
@@ -125,16 +120,10 @@
 <span class="kn">import</span> <span class="nn">pkg_resources</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 
 <span class="kn">import</span> <span class="nn">riskmapjnr</span> <span class="k">as</span> <span class="nn">rmj</span>
-</pre></div>
-</div>
-<p>We create some directories to hold the data and the ouputs with the
-function <code class="docutils literal notranslate"><span class="pre">rmj.make_dir()</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">make_dir</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We increase the cache for GDAL to increase computational speed.</p>
@@ -159,35 +148,38 @@ function <code class="docutils literal notranslate"><span class="pre">rmj.make_d
 </div>
 </section>
 </section>
+<section id="derive-the-deforestation-risk-map">
+<h2>2 Derive the deforestation risk map<a class="headerlink" href="#derive-the-deforestation-risk-map" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results_makemap</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">makemap</span><span class="p">(</span>
+    <span class="n">fcc_file</span><span class="o">=</span><span class="s2">&quot;data/fcc123_GLP.tif&quot;</span><span class="p">,</span>
+    <span class="n">time_interval</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;outputs_makemap&quot;</span><span class="p">,</span>
+    <span class="n">clean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">dist_bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
+    <span class="n">win_sizes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+    <span class="n">ncat</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Equal Interval&quot;</span><span class="p">,</span> <span class="s2">&quot;Equal Area&quot;</span><span class="p">],</span>
+    <span class="n">csize</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">),</span>
+    <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="results">
+<h2>3 Results<a class="headerlink" href="#results" title="Permalink to this heading">¶</a></h2>
 <section id="deforestation-risk-and-distance-to-forest-edge">
-<h2>2 Deforestation risk and distance to forest edge<a class="headerlink" href="#deforestation-risk-and-distance-to-forest-edge" title="Permalink to this heading">¶</a></h2>
-<p>The first step is to compute the distance to the forest edge after which the risk of deforestation becomes negligible. Indeed, it is known from previous studies on tropical deforestation that the deforestation risk decreases rapidly with the distance to the forest edge and that most of the deforestation occurs close to the forest edge (Vieilledent et al., 2013, Grinand et al., 2020, Vieilledent, 2021, Dezécache et al., 2017). The JNR methodology suggests identifying the distance to the forest edge <span class="math notranslate nohighlight">\(d\)</span>, so that at least 99% of the deforestation occurs within a distance <span class="math notranslate nohighlight">\(\leq d\)</span>. Forest areas located at a distance from the forest edge <span class="math notranslate nohighlight">\(\gt d\)</span> can be considered as having no risk of being deforested. As a consequence, forest pixels with a distance from the forest edge <span class="math notranslate nohighlight">\(\gt d\)</span> are assigned category 0 (zero) for the deforestation risk.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="s2">&quot;outputs/plot_dist.png&quot;</span>
-<span class="n">dist_edge_thres</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">dist_edge_threshold</span><span class="p">(</span>
-    <span class="n">input_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
-    <span class="n">dist_file</span><span class="o">=</span><span class="s2">&quot;outputs/dist_edge.tif&quot;</span><span class="p">,</span>
-    <span class="n">tab_file</span><span class="o">=</span><span class="s2">&quot;outputs/tab_dist.csv&quot;</span><span class="p">,</span>
-    <span class="n">fig_file</span><span class="o">=</span><span class="n">ofile</span><span class="p">,</span>
-    <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
-    <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-<span class="n">ofile</span>
+<h3>3.1 Deforestation risk and distance to forest edge<a class="headerlink" href="#deforestation-risk-and-distance-to-forest-edge" title="Permalink to this heading">¶</a></h3>
+<p>Distance threshold.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dist_thresh</span> <span class="o">=</span> <span class="n">results_makemap</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The distance theshold is </span><span class="si">{</span><span class="n">dist_thresh</span><span class="si">}</span><span class="s2"> m&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<figure class="align-default" id="id1">
-<span id="fig-dist-edge"></span><a class="reference internal image-reference" href="../_images/plot_dist.png"><img alt="../_images/plot_dist.png" src="../_images/plot_dist.png" style="width: 600px;" /></a>
-<figcaption>
-<p><span class="caption-text"><strong>Identifying areas for which the risk of deforestation is negligible.</strong> Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge ≤ 120 m. Forest areas located at a distance &gt; 120 m from the forest edge can be considered as having no risk of being deforested.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
-</figcaption>
-</figure>
-<p>The function returns a dictionnary including the distance threshold.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dist_thresh</span> <span class="o">=</span> <span class="n">dist_edge_thres</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The distance threshold is </span><span class="si">{</span><span class="n">dist_thresh</span><span class="si">}</span><span class="s2"> m&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">distance</span> <span class="n">theshold</span> <span class="ow">is</span> <span class="mi">180</span> <span class="n">m</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">distance</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="mi">120</span> <span class="n">m</span>
-</pre></div>
-</div>
-<p>A table indicating the cumulative percentage of deforestation as a function of the distance is also produced:</p>
+<p>We can have access to a table indicating the cumulative percentage of deforestation as a function of the distance.</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Distance</p></th>
@@ -199,301 +191,85 @@ function <code class="docutils literal notranslate"><span class="pre">rmj.make_d
 </thead>
 <tbody>
 <tr class="row-even"><td><p>30</p></td>
-<td><p>25325</p></td>
-<td><p>2279.25</p></td>
-<td><p>2279.25</p></td>
-<td><p>85.2263</p></td>
+<td><p>53389</p></td>
+<td><p>4805.01</p></td>
+<td><p>4805.01</p></td>
+<td><p>75.253</p></td>
 </tr>
 <tr class="row-odd"><td><p>60</p></td>
-<td><p>3134</p></td>
-<td><p>282.06</p></td>
-<td><p>2561.31</p></td>
-<td><p>95.7732</p></td>
+<td><p>10235</p></td>
+<td><p>921.15</p></td>
+<td><p>5726.16</p></td>
+<td><p>89.6795</p></td>
 </tr>
 <tr class="row-even"><td><p>90</p></td>
-<td><p>869</p></td>
-<td><p>78.21</p></td>
-<td><p>2639.52</p></td>
-<td><p>98.6976</p></td>
+<td><p>3848</p></td>
+<td><p>346.32</p></td>
+<td><p>6072.48</p></td>
+<td><p>95.1033</p></td>
 </tr>
 <tr class="row-odd"><td><p>120</p></td>
-<td><p>235</p></td>
-<td><p>21.15</p></td>
-<td><p>2660.67</p></td>
-<td><p>99.4885</p></td>
+<td><p>1474</p></td>
+<td><p>132.66</p></td>
+<td><p>6205.14</p></td>
+<td><p>97.181</p></td>
 </tr>
 <tr class="row-even"><td><p>150</p></td>
-<td><p>91</p></td>
-<td><p>8.19</p></td>
-<td><p>2668.86</p></td>
-<td><p>99.7947</p></td>
+<td><p>914</p></td>
+<td><p>82.26</p></td>
+<td><p>6287.4</p></td>
+<td><p>98.4693</p></td>
 </tr>
 <tr class="row-odd"><td><p>180</p></td>
-<td><p>30</p></td>
-<td><p>2.7</p></td>
-<td><p>2671.56</p></td>
-<td><p>99.8957</p></td>
+<td><p>428</p></td>
+<td><p>38.52</p></td>
+<td><p>6325.92</p></td>
+<td><p>99.0725</p></td>
 </tr>
 <tr class="row-even"><td><p>210</p></td>
-<td><p>15</p></td>
-<td><p>1.35</p></td>
-<td><p>2672.91</p></td>
-<td><p>99.9462</p></td>
+<td><p>230</p></td>
+<td><p>20.7</p></td>
+<td><p>6346.62</p></td>
+<td><p>99.3967</p></td>
 </tr>
 <tr class="row-odd"><td><p>240</p></td>
-<td><p>5</p></td>
-<td><p>0.45</p></td>
-<td><p>2673.36</p></td>
-<td><p>99.963</p></td>
+<td><p>178</p></td>
+<td><p>16.02</p></td>
+<td><p>6362.64</p></td>
+<td><p>99.6476</p></td>
 </tr>
 <tr class="row-even"><td><p>270</p></td>
-<td><p>2</p></td>
-<td><p>0.18</p></td>
-<td><p>2673.54</p></td>
-<td><p>99.9697</p></td>
+<td><p>90</p></td>
+<td><p>8.1</p></td>
+<td><p>6370.74</p></td>
+<td><p>99.7745</p></td>
 </tr>
 <tr class="row-odd"><td><p>300</p></td>
-<td><p>2</p></td>
-<td><p>0.18</p></td>
-<td><p>2673.72</p></td>
-<td><p>99.9764</p></td>
+<td><p>39</p></td>
+<td><p>3.51</p></td>
+<td><p>6374.25</p></td>
+<td><p>99.8294</p></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="local-deforestation-rate">
-<h2>3 Local deforestation rate<a class="headerlink" href="#local-deforestation-rate" title="Permalink to this heading">¶</a></h2>
-<p>The second step is to compute a local risk of deforestation at the pixel level using a moving window made of several pixels. The deforestation risk is estimated from the deforestation rate inside the moving window. The deforestation rate <span class="math notranslate nohighlight">\(\theta\)</span> (in %/yr) is computed from the formula <span class="math notranslate nohighlight">\(\theta=(\alpha_2/\alpha_1)^{1/\tau}-1\)</span>, with <span class="math notranslate nohighlight">\(\alpha\)</span> the forest areas (in ha) at time <span class="math notranslate nohighlight">\(t_1\)</span> and <span class="math notranslate nohighlight">\(t_2\)</span>, and <span class="math notranslate nohighlight">\(\tau\)</span>, the time interval (in yr) between time <span class="math notranslate nohighlight">\(t_1\)</span> and <span class="math notranslate nohighlight">\(t_2\)</span>. Using the deforestation rate formula, the moving window and the past forest cover change map, we can derive a raster map describing the local risk of deforestation at the same resolution as the input map.</p>
-<p>To save space on disk, deforestation rates are converted to integer values between 0 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10<sup>-4</sup>for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set window size</span>
-<span class="n">ws</span> <span class="o">=</span> <span class="mi">31</span>
-<span class="c1"># Compute local deforestation rate</span>
-<span class="n">rmj</span><span class="o">.</span><span class="n">local_defor_rate</span><span class="p">(</span><span class="n">input_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
-                     <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;outputs/ldefrate_ws</span><span class="si">{}</span><span class="s2">.tif&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ws</span><span class="p">),</span>
-                     <span class="n">win_size</span><span class="o">=</span><span class="n">ws</span><span class="p">,</span>
-                     <span class="n">time_interval</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                     <span class="n">blk_rows</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="pixels-with-zero-risk-of-deforestation">
-<h2>4 Pixels with zero risk of deforestation<a class="headerlink" href="#pixels-with-zero-risk-of-deforestation" title="Permalink to this heading">¶</a></h2>
-<p>This third step sets a value of 10001 to pixels with zero deforestation risk. As explained previously, a risk of deforestation of zero is assumed when distance to forest edge is greater than the distance below which more than 99% of the deforestation occurs.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">set_defor_cat_zero</span><span class="p">(</span>
-    <span class="n">input_file</span><span class="o">=</span><span class="s2">&quot;outputs/ldefrate_ws31.tif&quot;</span><span class="p">,</span>
-    <span class="n">dist_file</span><span class="o">=</span><span class="s2">&quot;outputs/dist_edge.tif&quot;</span><span class="p">,</span>
-    <span class="n">dist_thresh</span><span class="o">=</span><span class="n">dist_thresh</span><span class="p">,</span>
-    <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;outputs/defor_cat_zero.tif&quot;</span><span class="p">,</span>
-    <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
-    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="categories-of-deforestation-risk">
-<h2>5 Categories of deforestation risk<a class="headerlink" href="#categories-of-deforestation-risk" title="Permalink to this heading">¶</a></h2>
-<p>The fourth step implies converting the continuous values of the raster map of deforestation risk to categorical values. The JNR methodology suggests to use 31 classes of risk from “0” to “30” including the “0” class for the forest pixels with no risk of being deforested (located at a distance to the forest edge <span class="math notranslate nohighlight">\(&gt; d\)</span>, see first step). Following the JNR methodology, at least three slicing algorithms must be compared to derive the categorical map of deforestation risk, such as “equal area”, “equal interval”, and “natural breaks”. With the “equal area” algorithm, each class from “1” to “30” must cover approximately the same area. With the “equal interval” algorithm, classes from “1” to “30” correspond to bins of deforestation risk of the same range. In this case, some risk classes will be in majority in the landscape compared to other classes of lower frequency. With the “natural breaks” algorithm, the continuous deforestation risk is normalized before running an “equal interval” algorithm.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">defor_cat</span><span class="p">(</span><span class="n">input_file</span><span class="o">=</span><span class="s2">&quot;outputs/defor_cat_zero.tif&quot;</span><span class="p">,</span>
-              <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;outputs/defor_cat.tif&quot;</span><span class="p">,</span>
-              <span class="n">nbins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-              <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Equal Area&quot;</span><span class="p">,</span>
-              <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="deforestation-rates-per-category-of-risk">
-<h2>6 Deforestation rates per category of risk<a class="headerlink" href="#deforestation-rates-per-category-of-risk" title="Permalink to this heading">¶</a></h2>
-<p>Before the validation step, we need to compute the historical deforestation rates (in %/yr) for each category of spatial deforestation risk. The historical deforestation rates are computed for the calibration period (here 2000–2010). Deforestation rates provide estimates of the percentage of forest (which is then converted to an area of forest) that should be deforested inside each forest pixel which belongs to a given category of deforestation risk.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">defrate_per_cat</span><span class="p">(</span>
-    <span class="n">fcc_file</span> <span class="o">=</span> <span class="n">fcc_file</span><span class="p">,</span>
-    <span class="n">defor_cat_file</span> <span class="o">=</span> <span class="s2">&quot;outputs/defor_cat.tif&quot;</span><span class="p">,</span>
-    <span class="n">time_interval</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="n">tab_file</span> <span class="o">=</span> <span class="s2">&quot;outputs/defrate_per_cat.csv&quot;</span><span class="p">,</span>
-    <span class="n">blk_rows</span> <span class="o">=</span> <span class="mi">128</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>A table indicating the deforestation rate per category of deforestation is produced:</p>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>cat</p></th>
-<th class="head"><p>nfor</p></th>
-<th class="head"><p>ndefor</p></th>
-<th class="head"><p>rate</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>1</p></td>
-<td><p>39841</p></td>
-<td><p>8</p></td>
-<td><p>0.00200617</p></td>
-</tr>
-<tr class="row-odd"><td><p>2</p></td>
-<td><p>13367</p></td>
-<td><p>29</p></td>
-<td><p>0.0214846</p></td>
-</tr>
-<tr class="row-even"><td><p>3</p></td>
-<td><p>13238</p></td>
-<td><p>46</p></td>
-<td><p>0.0342101</p></td>
-</tr>
-<tr class="row-odd"><td><p>4</p></td>
-<td><p>13348</p></td>
-<td><p>72</p></td>
-<td><p>0.05265</p></td>
-</tr>
-<tr class="row-even"><td><p>5</p></td>
-<td><p>13290</p></td>
-<td><p>105</p></td>
-<td><p>0.0762562</p></td>
-</tr>
-<tr class="row-odd"><td><p>6</p></td>
-<td><p>13309</p></td>
-<td><p>150</p></td>
-<td><p>0.107158</p></td>
-</tr>
-<tr class="row-even"><td><p>7</p></td>
-<td><p>13328</p></td>
-<td><p>168</p></td>
-<td><p>0.119136</p></td>
-</tr>
-<tr class="row-odd"><td><p>8</p></td>
-<td><p>13175</p></td>
-<td><p>184</p></td>
-<td><p>0.1312</p></td>
-</tr>
-<tr class="row-even"><td><p>9</p></td>
-<td><p>13435</p></td>
-<td><p>232</p></td>
-<td><p>0.159864</p></td>
-</tr>
-<tr class="row-odd"><td><p>10</p></td>
-<td><p>13272</p></td>
-<td><p>268</p></td>
-<td><p>0.184534</p></td>
-</tr>
-<tr class="row-even"><td><p>11</p></td>
-<td><p>13336</p></td>
-<td><p>348</p></td>
-<td><p>0.232344</p></td>
-</tr>
-<tr class="row-odd"><td><p>12</p></td>
-<td><p>13291</p></td>
-<td><p>386</p></td>
-<td><p>0.255262</p></td>
-</tr>
-<tr class="row-even"><td><p>13</p></td>
-<td><p>13308</p></td>
-<td><p>410</p></td>
-<td><p>0.2687</p></td>
-</tr>
-<tr class="row-odd"><td><p>14</p></td>
-<td><p>13296</p></td>
-<td><p>491</p></td>
-<td><p>0.313587</p></td>
-</tr>
-<tr class="row-even"><td><p>15</p></td>
-<td><p>13304</p></td>
-<td><p>628</p></td>
-<td><p>0.383405</p></td>
-</tr>
-<tr class="row-odd"><td><p>16</p></td>
-<td><p>13315</p></td>
-<td><p>649</p></td>
-<td><p>0.393287</p></td>
-</tr>
-<tr class="row-even"><td><p>17</p></td>
-<td><p>13285</p></td>
-<td><p>611</p></td>
-<td><p>0.375516</p></td>
-</tr>
-<tr class="row-odd"><td><p>18</p></td>
-<td><p>13333</p></td>
-<td><p>763</p></td>
-<td><p>0.44528</p></td>
-</tr>
-<tr class="row-even"><td><p>19</p></td>
-<td><p>13308</p></td>
-<td><p>955</p></td>
-<td><p>0.525106</p></td>
-</tr>
-<tr class="row-odd"><td><p>20</p></td>
-<td><p>13301</p></td>
-<td><p>1041</p></td>
-<td><p>0.557349</p></td>
-</tr>
-<tr class="row-even"><td><p>21</p></td>
-<td><p>13304</p></td>
-<td><p>1270</p></td>
-<td><p>0.633328</p></td>
-</tr>
-<tr class="row-odd"><td><p>22</p></td>
-<td><p>13288</p></td>
-<td><p>1509</p></td>
-<td><p>0.700437</p></td>
-</tr>
-<tr class="row-even"><td><p>23</p></td>
-<td><p>13321</p></td>
-<td><p>1623</p></td>
-<td><p>0.727261</p></td>
-</tr>
-<tr class="row-odd"><td><p>24</p></td>
-<td><p>13300</p></td>
-<td><p>1790</p></td>
-<td><p>0.764367</p></td>
-</tr>
-<tr class="row-even"><td><p>25</p></td>
-<td><p>13302</p></td>
-<td><p>2280</p></td>
-<td><p>0.847442</p></td>
-</tr>
-<tr class="row-odd"><td><p>26</p></td>
-<td><p>13314</p></td>
-<td><p>2751</p></td>
-<td><p>0.901193</p></td>
-</tr>
-<tr class="row-even"><td><p>27</p></td>
-<td><p>13295</p></td>
-<td><p>3834</p></td>
-<td><p>0.966697</p></td>
-</tr>
-<tr class="row-odd"><td><p>28</p></td>
-<td><p>13314</p></td>
-<td><p>6932</p></td>
-<td><p>0.99936</p></td>
-</tr>
-</tbody>
-</table>
-<p>From this table, we see that except for category 1, categories have approximately the same surface area (corresponding to about 13300 pixels). Note that the number of categories might be slightly inferior to 30. Note also that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (close to 0), and category 28 represents well a category with very high deforestation risk (close to 1).</p>
 </section>
 <section id="validation">
-<h2>7 Validation<a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h2>
-<p>The fifth step focuses on comparing the map of deforestation risk with a deforestation map corresponding to the validation period. The validation period follows the calibration period and provides independent observations of deforestation.</p>
-<p>To do so, we consider a square grid of at least 1000 spatial cells containing at least one forest pixel at the beginning of the validation period. Following JNR specification, the cell size should be <span class="math notranslate nohighlight">\(\leq\)</span> 10 km. Note that with the map of deforestation risk, each forest pixel at the beginning of the validation period falls into a category of deforestation risk. For each cell of the grid, we compute the predicted area of deforestation (in ha) given the map of deforestation risk and the historical deforestation rates for each category of deforestation risk computed on the calibration period (see previous step).</p>
-<p>We can then compare the predicted deforestation with the observed deforestation in that spatial cell for the validation period. Because all cells don’t have the same forest cover at the beginning of the validation period, a weight <span class="math notranslate nohighlight">\(w_j\)</span> is computed for each grid cell <span class="math notranslate nohighlight">\(j\)</span> such that <span class="math notranslate nohighlight">\(w_j=\beta_j / B\)</span>, with <span class="math notranslate nohighlight">\(\beta_j\)</span> the forest cover (in ha) in the cell <span class="math notranslate nohighlight">\(j\)</span> at the beginning of the validation period and <span class="math notranslate nohighlight">\(B\)</span> the total forest cover in the jurisdiction (in ha) at the same date. We then calculate the weighted root mean squared error (wRMSE) from the observed and predicted deforestation for each cell and the cell weights.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="s2">&quot;outputs/pred_obs.png&quot;</span>
-<span class="n">rmj</span><span class="o">.</span><span class="n">validation</span><span class="p">(</span>
-    <span class="n">fcc_file</span> <span class="o">=</span> <span class="n">fcc_file</span><span class="p">,</span>
-    <span class="n">time_interval</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="n">defor_cat_file</span> <span class="o">=</span> <span class="s2">&quot;outputs/defor_cat.tif&quot;</span><span class="p">,</span>
-    <span class="n">defrate_per_cat_file</span> <span class="o">=</span> <span class="s2">&quot;outputs/defrate_per_cat.csv&quot;</span><span class="p">,</span>
-    <span class="n">csize</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
-    <span class="n">tab_file</span> <span class="o">=</span> <span class="s2">&quot;outputs/validation_data.csv&quot;</span><span class="p">,</span>
-    <span class="n">fig_file</span> <span class="o">=</span> <span class="n">ofile</span><span class="p">,</span>
-    <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">),</span>
-    <span class="n">dpi</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<h3>3.2 Validation<a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="s2">&quot;outputs_makemap/pred_obs_ws5_ei.png&quot;</span>
 <span class="n">ofile</span>
 </pre></div>
 </div>
-<figure class="align-default" id="id2">
-<span id="fig-pred-obs"></span><a class="reference internal image-reference" href="../_images/pred_obs.png"><img alt="../_images/pred_obs.png" src="../_images/pred_obs.png" style="width: 600px;" /></a>
+<figure class="align-default" id="id1">
+<span id="fig-pred-obs"></span><a class="reference internal image-reference" href="../_images/pred_obs_ws5_ei.png"><img alt="../_images/pred_obs_ws5_ei.png" src="../_images/pred_obs_ws5_ei.png" style="width: 600px;" /></a>
 <figcaption>
-<p><span class="caption-text"><strong>Relationship between observed and predicted deforestation in 1 x 1 km grid cells</strong>. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (<span class="math notranslate nohighlight">\(n\)</span>, the number of spatial cells) are reported on the graph.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text"><strong>Relationship between observed and predicted deforestation in 1 x 1 km grid cells</strong>. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (<span class="math notranslate nohighlight">\(n\)</span>, the number of spatial cells) are reported on the graph.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 </figcaption>
 </figure>
 </section>
-<section id="final-risk-map">
-<h2>8 Final risk map<a class="headerlink" href="#final-risk-map" title="Permalink to this heading">¶</a></h2>
-<p>The user must repeat the procedure and obtain risk maps for various window size and slicing algorithms. Following the JNR methodology, at least 25 different sizes for the moving window must be tested together with two slicing algorithms (“Equal Interval” and “Equal Area”), thus leading to a minimum of 50 different maps of deforestation risk. The map with the smallest wRMSE value is considered the best risk map. Once the best risk map is identified, with the corresponding window size and slicing algorithm, a final risk map is derived considering both the calibration and validation period.</p>
+<section id="riskmap">
+<h3>3.3 Riskmap<a class="headerlink" href="#riskmap" title="Permalink to this heading">¶</a></h3>
+<p>To be done.</p>
+</section>
 </section>
 </section>
 

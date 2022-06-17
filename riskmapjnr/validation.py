@@ -22,7 +22,7 @@ from .misc import progress_bar, make_square
 
 # validation
 def validation(fcc_file, time_interval,
-               defor_cat_file, tab_file_defrate,
+               riskmap_file, tab_file_defrate,
                csize=300,
                tab_file_pred="pred_obs.csv",
                fig_file_pred="pred_obs.png",
@@ -48,7 +48,7 @@ def validation(fcc_file, time_interval,
     :param time_interval: Time interval (in years) for forest cover
         change observations.
 
-    :param defor_cat_file: Input raster file with categories of
+    :param riskmap_file: Input raster file with categories of
         spatial deforestation risk. This file is typically obtained
         with function ``defor_cat()``.
 
@@ -92,7 +92,7 @@ def validation(fcc_file, time_interval,
     fcc_band = fcc_ds.GetRasterBand(1)
 
     # Get defor_cat raster data
-    defor_cat_ds = gdal.Open(defor_cat_file)
+    defor_cat_ds = gdal.Open(riskmap_file)
     defor_cat_band = defor_cat_ds.GetRasterBand(1)
 
     # Get defrate per cat
@@ -107,7 +107,7 @@ def validation(fcc_file, time_interval,
     # Check categories
     if not np.array_equal(cat_csv, cat_raster):
         msg = ("Categories in the 'defrate_per_cat_file' csv file do not"
-               "correspond to categories in the 'defor_cat_file' raster"
+               "correspond to categories in the 'riskmap_file' raster"
                "file.")
         raise ValueError(msg)
     else:
@@ -214,6 +214,7 @@ def validation(fcc_file, time_interval,
     y_text = 0
     plt.text(x_text, y_text, t, ha="right", va="bottom")
     fig.savefig(fig_file_pred)
+    plt.close(fig)
 
     # Results
     return {'wRMSE': wRMSE, 'ncell': ncell,
@@ -223,7 +224,7 @@ def validation(fcc_file, time_interval,
 # # Test
 # fcc_file = "data/fcc123.tif"
 # time_interval = 10
-# defor_cat_file = "outputs/defor_cat.tif"
+# riskmap_file = "outputs/defor_cat.tif"
 # defrate_per_cat_file = "outputs/defrate_per_cat.csv"
 # csize = 500
 # tab_file_pred = "outputs/validation_data.csv"
@@ -231,7 +232,7 @@ def validation(fcc_file, time_interval,
 # figsize = (6.4, 4.8)
 # dpi = 100
 
-# validation(fcc_file, time_interval, defor_cat_file, tab_file_defrate,
+# validation(fcc_file, time_interval, riskmap_file, tab_file_defrate,
 #            csize, tab_file_pred, fig_file_pred)
 
 # End

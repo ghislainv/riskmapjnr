@@ -251,6 +251,7 @@ def dist_edge_threshold(fcc_file,
     y2_text = perc_thresh - 0.01 * (100 - np.min(res_df["perc"]))
     plt.text(x2_text, y2_text, t2, ha="left", va="top")
     fig.savefig(fig_file_dist)
+    plt.close(fig)
 
     # Results
     return {'tot_def': tot_area_def, 'dist_thresh': dist_thresh,

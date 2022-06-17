@@ -213,8 +213,9 @@
         <span class="n">catzero_band</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">catzero_data</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
 
     <span class="c1"># Compute statistics</span>
-    <span class="n">catzero_band</span><span class="o">.</span><span class="n">FlushCache</span><span class="p">()</span>  <span class="c1"># Write cache data to disk</span>
-    <span class="n">catzero_band</span><span class="o">.</span><span class="n">ComputeStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">catzero_band</span><span class="o">.</span><span class="n">FlushCache</span><span class="p">()</span>
+    <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">catzero_band</span><span class="o">.</span><span class="n">ComputeStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">cb</span><span class="p">)</span>
 
     <span class="c1"># Dereference drivers</span>
     <span class="n">catzero_band</span> <span class="o">=</span> <span class="kc">None</span>

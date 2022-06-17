@@ -122,8 +122,8 @@
 
 
 <span class="c1"># validation</span>
-<div class="viewcode-block" id="validation"><a class="viewcode-back" href="../../reference.html#riskmapjnr.validation.validation">[docs]</a><span class="k">def</span> <span class="nf">validation</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
-               <span class="n">defor_cat_file</span><span class="p">,</span> <span class="n">tab_file_defrate</span><span class="p">,</span>
+<div class="viewcode-block" id="validation"><a class="viewcode-back" href="../../reference.html#riskmapjnr.validation">[docs]</a><span class="k">def</span> <span class="nf">validation</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
+               <span class="n">riskmap_file</span><span class="p">,</span> <span class="n">tab_file_defrate</span><span class="p">,</span>
                <span class="n">csize</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
                <span class="n">tab_file_pred</span><span class="o">=</span><span class="s2">&quot;pred_obs.csv&quot;</span><span class="p">,</span>
                <span class="n">fig_file_pred</span><span class="o">=</span><span class="s2">&quot;pred_obs.png&quot;</span><span class="p">,</span>
@@ -149,7 +149,7 @@
 <span class="sd">    :param time_interval: Time interval (in years) for forest cover</span>
 <span class="sd">        change observations.</span>
 
-<span class="sd">    :param defor_cat_file: Input raster file with categories of</span>
+<span class="sd">    :param riskmap_file: Input raster file with categories of</span>
 <span class="sd">        spatial deforestation risk. This file is typically obtained</span>
 <span class="sd">        with function ``defor_cat()``.</span>
 
@@ -193,7 +193,7 @@
     <span class="n">fcc_band</span> <span class="o">=</span> <span class="n">fcc_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Get defor_cat raster data</span>
-    <span class="n">defor_cat_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">defor_cat_file</span><span class="p">)</span>
+    <span class="n">defor_cat_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">riskmap_file</span><span class="p">)</span>
     <span class="n">defor_cat_band</span> <span class="o">=</span> <span class="n">defor_cat_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Get defrate per cat</span>
@@ -208,7 +208,7 @@
     <span class="c1"># Check categories</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">cat_csv</span><span class="p">,</span> <span class="n">cat_raster</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Categories in the &#39;defrate_per_cat_file&#39; csv file do not&quot;</span>
-               <span class="s2">&quot;correspond to categories in the &#39;defor_cat_file&#39; raster&quot;</span>
+               <span class="s2">&quot;correspond to categories in the &#39;riskmap_file&#39; raster&quot;</span>
                <span class="s2">&quot;file.&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -226,10 +226,9 @@
     <span class="n">y</span> <span class="o">=</span> <span class="n">squareinfo</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
     <span class="n">nx</span> <span class="o">=</span> <span class="n">squareinfo</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
     <span class="n">ny</span> <span class="o">=</span> <span class="n">squareinfo</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Divide region in </span><span class="si">{}</span><span class="s2"> square cells&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nsquare</span><span class="p">))</span>
 
     <span class="c1"># Cell size in km</span>
-    <span class="n">csize_km</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">csize</span> <span class="o">*</span> <span class="n">gt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">csize_km</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">csize</span> <span class="o">*</span> <span class="n">gt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Create a table to save the results</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;cell&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nsquare</span><span class="p">)),</span> <span class="s2">&quot;nfor_obs&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -257,8 +256,10 @@
             <span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
         <span class="n">defor_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">defor_cat_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">categories</span><span class="o">=</span><span class="n">cat</span><span class="p">)</span>
         <span class="n">defor_cat_count</span> <span class="o">=</span> <span class="n">defor_cat</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="s2">&quot;ndefor_pred&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">defor_cat_count</span> <span class="o">*</span>
-                                          <span class="n">defrate_per_cat</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="s2">&quot;ndefor_pred&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">defor_cat_count</span> <span class="o">*</span>
+                                             <span class="n">defrate_per_cat</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="c1"># Note: np.nansum is used here as some cat might not exist and</span>
+        <span class="c1"># have nan for defrate (eg. in the case of Equal Interval).</span>
 
     <span class="c1"># Dereference drivers</span>
     <span class="k">del</span> <span class="n">fcc_ds</span><span class="p">,</span> <span class="n">defor_cat_ds</span>
@@ -289,7 +290,7 @@
     <span class="n">w</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;nfor_obs_ha&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;nfor_obs_ha&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
     <span class="n">error_pred</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor_pred_ha&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor_obs_ha&quot;</span><span class="p">]</span>
     <span class="n">squared_error</span> <span class="o">=</span> <span class="p">(</span><span class="n">error_pred</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
-    <span class="n">wRMSE</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">squared_error</span> <span class="o">*</span> <span class="n">w</span><span class="p">)))</span>
+    <span class="n">wRMSE</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">squared_error</span> <span class="o">*</span> <span class="n">w</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Plot title</span>
     <span class="n">title</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Predicted vs. observed deforestation (ha) &quot;</span>
@@ -314,6 +315,7 @@
     <span class="n">y_text</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x_text</span><span class="p">,</span> <span class="n">y_text</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_file_pred</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
 
     <span class="c1"># Results</span>
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;wRMSE&#39;</span><span class="p">:</span> <span class="n">wRMSE</span><span class="p">,</span> <span class="s1">&#39;ncell&#39;</span><span class="p">:</span> <span class="n">ncell</span><span class="p">,</span>
@@ -323,7 +325,7 @@
 <span class="c1"># # Test</span>
 <span class="c1"># fcc_file = &quot;data/fcc123.tif&quot;</span>
 <span class="c1"># time_interval = 10</span>
-<span class="c1"># defor_cat_file = &quot;outputs/defor_cat.tif&quot;</span>
+<span class="c1"># riskmap_file = &quot;outputs/defor_cat.tif&quot;</span>
 <span class="c1"># defrate_per_cat_file = &quot;outputs/defrate_per_cat.csv&quot;</span>
 <span class="c1"># csize = 500</span>
 <span class="c1"># tab_file_pred = &quot;outputs/validation_data.csv&quot;</span>
@@ -331,7 +333,7 @@
 <span class="c1"># figsize = (6.4, 4.8)</span>
 <span class="c1"># dpi = 100</span>
 
-<span class="c1"># validation(fcc_file, time_interval, defor_cat_file, defrate_per_cat_file,</span>
+<span class="c1"># validation(fcc_file, time_interval, riskmap_file, tab_file_defrate,</span>
 <span class="c1">#            csize, tab_file_pred, fig_file_pred)</span>
 
 <span class="c1"># End</span>
