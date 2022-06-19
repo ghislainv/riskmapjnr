@@ -62,6 +62,7 @@
 <li class="toctree-l1"><a class="reference internal" href="notebooks/get_started.html">Get Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Python API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-riskmapjnr">Main functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-riskmapjnr.plot">Plot functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-riskmapjnr.misc.miscellaneous">Miscellaneous functions</a></li>
 </ul>
 </li>
@@ -533,6 +534,67 @@ Error (in hectares) for the deforestation predictions,
 the beginning of the validation period, <code class="docutils literal notranslate"><span class="pre">csize</span></code>: the cell size
 in number of pixels, <code class="docutils literal notranslate"><span class="pre">csize_km</span></code>: the cell size in
 kilometers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-riskmapjnr.plot">
+<span id="plot-functions"></span><h2>Plot functions<a class="headerlink" href="#module-riskmapjnr.plot" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.plot.fcc123">
+<span class="sig-name descname"><span class="pre">fcc123</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_fcc_raster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fcc123.png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxpixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[(255,</span> <span class="pre">165,</span> <span class="pre">0,</span> <span class="pre">255),</span> <span class="pre">(227,</span> <span class="pre">26,</span> <span class="pre">28,</span> <span class="pre">255),</span> <span class="pre">(34,</span> <span class="pre">139,</span> <span class="pre">34,</span> <span class="pre">255)]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(11.69,</span> <span class="pre">8.27)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/plot.html#fcc123"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.plot.fcc123" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot forest-cover change (fcc123) map.</p>
+<p>This function plots the forest-cover change map with 2
+deforestation time-periods (2000 -&gt; 2010 -&gt; 2020 for example) plus
+the remaining forest (3 classes).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_fcc_raster</strong> – Path to fcc123 raster.</p></li>
+<li><p><strong>output_file</strong> – Name of the plot file.</p></li>
+<li><p><strong>maxpixels</strong> – Maximum number of pixels to plot.</p></li>
+<li><p><strong>borders</strong> – Vector file to be plotted.</p></li>
+<li><p><strong>zoom</strong> – Zoom to region (xmin, xmax, ymin, ymax).</p></li>
+<li><p><strong>col</strong> – List of rgba colors for classes 123.</p></li>
+<li><p><strong>figsize</strong> – Figure size in inches.</p></li>
+<li><p><strong>dpi</strong> – Resolution for output image.</p></li>
+<li><p><strong>**kwargs</strong> – see below.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><p>Additional arguments to plot borders.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A Matplotlib figure of the forest cover change map.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.plot.riskmap">
+<span class="sig-name descname"><span class="pre">riskmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_risk_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prob.png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxpixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(11.69,</span> <span class="pre">8.27)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/plot.html#riskmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.plot.riskmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot deforestation risk map.</p>
+<p>This function plots the spatial probability of deforestation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_risk_map</strong> – Path to risk map.</p></li>
+<li><p><strong>output_file</strong> – Name of the plot file.</p></li>
+<li><p><strong>maxpixels</strong> – Maximum number of pixels to plot.</p></li>
+<li><p><strong>borders</strong> – Vector file to be plotted.</p></li>
+<li><p><strong>legend</strong> – Add colorbar if True.</p></li>
+<li><p><strong>figsize</strong> – Figure size in inches.</p></li>
+<li><p><strong>dpi</strong> – Resolution for output image.</p></li>
+<li><p><strong>**kwargs</strong> – see below.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><p>Additional arguments to plot borders.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A Matplotlib figure of the map of spatial probability of
+deforestation.</p>
 </dd>
 </dl>
 </dd></dl>

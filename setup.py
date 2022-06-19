@@ -62,7 +62,8 @@ setup(name="riskmapjnr",
       packages=find_packages(),
       package_dir={"riskmapjnr": "./riskmapjnr"},
       package_data={
-          "riskmapjnr": ["data/fcc123_GLP.tif"]
+          "riskmapjnr": ["data/fcc123_GLP.tif",
+                         "data/ctry_border_GLP.gpkg"]
       },
       include_package_data=True,
       entry_points={

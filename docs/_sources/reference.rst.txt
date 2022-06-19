@@ -11,6 +11,14 @@ Main functions
    :undoc-members:
    :show-inheritance:
 
+Plot functions
+**************
+
+.. automodule:: riskmapjnr.plot
+   :members: fcc123, riskmap
+   :undoc-members:
+   :show-inheritance:
+      
 Miscellaneous functions
 ***********************
 

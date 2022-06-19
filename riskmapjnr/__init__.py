@@ -28,6 +28,7 @@ from .defrate_per_cat import defrate_per_cat
 from .defor_cat import defor_cat
 from .validation import validation
 from .makemap import makemap
+from .plot import fcc123, riskmap
 
 # # Welcome message
 # print("# riskmapjnr: Map of deforestation risk following JNR methodology.")
