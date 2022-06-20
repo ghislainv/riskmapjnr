@@ -134,7 +134,7 @@ We derive the deforestation risk map using the =makemap()= function. This functi
 results_makemap = rmj.makemap(
     fcc_file=fcc_file,
     time_interval=[10, 10],
-    output_dir="outputs_makemap",
+    output_dir=out_dir,
     clean=False,
     dist_bins=np.arange(0, 1080, step=30),
     win_sizes=np.arange(5, 48, 16),
@@ -166,7 +166,7 @@ print(f"The distance theshold is {dist_thresh} m.")
 We have access to a table indicating the cumulative percentage of deforestation as a function of the distance to forest edge.
 
 #+begin_src python :results value raw :session :exports results
-perc_df = pd.read_csv("outputs_makemap/perc_dist.csv", na_filter=False)
+perc_df = pd.read_csv(os.path.join(out_dir, "perc_dist.csv"), na_filter=False)
 col_names = ["Distance", "Npixels", "Area", "Cumulation", "Percentage"]
 tabulate(perc_df.head(10), headers=col_names, tablefmt="orgtbl", showindex=False)
 #+end_src
@@ -188,7 +188,7 @@ tabulate(perc_df.head(10), headers=col_names, tablefmt="orgtbl", showindex=False
 We also have access to a plot showing how the cumulative percentage of deforestation increases with the distance to forest edge.
 
 #+begin_src python :results file :session :exports both
-ofile = "outputs_makemap/perc_dist.png"
+ofile = os.path.join(out_dir, "perc_dist.png")
 ofile
 #+end_src
 
@@ -216,7 +216,7 @@ print(f"The best slicing algorithm is '{m_hat}'.")
 ** Validation
 
 #+begin_src python :results file :session :exports both
-ofile = "outputs_makemap/pred_obs_ws5_ei.png"
+ofile = os.path.join(out_dir, "pred_obs_ws5_ei.png")
 ofile
 #+end_src
 
@@ -231,7 +231,7 @@ ofile
 We plot the risk map using the =plot.riskmap()= function.
 
 #+begin_src python :results file :session :exports both
-ofile = os.path.join("outputs_makemap", "riskmap_ws5_ei.png")
+ofile = os.path.join(out_dir, "riskmap_ws5_ei.png")
 riskmap_fig = rmj.plot.riskmap(
     input_risk_map="outputs_makemap/riskmap_ws5_ei.tif",
     maxpixels=1e8,

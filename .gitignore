@@ -5,6 +5,7 @@ notes.org
 docsrc/notebooks/data
 docsrc/notebooks/outputs_makemap
 docsrc/notebooks/outputs_MDG
+docsrc/notebooks/outputs_steps
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

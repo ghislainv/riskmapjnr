@@ -8,6 +8,7 @@ Table of contents
 
    Home <self>
    notebooks/get_started
+   articles
    reference
    indices
    changelog

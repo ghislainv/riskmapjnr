@@ -20,7 +20,7 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Python API" href="../reference.html" />
+    <link rel="next" title="Articles" href="../articles.html" />
     <link rel="prev" title="riskmapjnr Python package" href="../index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -67,6 +67,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#results">3 Results</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../articles.html">Articles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference.html">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../indices.html">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
@@ -78,7 +79,7 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="../index.html" title="previous chapter"><code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package</a></li>
-      <li>Next: <a href="../reference.html" title="next chapter">Python API</a></li>
+      <li>Next: <a href="../articles.html" title="next chapter">Articles</a></li>
   </ul></li>
 </ul>
 </div>
@@ -180,7 +181,7 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results_makemap</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">makemap</span><span class="p">(</span>
     <span class="n">fcc_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
     <span class="n">time_interval</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;outputs_makemap&quot;</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">,</span>
     <span class="n">clean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">dist_bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
     <span class="n">win_sizes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
@@ -280,7 +281,7 @@
 </tbody>
 </table>
 <p>We also have access to a plot showing how the cumulative percentage of deforestation increases with the distance to forest edge.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="s2">&quot;outputs_makemap/perc_dist.png&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;perc_dist.png&quot;</span><span class="p">)</span>
 <span class="n">ofile</span>
 </pre></div>
 </div>
@@ -307,7 +308,7 @@
 </section>
 <section id="validation">
 <h3>3.3 Validation<a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="s2">&quot;outputs_makemap/pred_obs_ws5_ei.png&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;pred_obs_ws5_ei.png&quot;</span><span class="p">)</span>
 <span class="n">ofile</span>
 </pre></div>
 </div>
@@ -321,7 +322,7 @@
 <section id="risk-map-of-deforestation">
 <h3>3.4 Risk map of deforestation<a class="headerlink" href="#risk-map-of-deforestation" title="Permalink to this heading">¶</a></h3>
 <p>We plot the risk map using the <code class="docutils literal notranslate"><span class="pre">plot.riskmap()</span></code> function.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;outputs_makemap&quot;</span><span class="p">,</span> <span class="s2">&quot;riskmap_ws5_ei.png&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;riskmap_ws5_ei.png&quot;</span><span class="p">)</span>
 <span class="n">riskmap_fig</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">riskmap</span><span class="p">(</span>
     <span class="n">input_risk_map</span><span class="o">=</span><span class="s2">&quot;outputs_makemap/riskmap_ws5_ei.tif&quot;</span><span class="p">,</span>
     <span class="n">maxpixels</span><span class="o">=</span><span class="mf">1e8</span><span class="p">,</span>

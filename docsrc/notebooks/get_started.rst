@@ -95,7 +95,7 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
     results_makemap = rmj.makemap(
         fcc_file=fcc_file,
         time_interval=[10, 10],
-        output_dir="outputs_makemap",
+        output_dir=out_dir,
         clean=False,
         dist_bins=np.arange(0, 1080, step=30),
         win_sizes=np.arange(5, 48, 16),
@@ -157,7 +157,7 @@ We also have access to a plot showing how the cumulative percentage of deforesta
 
 .. code:: python
 
-    ofile = "outputs_makemap/perc_dist.png"
+    ofile = os.path.join(out_dir, "perc_dist.png")
     ofile
 
 .. _fig:perc_dist:
@@ -190,7 +190,7 @@ We identify the moving window size and the slicing algorithm of the best model.
 
 .. code:: python
 
-    ofile = "outputs_makemap/pred_obs_ws5_ei.png"
+    ofile = os.path.join(out_dir, "pred_obs_ws5_ei.png")
     ofile
 
 .. _fig:pred_obs:
@@ -208,7 +208,7 @@ We plot the risk map using the ``plot.riskmap()`` function.
 
 .. code:: python
 
-    ofile = os.path.join("outputs_makemap", "riskmap_ws5_ei.png")
+    ofile = os.path.join(out_dir, "riskmap_ws5_ei.png")
     riskmap_fig = rmj.plot.riskmap(
         input_risk_map="outputs_makemap/riskmap_ws5_ei.tif",
         maxpixels=1e8,
