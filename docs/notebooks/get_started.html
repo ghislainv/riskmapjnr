@@ -118,6 +118,7 @@
 <p>Import the Python modules needed to run the analysis.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 <span class="kn">import</span> <span class="nn">pkg_resources</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -177,7 +178,14 @@
 </section>
 <section id="derive-the-deforestation-risk-map">
 <h2>2 Derive the deforestation risk map<a class="headerlink" href="#derive-the-deforestation-risk-map" title="Permalink to this heading">¶</a></h2>
-<p>We derive the deforestation risk map using the <code class="docutils literal notranslate"><span class="pre">makemap()</span></code> function. This function calls a sequence of functions from the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package which perform all the steps detailed in the JNR methodology.</p>
+<p>We derive the deforestation risk map using the <code class="docutils literal notranslate"><span class="pre">makemap()</span></code> function. This function calls a sequence of functions from the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package which perform all the steps detailed in the JNR methodology. We can use parallel computing using several CPUs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ncpu</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total number of CPUs: </span><span class="si">{</span><span class="n">ncpu</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">CPUs</span><span class="p">:</span> <span class="mf">8.</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results_makemap</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">makemap</span><span class="p">(</span>
     <span class="n">fcc_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
     <span class="n">time_interval</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
@@ -186,6 +194,8 @@
     <span class="n">dist_bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
     <span class="n">win_sizes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
     <span class="n">ncat</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">ncpu</span><span class="o">=</span><span class="n">ncpu</span><span class="p">,</span>
     <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Equal Interval&quot;</span><span class="p">,</span> <span class="s2">&quot;Equal Area&quot;</span><span class="p">],</span>
     <span class="n">csize</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
     <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">),</span>
@@ -220,62 +230,62 @@
 <tbody>
 <tr class="row-even"><td><p>30</p></td>
 <td><p>52150</p></td>
-<td><p>4693.31</p></td>
-<td><p>4693.31</p></td>
+<td><p>4693.5</p></td>
+<td><p>4693.5</p></td>
 <td><p>73.6676</p></td>
 </tr>
 <tr class="row-odd"><td><p>60</p></td>
 <td><p>10755</p></td>
-<td><p>967.911</p></td>
-<td><p>5661.22</p></td>
+<td><p>967.95</p></td>
+<td><p>5661.45</p></td>
 <td><p>88.8602</p></td>
 </tr>
 <tr class="row-even"><td><p>90</p></td>
 <td><p>4192</p></td>
-<td><p>377.265</p></td>
-<td><p>6038.49</p></td>
+<td><p>377.28</p></td>
+<td><p>6038.73</p></td>
 <td><p>94.7818</p></td>
 </tr>
 <tr class="row-odd"><td><p>120</p></td>
 <td><p>1654</p></td>
-<td><p>148.854</p></td>
-<td><p>6187.34</p></td>
+<td><p>148.86</p></td>
+<td><p>6187.59</p></td>
 <td><p>97.1183</p></td>
 </tr>
 <tr class="row-even"><td><p>150</p></td>
 <td><p>968</p></td>
-<td><p>87.1165</p></td>
-<td><p>6274.46</p></td>
+<td><p>87.12</p></td>
+<td><p>6274.71</p></td>
 <td><p>98.4857</p></td>
 </tr>
 <tr class="row-odd"><td><p>180</p></td>
 <td><p>402</p></td>
-<td><p>36.1785</p></td>
-<td><p>6310.64</p></td>
+<td><p>36.18</p></td>
+<td><p>6310.89</p></td>
 <td><p>99.0536</p></td>
 </tr>
 <tr class="row-even"><td><p>210</p></td>
 <td><p>233</p></td>
-<td><p>20.9692</p></td>
-<td><p>6331.6</p></td>
+<td><p>20.97</p></td>
+<td><p>6331.86</p></td>
 <td><p>99.3827</p></td>
 </tr>
 <tr class="row-odd"><td><p>240</p></td>
 <td><p>149</p></td>
-<td><p>13.4095</p></td>
-<td><p>6345.01</p></td>
+<td><p>13.41</p></td>
+<td><p>6345.27</p></td>
 <td><p>99.5932</p></td>
 </tr>
 <tr class="row-even"><td><p>270</p></td>
 <td><p>100</p></td>
-<td><p>8.99964</p></td>
-<td><p>6354.01</p></td>
+<td><p>9</p></td>
+<td><p>6354.27</p></td>
 <td><p>99.7344</p></td>
 </tr>
 <tr class="row-odd"><td><p>300</p></td>
 <td><p>46</p></td>
-<td><p>4.13983</p></td>
-<td><p>6358.15</p></td>
+<td><p>4.14</p></td>
+<td><p>6358.41</p></td>
 <td><p>99.7994</p></td>
 </tr>
 </tbody>
@@ -308,7 +318,7 @@
 </section>
 <section id="validation">
 <h3>3.3 Validation<a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;pred_obs_ws5_ei.png&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;pred_obs_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
 <span class="n">ofile</span>
 </pre></div>
 </div>

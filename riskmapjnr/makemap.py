@@ -108,7 +108,7 @@ def makemap_ws(i, win_size, fcc_file, time_interval, dist_file,
         wRMSE_list.append(val["wRMSE"])
 
     # Return iteration and wRMSE
-    return (i, wRMSE_list)
+    return (i, wRMSE_list, val["ncell"], val["csize_km"])
 
 
 # makemap
@@ -327,7 +327,7 @@ def makemap(fcc_file, time_interval,
         # Loop on window sizes
         for i in range(n_ws):
             s = win_sizes[i]
-            i, wRMSE_list = makemap_ws(
+            i, wRMSE_list, ncell, csize_km = makemap_ws(
                 i, s, fcc_file, time_interval, dist_file,
                 dist_edge_thres, calval_dir, ncat, methods,
                 meth, n_m, csize, figsize, dpi, blk_rows,
@@ -342,6 +342,8 @@ def makemap(fcc_file, time_interval,
                 meth, n_m, csize, figsize, dpi, blk_rows,
                  verbose) for i, s in enumerate(win_sizes)]
         res = pool.starmap_async(makemap_ws, args).get()
+        ncell = res[0][2]
+        csize_km = res[0][3]
         wRMSE_obj = [r[1] for r in res]
         df.loc[:, "wRMSE"] = np.array(wRMSE_obj).flatten()
 
@@ -464,8 +466,8 @@ def makemap(fcc_file, time_interval,
     return {'tot_def': dist_edge_thres["tot_def"],
             'dist_thresh': dist_edge_thres["dist_thresh"],
             'perc_thresh': dist_edge_thres["perc_thresh"],
-            'ncell': val["ncell"], 'csize': csize,
-            'csize_km': val["csize_km"],
+            'ncell': ncell, 'csize': csize,
+            'csize_km': csize_km,
             'ws_hat': ws_hat, 'm_hat': m_hat,
             'wRMSE_hat': wRMSE_hat}
 

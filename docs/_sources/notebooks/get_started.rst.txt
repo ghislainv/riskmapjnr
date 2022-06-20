@@ -17,6 +17,7 @@ Import the Python modules needed to run the analysis.
 
     # Imports
     import os
+    import multiprocessing as mp
     import pkg_resources
 
     import numpy as np
@@ -88,7 +89,17 @@ We plot the forest cover change map with the ``plot.fcc123()`` function.
 2 Derive the deforestation risk map
 -----------------------------------
 
-We derive the deforestation risk map using the ``makemap()`` function. This function calls a sequence of functions from the ``riskmapjnr`` package which perform all the steps detailed in the JNR methodology.
+We derive the deforestation risk map using the ``makemap()`` function. This function calls a sequence of functions from the ``riskmapjnr`` package which perform all the steps detailed in the JNR methodology. We can use parallel computing using several CPUs.
+
+.. code:: python
+
+    ncpu = mp.cpu_count()
+    print(f"Total number of CPUs: {ncpu}.") 
+
+::
+
+    Total number of CPUs: 8.
+
 
 .. code:: python
 
@@ -100,6 +111,8 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
         dist_bins=np.arange(0, 1080, step=30),
         win_sizes=np.arange(5, 48, 16),
         ncat=30,
+        parallel=True,
+        ncpu=ncpu,
         methods=["Equal Interval", "Equal Area"],
         csize=40,
         figsize=(6.4, 4.8),
@@ -129,29 +142,29 @@ We have access to a table indicating the cumulative percentage of deforestation 
 
 .. table::
 
-    +----------+---------+---------+------------+------------+
-    | Distance | Npixels |    Area | Cumulation | Percentage |
-    +==========+=========+=========+============+============+
-    |       30 |   52150 | 4693.31 |    4693.31 |    73.6676 |
-    +----------+---------+---------+------------+------------+
-    |       60 |   10755 | 967.911 |    5661.22 |    88.8602 |
-    +----------+---------+---------+------------+------------+
-    |       90 |    4192 | 377.265 |    6038.49 |    94.7818 |
-    +----------+---------+---------+------------+------------+
-    |      120 |    1654 | 148.854 |    6187.34 |    97.1183 |
-    +----------+---------+---------+------------+------------+
-    |      150 |     968 | 87.1165 |    6274.46 |    98.4857 |
-    +----------+---------+---------+------------+------------+
-    |      180 |     402 | 36.1785 |    6310.64 |    99.0536 |
-    +----------+---------+---------+------------+------------+
-    |      210 |     233 | 20.9692 |     6331.6 |    99.3827 |
-    +----------+---------+---------+------------+------------+
-    |      240 |     149 | 13.4095 |    6345.01 |    99.5932 |
-    +----------+---------+---------+------------+------------+
-    |      270 |     100 | 8.99964 |    6354.01 |    99.7344 |
-    +----------+---------+---------+------------+------------+
-    |      300 |      46 | 4.13983 |    6358.15 |    99.7994 |
-    +----------+---------+---------+------------+------------+
+    +----------+---------+--------+------------+------------+
+    | Distance | Npixels |   Area | Cumulation | Percentage |
+    +==========+=========+========+============+============+
+    |       30 |   52150 | 4693.5 |     4693.5 |    73.6676 |
+    +----------+---------+--------+------------+------------+
+    |       60 |   10755 | 967.95 |    5661.45 |    88.8602 |
+    +----------+---------+--------+------------+------------+
+    |       90 |    4192 | 377.28 |    6038.73 |    94.7818 |
+    +----------+---------+--------+------------+------------+
+    |      120 |    1654 | 148.86 |    6187.59 |    97.1183 |
+    +----------+---------+--------+------------+------------+
+    |      150 |     968 |  87.12 |    6274.71 |    98.4857 |
+    +----------+---------+--------+------------+------------+
+    |      180 |     402 |  36.18 |    6310.89 |    99.0536 |
+    +----------+---------+--------+------------+------------+
+    |      210 |     233 |  20.97 |    6331.86 |    99.3827 |
+    +----------+---------+--------+------------+------------+
+    |      240 |     149 |  13.41 |    6345.27 |    99.5932 |
+    +----------+---------+--------+------------+------------+
+    |      270 |     100 |      9 |    6354.27 |    99.7344 |
+    +----------+---------+--------+------------+------------+
+    |      300 |      46 |   4.14 |    6358.41 |    99.7994 |
+    +----------+---------+--------+------------+------------+
 
 We also have access to a plot showing how the cumulative percentage of deforestation increases with the distance to forest edge.
 
@@ -190,7 +203,7 @@ We identify the moving window size and the slicing algorithm of the best model.
 
 .. code:: python
 
-    ofile = os.path.join(out_dir, "pred_obs_ws5_ei.png")
+    ofile = os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
     ofile
 
 .. _fig:pred_obs:
