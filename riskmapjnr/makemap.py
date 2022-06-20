@@ -11,6 +11,7 @@
 
 import os
 import shutil
+import multiprocessing as mp
 
 # Third party imports
 from matplotlib import pyplot as plt
@@ -23,6 +24,93 @@ from . import dist_edge_threshold, local_defor_rate, set_defor_cat_zero
 from . import defor_cat, defrate_per_cat, validation
 
 
+# Function for computing by window size
+def makemap_ws(i, win_size, fcc_file, time_interval, dist_file,
+               dist_edge_thres, calval_dir, ncat, methods, meth, n_m,
+               csize, figsize, dpi, blk_rows, verbose):
+
+    # Window size
+    s = win_size
+
+    # Output files for calibration and validation
+    ldefrate_file = os.path.join(calval_dir, f"ldefrate_ws{s}.tif")
+    ldefrate_with_zero_file = os.path.join(calval_dir,
+                                           f"ldefrate_ws{s}_with_zero.tif")
+
+    # Local deforestation rates
+    local_defor_rate(
+        fcc_file=fcc_file,
+        defor_values=1,  # First period
+        ldefrate_file=ldefrate_file,
+        win_size=s,
+        time_interval=time_interval[0],
+        blk_rows=blk_rows,
+        verbose=False)
+
+    # Pixels with zero risk of deforestation
+    set_defor_cat_zero(
+        ldefrate_file=ldefrate_file,
+        dist_file=dist_file,
+        dist_thresh=dist_edge_thres["dist_thresh"],
+        ldefrate_with_zero_file=ldefrate_with_zero_file,
+        blk_rows=blk_rows,
+        verbose=False)
+
+    # wRMSE list
+    wRMSE_list = []
+
+    # Loop on slicing methods
+    for j in range(n_m):
+        # Method
+        m = meth[j]
+        mm = methods[j]
+        # Message
+        if verbose:
+            imod = i * n_m + j
+            print(f".. Model {imod}: window size = {s}, "
+                  f"slicing method = {m}.")
+        # Output files
+        riskmap_file = os.path.join(calval_dir,
+                                    f"riskmap_ws{s}_{m}.tif")
+        tab_file_defrate = os.path.join(calval_dir,
+                                        f"defrate_per_cat_ws{s}_{m}.csv")
+        tab_file_pred = os.path.join(calval_dir, f"pred_obs_ws{s}_{m}.csv")
+        fig_file_pred = os.path.join(calval_dir, f"pred_obs_ws{s}_{m}.png")
+        # Categories of deforestation risk
+        defor_cat(
+            ldefrate_with_zero_file=ldefrate_with_zero_file,
+            riskmap_file=riskmap_file,
+            ncat=ncat,
+            method=mm,
+            blk_rows=blk_rows,
+            verbose=False)
+        # Compute deforestation rates per cat
+        defrate_per_cat(
+            fcc_file,
+            defor_values=1,
+            riskmap_file=riskmap_file,
+            time_interval=time_interval[0],
+            tab_file_defrate=tab_file_defrate,
+            blk_rows=blk_rows,
+            verbose=False)
+        # Validation
+        val = validation(
+            fcc_file=fcc_file,
+            time_interval=time_interval[1],
+            riskmap_file=riskmap_file,
+            tab_file_defrate=tab_file_defrate,
+            csize=csize,
+            tab_file_pred=tab_file_pred,
+            fig_file_pred=fig_file_pred,
+            figsize=figsize,
+            dpi=dpi,
+            verbose=False)
+        wRMSE_list.append(val["wRMSE"])
+
+    # Return iteration and wRMSE
+    return (i, wRMSE_list)
+
+
 # makemap
 def makemap(fcc_file, time_interval,
             output_dir="outputs",
@@ -32,6 +120,8 @@ def makemap(fcc_file, time_interval,
             ncat=30,
             methods=["Equal Interval", "Equal Area"],
             csize=300,
+            parallel=False,
+            ncpu=4,
             figsize=(6.4, 4.8),
             dpi=100,
             blk_rows=128,
@@ -149,6 +239,11 @@ def makemap(fcc_file, time_interval,
         correspond to a distance < 10 km. Default to 300 corresponding
         to 9 km for a 30 m resolution raster.
 
+    :param parallel: Logical. Parallel (if ``True``) or sequential (if
+        ``False``) computing. Default to ``False``.
+
+    :param ncpu: Number of CPUs for parallel computing.
+
     :param figsize: Figure sizes.
 
     :param dpi: Resolution for output images.
@@ -227,82 +322,28 @@ def makemap(fcc_file, time_interval,
         blk_rows=blk_rows,
         verbose=False)
 
-    # Loop on window sizes
-    for i in range(n_ws):
-        # Window size
-        s = win_sizes[i]
-        # Output files
-        ldefrate_file = os.path.join(output_dir, "calval",
-                                     f"ldefrate_ws{s}.tif")
-        ldefrate_with_zero_file = os.path.join(output_dir, "calval",
-                                               f"ldefrate_ws{s}_with_zero.tif")
-        # Local deforestation rates
-        local_defor_rate(
-            fcc_file=fcc_file,
-            defor_values=1,  # First period
-            ldefrate_file=ldefrate_file,
-            win_size=s,
-            time_interval=time_interval[0],
-            blk_rows=blk_rows,
-            verbose=False)
-        # Pixels with zero risk of deforestation
-        set_defor_cat_zero(
-            ldefrate_file=ldefrate_file,
-            dist_file=dist_file,
-            dist_thresh=dist_edge_thres["dist_thresh"],
-            ldefrate_with_zero_file=ldefrate_with_zero_file,
-            blk_rows=blk_rows,
-            verbose=False)
-        # Loop on slicing methods
-        for j in range(n_m):
-            # Method
-            m = meth[j]
-            mm = methods[j]
-            # Message
-            if verbose:
-                imod = i * n_m + j
-                print(f".. Model {imod}: window size = {s}, "
-                      f"slicing method = {m}.")
-            # Output files
-            riskmap_file = os.path.join(calval_dir,
-                                        f"riskmap_ws{s}_{m}.tif")
-            tab_file_defrate = os.path.join(calval_dir,
-                                            f"defrate_per_cat_ws{s}_{m}.csv")
-            tab_file_pred = os.path.join(calval_dir, f"pred_obs_ws{s}_{m}.csv")
-            fig_file_pred = os.path.join(calval_dir, f"pred_obs_ws{s}_{m}.png")
-            # Categories of deforestation risk
-            defor_cat(
-                ldefrate_with_zero_file=ldefrate_with_zero_file,
-                riskmap_file=riskmap_file,
-                ncat=ncat,
-                method=mm,
-                blk_rows=blk_rows,
-                verbose=False)
-            # Compute deforestation rates per cat
-            defrate_per_cat(
-                fcc_file,
-                defor_values=1,
-                riskmap_file=riskmap_file,
-                time_interval=time_interval[0],
-                tab_file_defrate=tab_file_defrate,
-                blk_rows=blk_rows,
-                verbose=False)
-            # Validation
-            val = validation(
-                fcc_file=fcc_file,
-                time_interval=time_interval[1],
-                riskmap_file=riskmap_file,
-                tab_file_defrate=tab_file_defrate,
-                csize=csize,
-                tab_file_pred=tab_file_pred,
-                fig_file_pred=fig_file_pred,
-                figsize=figsize,
-                dpi=dpi,
-                verbose=False)
-            # wRMSE
-            df.loc[(df["ws"] == s) &
-                   (df["m"] == m),
-                   "wRMSE"] = val["wRMSE"]
+    # Sequential computing
+    if parallel is False:
+        # Loop on window sizes
+        for i in range(n_ws):
+            s = win_sizes[i]
+            i, wRMSE_list = makemap_ws(
+                i, s, fcc_file, time_interval, dist_file,
+                dist_edge_thres, calval_dir, ncat, methods,
+                meth, n_m, csize, figsize, dpi, blk_rows,
+                verbose)
+            df.loc[df["ws"] == s, "wRMSE"] = wRMSE_list
+
+    # Parallel computing
+    if parallel is True:
+        pool = mp.Pool(processes=ncpu)
+        args = [(i, s, fcc_file, time_interval, dist_file,
+                dist_edge_thres, calval_dir, ncat, methods,
+                meth, n_m, csize, figsize, dpi, blk_rows,
+                 verbose) for i, s in enumerate(win_sizes)]
+        res = pool.starmap_async(makemap_ws, args).get()
+        wRMSE_obj = [r[1] for r in res]
+        df.loc[:, "wRMSE"] = np.array(wRMSE_obj).flatten()
 
     # Export the table of results
     df.to_csv(tab_file_map_comp, sep=",", header=True,
