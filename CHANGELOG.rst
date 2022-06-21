@@ -4,7 +4,9 @@ Changelog
 riskmapjnr 0.2
 --------------
 
-* Parallel computation for makemap().
+* Parallel computation for `makemap()`.
+* Benchmark to estimate advantage of parallel computing.
+* New tutorials on large jurisdictions (countries).
 
 riskmapjnr 0.1
 --------------

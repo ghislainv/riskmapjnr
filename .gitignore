@@ -3,9 +3,7 @@ notes.org
 
 # Notebook data and outputs
 docsrc/notebooks/data
-docsrc/notebooks/outputs_makemap
-docsrc/notebooks/outputs_MDG
-docsrc/notebooks/outputs_steps
+docsrc/notebooks/outputs*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

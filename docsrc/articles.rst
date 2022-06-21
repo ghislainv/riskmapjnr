@@ -6,5 +6,6 @@ Articles
 
    notebooks/get_started
    notebooks/steps
+   notebooks/parallel
 
    

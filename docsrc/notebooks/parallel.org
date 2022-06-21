@@ -1,0 +1,232 @@
+# -*- mode: org -*-
+# -*- coding: utf-8 -*-
+# -*- org-src-preserve-indentation: t; org-edit-src-content: 0; -*-
+# ==============================================================================
+# author          :Ghislain Vieilledent
+# email           :ghislain.vieilledent@cirad.fr, ghislainv@gmail.com
+# web             :https://ecology.ghislainv.fr
+# license         :GPLv3
+# ==============================================================================
+
+#+title: Parallel computing
+#+author:
+# #+author: Ghislain Vieilledent
+# #+email: ghislain.vieilledent@cirad.fr
+
+#+LANGUAGE: en
+#+TAGS: Blog(B) noexport(n) Stats(S)
+#+TAGS: Ecology(E) R(R) OrgMode(O) Python(P)
+#+EXPORT_SELECT_TAGS: Blog
+#+OPTIONS: H:3 num:t toc:nil \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+#+OPTIONS: html-postamble:nil
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+HTML_DOCTYPE: html5
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
+
+# For math display
+#+LATEX_HEADER: \usepackage{amsfonts}
+#+LATEX_HEADER: \usepackage{unicode-math}
+
+#+PROPERTY: header-args :eval never-export
+
+* Version information    :noexport:
+
+#+begin_src emacs-lisp -n :exports both
+(princ (concat
+        (format "Emacs version: %s\n"
+                (emacs-version))
+        (format "org version: %s\n"
+                (org-version))))        
+#+end_src
+
+#+RESULTS:
+: Emacs version: GNU Emacs 27.1 (build 1, x86_64-pc-linux-gnu, GTK+ Version 3.24.30, cairo version 1.16.0)
+:  of 2021-11-27, modified by Debian
+: org version: 9.5.3
+
+* Preamble
+
+Import the Python modules needed to run the analysis.
+
+#+begin_src python :results output :session :exports both
+# Imports
+import os
+import multiprocessing as mp
+import pkg_resources
+import time
+
+import numpy as np
+import pandas as pd
+from tabulate import tabulate
+
+import riskmapjnr as rmj
+#+end_src
+
+#+RESULTS:
+
+Increase the cache for GDAL to increase computational speed.
+
+#+begin_src python :results output :session :exports both
+# GDAL
+os.environ["GDAL_CACHEMAX"] = "1024"
+#+end_src
+
+#+RESULTS:
+
+Set the =PROJ_LIB= environmental variable.
+
+#+begin_src python :results output :session :exports both
+os.environ["PROJ_LIB"] = "/home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/share/proj"
+#+end_src
+
+#+RESULTS:
+
+Create a directory to save results.
+
+#+begin_src python :results output :session :exports both
+out_dir = "outputs_parallel"
+rmj.make_dir(out_dir)
+#+end_src
+
+#+RESULTS:
+
+Load forest data.
+
+#+begin_src python :results output :session :exports both
+fcc_file = pkg_resources.resource_filename("riskmapjnr", "data/fcc123_GLP.tif")
+print(fcc_file)
+border_file = pkg_resources.resource_filename("riskmapjnr", "data/ctry_border_GLP.gpkg")
+print(border_file)
+#+end_src
+
+#+RESULTS:
+: /home/ghislain/Code/riskmapjnr/riskmapjnr/data/fcc123_GLP.tif
+: /home/ghislain/Code/riskmapjnr/riskmapjnr/data/ctry_border_GLP.gpkg
+
+
+* Sequential computing
+
+We set =parallel= argument to =False= in the call to =makemap()= function.
+
+#+begin_src python :results output :session :exports both
+start_time = time.time()
+results_makemap = rmj.makemap(
+    fcc_file=fcc_file,
+    time_interval=[10, 10],
+    output_dir=out_dir,
+    clean=False,
+    dist_bins=np.arange(0, 1080, step=30),
+    win_sizes=np.arange(5, 48, 6),
+    ncat=30,
+    parallel=False,
+    ncpu=None,
+    methods=["Equal Interval", "Equal Area"],
+    csize=40,
+    figsize=(6.4, 4.8),
+    dpi=100,
+    blk_rows=128,
+    verbose=True)
+sec_seq = time.time() - start_time
+print('Time Taken:', time.strftime("%H:%M:%S",time.gmtime(sec_seq)))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Model calibration and validation
+.. Model 0: window size = 5, slicing method = ei.
+.. Model 1: window size = 5, slicing method = ea.
+.. Model 2: window size = 11, slicing method = ei.
+.. Model 3: window size = 11, slicing method = ea.
+.. Model 4: window size = 17, slicing method = ei.
+.. Model 5: window size = 17, slicing method = ea.
+.. Model 6: window size = 23, slicing method = ei.
+.. Model 7: window size = 23, slicing method = ea.
+.. Model 8: window size = 29, slicing method = ei.
+.. Model 9: window size = 29, slicing method = ea.
+.. Model 10: window size = 35, slicing method = ei.
+.. Model 11: window size = 35, slicing method = ea.
+.. Model 12: window size = 41, slicing method = ei.
+.. Model 13: window size = 41, slicing method = ea.
+.. Model 14: window size = 47, slicing method = ei.
+.. Model 15: window size = 47, slicing method = ea.
+Deriving risk map for entire historical period
+Time Taken: 00:01:27
+#+end_example
+
+* Parallel computing
+
+We use parallel computing using several CPUs. We set =parallel= argument to =True= in the call to =makemap()= function and set =ncpu= to =mp.cpu_count()= to use the maximum number of available CPUs (here 8). When using parallel computing, one CPU is used for each window size.
+
+#+begin_src python :results output :session :exports both
+ncpu = mp.cpu_count()
+print(f"Total number of CPUs: {ncpu}.") 
+#+end_src
+
+#+RESULTS:
+: Total number of CPUs: 8.
+ 
+#+begin_src python :results output :session :exports both
+start_time = time.time()
+results_makemap = rmj.makemap(
+    fcc_file=fcc_file,
+    time_interval=[10, 10],
+    output_dir=out_dir,
+    clean=False,
+    dist_bins=np.arange(0, 1080, step=30),
+    win_sizes=np.arange(5, 48, 6),
+    ncat=30,
+    parallel=True,
+    ncpu=ncpu,
+    methods=["Equal Interval", "Equal Area"],
+    csize=40,
+    figsize=(6.4, 4.8),
+    dpi=100,
+    blk_rows=128,
+    verbose=True)
+sec_par = time.time() - start_time
+print('Time Taken:', time.strftime("%H:%M:%S",time.gmtime(sec_par)))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Model calibration and validation
+.. Model 0: window size = 5, slicing method = ei.
+.. Model 2: window size = 11, slicing method = ei.
+.. Model 8: window size = 29, slicing method = ei.
+.. Model 4: window size = 17, slicing method = ei.
+.. Model 6: window size = 23, slicing method = ei.
+.. Model 10: window size = 35, slicing method = ei.
+.. Model 12: window size = 41, slicing method = ei.
+.. Model 14: window size = 47, slicing method = ei.
+.. Model 9: window size = 29, slicing method = ea.
+.. Model 3: window size = 11, slicing method = ea.
+.. Model 1: window size = 5, slicing method = ea.
+.. Model 11: window size = 35, slicing method = ea.
+.. Model 15: window size = 47, slicing method = ea.
+.. Model 13: window size = 41, slicing method = ea.
+.. Model 7: window size = 23, slicing method = ea.
+.. Model 5: window size = 17, slicing method = ea.
+Deriving risk map for entire historical period
+Time Taken: 00:00:36
+#+end_example
+
+* Results
+
+Sequential computing took 1m 27s against 36s for parallel computing considering 8 window sizes on 8 CPUs.
+
+* Environment setup and test :noexport:
+
+#+BEGIN_SRC python :results value
+import sys
+return(sys.executable)
+#+END_SRC
+
+#+RESULTS:
+: /home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/bin/python
+
+Local Variables:
+org-babel-python-command: "/home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/bin/python"
+org-babel-sh-command: "/bin/bash"
+End:
+
