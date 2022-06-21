@@ -1,0 +1,3 @@
+- For the final map, do we recompute the distance threshold given the entire historical period ? In this case, the distance will be automatically higher.
+- Because of cat 0, the map cannot be used to project beyond the duration of the historical period (either calibration period, say 5 years if 5, or entire historical period, say 10 years if 5 + 5).
+- Windows size should be small as if the window size is greater than distance to forest edge, it will include a lot of pixels where deforestation is low ??...    

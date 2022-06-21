@@ -1,0 +1,183 @@
+
+
+* Raster computation in parallel
+
+** Concurrent implementation
+
+[[https://github.com/neerubhai/GDAL-rasterio-tutorials/blob/master/Tutorial%203%20-%20Speed%20up%20analysis%20with%20concurrent%20and%20parallel%20processing%20techniques.ipynb][Source]]
+
+#+begin_src python :results output :session :exports both
+import os
+import time
+import matplotlib.pyplot as plt
+import rasterio
+from rasterio.plot import show
+import concurrent.futures
+from multiprocessing import cpu_count
+from Utils.NDVI import create_ndvi_array
+
+start_time = time.perf_counter()
+
+with rasterio.Env():
+    with rasterio.open(input_file) as src:
+        profile = input_src.profile
+        profile.update(blockxsize = 1024, blockysize = 1024, 
+                       tiled = True, count=1, dtype=rasterio.float64)
+        
+        with rasterio.open(out_NDVI_raster_c, "w", **profile) as outras:
+            #list of destination windows
+            windows = [window for ji, window in outras.block_windows()]
+            
+            #read input dataset for these windows
+            input_window_data = (input_src.read(window=window, masked=True) for window in windows)
+            
+            # multiply number of processors by 5 to overlap I/O
+            with concurrent.futures.ThreadPoolExecutor(
+                    max_workers=cpu_count()*5
+            ) as executor:
+                
+                for window, result in zip(
+                        windows, executor.map(create_ndvi_array, input_window_data)
+                ):
+                    outras.write(result, window=window)
+                    
+end_time = time.perf_counter()
+
+total_execution_time_c = end_time - start_time
+
+print("Time to execute concurrently (seconds): {t}".format(t=total_execution_time_c))
+#+end_src
+
+** Example in sepal
+
+[[https://github.com/12rambau/bfast_gpu/blob/8b3c89a95139ff75d40e5bc86c65f1f381e19389/component/scripts/process.py#L203][bfast]]
+
+#+begin_src python :results output :session :exports both
+def run_bfast(folder, out_dir, tiles, monitoring, history, freq, k, hfrac, trend, level, backend, out):
+    """pilot the different threads that will launch the bfast process on windows"""
+    
+    # prepare parameters for crop as a dict 
+    crop_params = {
+        'start': history,
+        'end': monitoring[1]
+    }
+        
+    # prepare parameters for the bfastmonitor function 
+    monitor_params = {
+        'start_monitor': monitoring[0],
+        'freq': freq,
+        'k': k,
+        'hfrac': hfrac,
+        'trend': trend,
+        'level': 1-level,  # it's an hidden parameter I hate it https://github.com/diku-dk/bfast/issues/23
+        'backend': backend
+    }
+    
+    # create 1 folder for each set of parameter
+    parameter_string = f'{history.year}_{monitoring[0].year}_{monitoring[1].year}_k{k}_f{freq}_t{int(trend)}_h{hfrac}_l{level}'
+    save_dir = cp.result_dir/out_dir/parameter_string
+    save_dir.mkdir(parents=True, exist_ok=True)
+    
+    # loop through the tiles
+    file_list = []
+    for tile in tiles:
+        
+        # get the starting time 
+        start = dt.now()
+        
+        # get the segment useful folders 
+        tile_dir = folder/tile
+        tile_save_dir = save_dir/tile
+        tile_save_dir.mkdir(exist_ok=True)
+        
+        # set the log and output file names
+        log_file = tile_save_dir/f'tile_{tile}.log'
+        file = tile_save_dir/'bfast_outputs.tif'
+        
+        # check the logs to see if the tile is already finished 
+        if log_file.is_file():
+            out.add_msg(cm.bfast.skip.format(tile))
+            time.sleep(.5) # to let people read the message
+            file_list.append(str(file))
+            continue
+        
+        # create the locks to avoid data coruption
+        read_lock = threading.Lock()
+        write_lock = threading.Lock()
+
+        # get the profile from the master vrt
+        with rio.open(tile_dir/'stack.vrt', GEOREF_SOURCES='INTERNAL') as src:
+            
+            windows_size = 1024
+            
+            profile = src.profile.copy()
+            profile.update(
+                blockxsize = windows_size, 
+                blockysize = windows_size,
+                driver = 'GTiff',
+                count = 3,
+                dtype = np.float32
+            )
+            
+            # execute the concurent threads and write the results in a dst file 
+            with rio.open(file, 'w', **profile) as dst:
+                
+                # get the windows
+                windows = [w for _, w in dst.block_windows()]
+
+                # display an tile computation message
+                out.add_live_msg(cm.bfast.sum_up.format(len(windows), tile))
+
+                # reset the output 
+                out.reset_progress(len(windows), cm.bfast.progress.format(tile))
+                
+                bfast_params = {
+                    'read_lock': read_lock, 
+                    'write_lock': write_lock,
+                    'src': src,
+                    'dst': dst,
+                    'segment_dir': tile_dir, 
+                    'monitor_params': monitor_params, 
+                    'crop_params': crop_params,
+                    'out': out
+                }
+                
+                # test outside the future
+                #for window in windows:
+                #    bfast_window(window, **bfast_params)
+                #    raise Exception ("done")
+                
+                with futures.ThreadPoolExecutor() as executor: # use all the available CPU/GPU
+                    executor.map(partial(bfast_window, **bfast_params), windows)
+        
+        # write in the logs that the tile is finished
+        write_logs(log_file, start, dt.now())
+        
+        # add the file to the file_list
+        file_list.append(str(file))
+        
+    # write a global vrt file to open all the tile at once
+    vrt_path = save_dir/f'bfast_outputs_{out_dir}.vrt'
+    ds = gdal.BuildVRT(str(vrt_path), file_list)
+    ds.FlushCache()
+        
+    # check that the file was effectively created (gdal doesn't raise errors)
+    if not vrt_path.is_file():
+        raise Exception(f"the vrt {vrt_path} was not created")
+    
+    # return a str for the traitlets 
+    return str(save_dir)
+#+end_src
+
+
+* Meeting
+
+https://fao.zoom.us/webinar/register/WN_UXvtKfr9QhuNTksTvHAITQ
+
+[[https://fao.zoom.us/w/91330904089?tk=f83xUHISc1DJs3akNAvlk3aNk6VyYtgWfYGtKRhw5LI.DQMAAAAVQ78AGRZlQWZqZVZ1eFR4MlBrbFR4bnBveTBnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&uuid=WN_UXvtKfr9QhuNTksTvHAITQ][Team meeting]]
+
+dask-rasterio,
+
+xarray, pas accès aux fonctions vectorisés dans dask
+
+rioxarray
