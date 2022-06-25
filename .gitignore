@@ -1,6 +1,7 @@
 # Notebook data and outputs
 docsrc/notebooks/data
 docsrc/notebooks/outputs*
+docsrc/notebooks/grassdata
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

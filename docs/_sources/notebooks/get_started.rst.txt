@@ -221,9 +221,10 @@ We plot the risk map using the ``plot.riskmap()`` function.
 
 .. code:: python
 
-    ofile = os.path.join(out_dir, "riskmap_ws5_ei.png")
+    ifile = os.path.join(out_dir, "riskmap_ws{ws_hat}_{m_hat}.tif")
+    ofile = os.path.join(out_dir, "riskmap_ws{ws_hat}_{m_hat}.png")
     riskmap_fig = rmj.plot.riskmap(
-        input_risk_map="outputs_makemap/riskmap_ws5_ei.tif",
+        input_risk_map=ifile,
         maxpixels=1e8,
         output_file=ofile,
         borders=border_file,

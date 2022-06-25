@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Get Started &#8212; riskmapjnr — Map of deforestation risk following JNR methodology</title>
+    <title>Kenya &#8212; riskmapjnr — Map of deforestation risk following JNR methodology</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Articles" href="../articles.html" />
-    <link rel="prev" title="riskmapjnr Python package" href="../index.html" />
+    <link rel="next" title="Python API" href="../reference.html" />
+    <link rel="prev" title="Parallel computing" href="parallel.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -57,13 +57,14 @@
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Get Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#preamble">1 Preamble</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#derive-the-deforestation-risk-map">2 Derive the deforestation risk map</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#results">3 Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../articles.html">Articles</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="get_started.html">Get Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="steps.html">All steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallel.html">Parallel computing</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Kenya</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../articles.html">Articles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference.html">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../indices.html">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
@@ -74,8 +75,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../index.html" title="previous chapter"><code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package</a></li>
-      <li>Next: <a href="../articles.html" title="next chapter">Articles</a></li>
+  <li><a href="../articles.html">Articles</a><ul>
+      <li>Previous: <a href="parallel.html" title="previous chapter">Parallel computing</a></li>
+      <li>Next: <a href="../reference.html" title="next chapter">Python API</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -105,8 +108,8 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="get-started">
-<h1>Get Started<a class="headerlink" href="#get-started" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="kenya">
+<h1>Kenya<a class="headerlink" href="#kenya" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="preamble">
 <h2>1 Preamble<a class="headerlink" href="#preamble" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="importing-python-modules">
@@ -116,6 +119,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 <span class="kn">import</span> <span class="nn">pkg_resources</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -134,22 +138,22 @@
 </pre></div>
 </div>
 <p>Create a directory to save results.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">out_dir</span> <span class="o">=</span> <span class="s2">&quot;outputs_makemap&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">out_dir</span> <span class="o">=</span> <span class="s2">&quot;outputs_kenya&quot;</span>
 <span class="n">rmj</span><span class="o">.</span><span class="n">make_dir</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="forest-cover-change-data">
 <h3>1.2 Forest cover change data<a class="headerlink" href="#forest-cover-change-data" title="Permalink to this headline">¶</a></h3>
-<p>We use the Guadeloupe archipelago as a case study. Recent forest cover change data for Guadeloupe is included in the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package. The raster file (<code class="docutils literal notranslate"><span class="pre">fcc123_GLP.tif</span></code>) includes the following values: <strong>1</strong> for deforestation on the period 2000–2010, <strong>2</strong> for deforestation on the period 2010–2020, and <strong>3</strong> for the remaining forest in 2020. NoData value is set to <strong>0</strong>. The first period (2000–2010) will be used for calibration and the second period (2010–2020) will be used for validation. This is the only data we need to derive a map of deforestation risk following the JNR methodology.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fcc_file</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s2">&quot;riskmapjnr&quot;</span><span class="p">,</span> <span class="s2">&quot;data/fcc123_GLP.tif&quot;</span><span class="p">)</span>
+<p>We consider recent forest cover change data for Kenya. The raster file (<code class="docutils literal notranslate"><span class="pre">fcc123_KEN_101418.tif</span></code>) includes the following values: <strong>1</strong> for deforestation on the period 2010–2014, <strong>2</strong> for deforestation on the period 2014–2018, and <strong>3</strong> for the remaining forest in 2018. NoData value is set to <strong>0</strong>. The first period (2010–2014) will be used for calibration and the second period (2014–2018) will be used for validation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fcc_file</span> <span class="o">=</span> <span class="s2">&quot;data/fcc123_KEN_101418.tif&quot;</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">)</span>
-<span class="n">border_file</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s2">&quot;riskmapjnr&quot;</span><span class="p">,</span> <span class="s2">&quot;data/ctry_border_GLP.gpkg&quot;</span><span class="p">)</span>
+<span class="n">border_file</span> <span class="o">=</span> <span class="s2">&quot;data/ctry_border_KEN.gpkg&quot;</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">border_file</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">ghislain</span><span class="o">/</span><span class="n">Code</span><span class="o">/</span><span class="n">riskmapjnr</span><span class="o">/</span><span class="n">riskmapjnr</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">fcc123_GLP</span><span class="o">.</span><span class="n">tif</span>
-<span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">ghislain</span><span class="o">/</span><span class="n">Code</span><span class="o">/</span><span class="n">riskmapjnr</span><span class="o">/</span><span class="n">riskmapjnr</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">ctry_border_GLP</span><span class="o">.</span><span class="n">gpkg</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">/</span><span class="n">fcc123_KEN_101418</span><span class="o">.</span><span class="n">tif</span>
+<span class="n">data</span><span class="o">/</span><span class="n">ctry_border_KEN</span><span class="o">.</span><span class="n">gpkg</span>
 </pre></div>
 </div>
 <p>We plot the forest cover change map with the <code class="docutils literal notranslate"><span class="pre">plot.fcc123()</span></code> function.</p>
@@ -165,37 +169,40 @@
 </pre></div>
 </div>
 <div class="figure align-default" id="id1">
-<span id="fig-fccmap"></span><a class="reference internal image-reference" href="../_images/fcc123.png"><img alt="../_images/fcc123.png" src="../_images/fcc123.png" style="width: 600px;" /></a>
-<p class="caption"><span class="caption-text"><strong>Forest cover change map.</strong> Deforestation on the first period (2000–2010) is in orange, deforestation on the second period (2000–2020) is in red and remaining forest (in 2020) is in green.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<span id="fig-kenya-fccmap"></span><a class="reference internal image-reference" href="../_images/fcc1231.png"><img alt="../_images/fcc1231.png" src="../_images/fcc1231.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text"><strong>Forest cover change map.</strong> Deforestation on the first period (2010–2014) is in orange, deforestation on the second period (2014–2018) is in red and remaining forest (in 2018) is in green.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 </div>
 </div>
 </div>
 <div class="section" id="derive-the-deforestation-risk-map">
 <h2>2 Derive the deforestation risk map<a class="headerlink" href="#derive-the-deforestation-risk-map" title="Permalink to this headline">¶</a></h2>
 <p>We derive the deforestation risk map using the <code class="docutils literal notranslate"><span class="pre">makemap()</span></code> function. This function calls a sequence of functions from the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package which perform all the steps detailed in the JNR methodology. We can use parallel computing using several CPUs.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ncpu</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total number of CPUs: </span><span class="si">{</span><span class="n">ncpu</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ncpu</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of CPUs: </span><span class="si">{</span><span class="n">ncpu</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">CPUs</span><span class="p">:</span> <span class="mf">8.</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Number</span> <span class="n">of</span> <span class="n">CPUs</span><span class="p">:</span> <span class="mf">6.</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results_makemap</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">makemap</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">results_makemap</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">makemap</span><span class="p">(</span>
     <span class="n">fcc_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
-    <span class="n">time_interval</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+    <span class="n">time_interval</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
     <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">,</span>
     <span class="n">clean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">dist_bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
-    <span class="n">win_sizes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+    <span class="n">win_sizes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
     <span class="n">ncat</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
     <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">ncpu</span><span class="o">=</span><span class="n">ncpu</span><span class="p">,</span>
     <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Equal Interval&quot;</span><span class="p">,</span> <span class="s2">&quot;Equal Area&quot;</span><span class="p">],</span>
-    <span class="n">csize</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+    <span class="n">csize</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>  <span class="c1"># 12 km</span>
     <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">),</span>
     <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
     <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sec_seq</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Time Taken:&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">,</span><span class="n">time</span><span class="o">.</span><span class="n">gmtime</span><span class="p">(</span><span class="n">sec_seq</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -208,17 +215,17 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The distance theshold is </span><span class="si">{</span><span class="n">dist_thresh</span><span class="si">}</span><span class="s2"> m.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">distance</span> <span class="n">theshold</span> <span class="ow">is</span> <span class="mi">180</span> <span class="n">m</span><span class="o">.</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">distance</span> <span class="n">theshold</span> <span class="ow">is</span> <span class="mi">780</span> <span class="n">m</span><span class="o">.</span>
 </pre></div>
 </div>
 <p>We have access to a table indicating the cumulative percentage of deforestation as a function of the distance to forest edge.</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 20%" />
-<col style="width: 18%" />
 <col style="width: 16%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 20%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Distance</p></th>
@@ -230,64 +237,184 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>30</p></td>
-<td><p>52150</p></td>
-<td><p>4693.5</p></td>
-<td><p>4693.5</p></td>
-<td><p>73.6676</p></td>
+<td><p>1.4005e+07</p></td>
+<td><p>1.26045e+06</p></td>
+<td><p>1.26045e+06</p></td>
+<td><p>48.9547</p></td>
 </tr>
 <tr class="row-odd"><td><p>60</p></td>
-<td><p>10755</p></td>
-<td><p>967.95</p></td>
-<td><p>5661.45</p></td>
-<td><p>88.8602</p></td>
+<td><p>5.35311e+06</p></td>
+<td><p>481780</p></td>
+<td><p>1.74223e+06</p></td>
+<td><p>67.6666</p></td>
 </tr>
 <tr class="row-even"><td><p>90</p></td>
-<td><p>4192</p></td>
-<td><p>377.28</p></td>
-<td><p>6038.73</p></td>
-<td><p>94.7818</p></td>
+<td><p>3.02736e+06</p></td>
+<td><p>272463</p></td>
+<td><p>2.01469e+06</p></td>
+<td><p>78.2489</p></td>
 </tr>
 <tr class="row-odd"><td><p>120</p></td>
-<td><p>1654</p></td>
-<td><p>148.86</p></td>
-<td><p>6187.59</p></td>
-<td><p>97.1183</p></td>
+<td><p>1.49449e+06</p></td>
+<td><p>134504</p></td>
+<td><p>2.1492e+06</p></td>
+<td><p>83.4729</p></td>
 </tr>
 <tr class="row-even"><td><p>150</p></td>
-<td><p>968</p></td>
-<td><p>87.12</p></td>
-<td><p>6274.71</p></td>
-<td><p>98.4857</p></td>
+<td><p>1.17144e+06</p></td>
+<td><p>105430</p></td>
+<td><p>2.25463e+06</p></td>
+<td><p>87.5677</p></td>
 </tr>
 <tr class="row-odd"><td><p>180</p></td>
-<td><p>402</p></td>
-<td><p>36.18</p></td>
-<td><p>6310.89</p></td>
-<td><p>99.0536</p></td>
+<td><p>639743</p></td>
+<td><p>57576.9</p></td>
+<td><p>2.3122e+06</p></td>
+<td><p>89.8039</p></td>
 </tr>
 <tr class="row-even"><td><p>210</p></td>
-<td><p>233</p></td>
-<td><p>20.97</p></td>
-<td><p>6331.86</p></td>
-<td><p>99.3827</p></td>
+<td><p>469736</p></td>
+<td><p>42276.2</p></td>
+<td><p>2.35448e+06</p></td>
+<td><p>91.4459</p></td>
 </tr>
 <tr class="row-odd"><td><p>240</p></td>
-<td><p>149</p></td>
-<td><p>13.41</p></td>
-<td><p>6345.27</p></td>
-<td><p>99.5932</p></td>
+<td><p>417499</p></td>
+<td><p>37574.9</p></td>
+<td><p>2.39205e+06</p></td>
+<td><p>92.9053</p></td>
 </tr>
 <tr class="row-even"><td><p>270</p></td>
-<td><p>100</p></td>
-<td><p>9</p></td>
-<td><p>6354.27</p></td>
-<td><p>99.7344</p></td>
+<td><p>326224</p></td>
+<td><p>29360.2</p></td>
+<td><p>2.42141e+06</p></td>
+<td><p>94.0456</p></td>
 </tr>
 <tr class="row-odd"><td><p>300</p></td>
-<td><p>46</p></td>
-<td><p>4.14</p></td>
-<td><p>6358.41</p></td>
-<td><p>99.7994</p></td>
+<td><p>260730</p></td>
+<td><p>23465.7</p></td>
+<td><p>2.44488e+06</p></td>
+<td><p>94.957</p></td>
+</tr>
+<tr class="row-even"><td><p>330</p></td>
+<td><p>179341</p></td>
+<td><p>16140.7</p></td>
+<td><p>2.46102e+06</p></td>
+<td><p>95.5839</p></td>
+</tr>
+<tr class="row-odd"><td><p>360</p></td>
+<td><p>147688</p></td>
+<td><p>13291.9</p></td>
+<td><p>2.47431e+06</p></td>
+<td><p>96.1001</p></td>
+</tr>
+<tr class="row-even"><td><p>390</p></td>
+<td><p>153559</p></td>
+<td><p>13820.3</p></td>
+<td><p>2.48813e+06</p></td>
+<td><p>96.6369</p></td>
+</tr>
+<tr class="row-odd"><td><p>420</p></td>
+<td><p>109451</p></td>
+<td><p>9850.59</p></td>
+<td><p>2.49798e+06</p></td>
+<td><p>97.0195</p></td>
+</tr>
+<tr class="row-even"><td><p>450</p></td>
+<td><p>98440</p></td>
+<td><p>8859.6</p></td>
+<td><p>2.50684e+06</p></td>
+<td><p>97.3636</p></td>
+</tr>
+<tr class="row-odd"><td><p>480</p></td>
+<td><p>72145</p></td>
+<td><p>6493.05</p></td>
+<td><p>2.51334e+06</p></td>
+<td><p>97.6158</p></td>
+</tr>
+<tr class="row-even"><td><p>510</p></td>
+<td><p>70682</p></td>
+<td><p>6361.38</p></td>
+<td><p>2.5197e+06</p></td>
+<td><p>97.8628</p></td>
+</tr>
+<tr class="row-odd"><td><p>540</p></td>
+<td><p>58834</p></td>
+<td><p>5295.06</p></td>
+<td><p>2.52499e+06</p></td>
+<td><p>98.0685</p></td>
+</tr>
+<tr class="row-even"><td><p>570</p></td>
+<td><p>53707</p></td>
+<td><p>4833.63</p></td>
+<td><p>2.52983e+06</p></td>
+<td><p>98.2562</p></td>
+</tr>
+<tr class="row-odd"><td><p>600</p></td>
+<td><p>47735</p></td>
+<td><p>4296.15</p></td>
+<td><p>2.53412e+06</p></td>
+<td><p>98.4231</p></td>
+</tr>
+<tr class="row-even"><td><p>630</p></td>
+<td><p>36436</p></td>
+<td><p>3279.24</p></td>
+<td><p>2.5374e+06</p></td>
+<td><p>98.5504</p></td>
+</tr>
+<tr class="row-odd"><td><p>660</p></td>
+<td><p>38346</p></td>
+<td><p>3451.14</p></td>
+<td><p>2.54085e+06</p></td>
+<td><p>98.6845</p></td>
+</tr>
+<tr class="row-even"><td><p>690</p></td>
+<td><p>30219</p></td>
+<td><p>2719.71</p></td>
+<td><p>2.54357e+06</p></td>
+<td><p>98.7901</p></td>
+</tr>
+<tr class="row-odd"><td><p>720</p></td>
+<td><p>26853</p></td>
+<td><p>2416.77</p></td>
+<td><p>2.54599e+06</p></td>
+<td><p>98.884</p></td>
+</tr>
+<tr class="row-even"><td><p>750</p></td>
+<td><p>27575</p></td>
+<td><p>2481.75</p></td>
+<td><p>2.54847e+06</p></td>
+<td><p>98.9804</p></td>
+</tr>
+<tr class="row-odd"><td><p>780</p></td>
+<td><p>22398</p></td>
+<td><p>2015.82</p></td>
+<td><p>2.55049e+06</p></td>
+<td><p>99.0586</p></td>
+</tr>
+<tr class="row-even"><td><p>810</p></td>
+<td><p>20402</p></td>
+<td><p>1836.18</p></td>
+<td><p>2.55232e+06</p></td>
+<td><p>99.13</p></td>
+</tr>
+<tr class="row-odd"><td><p>840</p></td>
+<td><p>17439</p></td>
+<td><p>1569.51</p></td>
+<td><p>2.55389e+06</p></td>
+<td><p>99.1909</p></td>
+</tr>
+<tr class="row-even"><td><p>870</p></td>
+<td><p>16532</p></td>
+<td><p>1487.88</p></td>
+<td><p>2.55538e+06</p></td>
+<td><p>99.2487</p></td>
+</tr>
+<tr class="row-odd"><td><p>900</p></td>
+<td><p>17080</p></td>
+<td><p>1537.2</p></td>
+<td><p>2.55692e+06</p></td>
+<td><p>99.3084</p></td>
 </tr>
 </tbody>
 </table>
@@ -297,7 +424,7 @@
 </pre></div>
 </div>
 <div class="figure align-default" id="id2">
-<span id="fig-perc-dist"></span><a class="reference internal image-reference" href="../_images/perc_dist.png"><img alt="../_images/perc_dist.png" src="../_images/perc_dist.png" style="width: 600px;" /></a>
+<span id="fig-kenya-perc-dist"></span><a class="reference internal image-reference" href="../_images/perc_dist1.png"><img alt="../_images/perc_dist1.png" src="../_images/perc_dist1.png" style="width: 600px;" /></a>
 <p class="caption"><span class="caption-text"><strong>Identifying areas for which the risk of deforestation is negligible.</strong> Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge ≤ 180 m. Forest areas located at a distance &gt; 180 m from the forest edge can be considered as having no risk of being deforested.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 </div>
@@ -311,7 +438,7 @@
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">best</span> <span class="n">moving</span> <span class="n">window</span> <span class="n">size</span> <span class="ow">is</span> <span class="mi">5</span> <span class="n">pixels</span><span class="o">.</span>
-<span class="n">The</span> <span class="n">best</span> <span class="n">slicing</span> <span class="n">algorithm</span> <span class="ow">is</span> <span class="s1">&#39;ei&#39;</span><span class="o">.</span>
+<span class="n">The</span> <span class="n">best</span> <span class="n">slicing</span> <span class="n">algorithm</span> <span class="ow">is</span> <span class="s1">&#39;ea&#39;</span><span class="o">.</span>
 </pre></div>
 </div>
 </div>
@@ -322,15 +449,15 @@
 </pre></div>
 </div>
 <div class="figure align-default" id="id3">
-<span id="fig-pred-obs"></span><a class="reference internal image-reference" href="../_images/pred_obs_ws5_ei.png"><img alt="../_images/pred_obs_ws5_ei.png" src="../_images/pred_obs_ws5_ei.png" style="width: 600px;" /></a>
+<span id="fig-kenya-pred-obs"></span><a class="reference internal image-reference" href="../_images/pred_obs_ws5_ea.png"><img alt="../_images/pred_obs_ws5_ea.png" src="../_images/pred_obs_ws5_ea.png" style="width: 600px;" /></a>
 <p class="caption"><span class="caption-text"><strong>Relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model</strong>. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (<span class="math notranslate nohighlight">\(n\)</span>, the number of spatial cells) are reported on the graph.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
 </div>
 <div class="section" id="risk-map-of-deforestation">
 <h3>3.4 Risk map of deforestation<a class="headerlink" href="#risk-map-of-deforestation" title="Permalink to this headline">¶</a></h3>
 <p>We plot the risk map using the <code class="docutils literal notranslate"><span class="pre">plot.riskmap()</span></code> function.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ifile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;riskmap_ws</span><span class="si">{ws_hat}</span><span class="s2">_</span><span class="si">{m_hat}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
-<span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;riskmap_ws</span><span class="si">{ws_hat}</span><span class="s2">_</span><span class="si">{m_hat}</span><span class="s2">.png&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ifile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;riskmap_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
+<span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;riskmap_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
 <span class="n">riskmap_fig</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">riskmap</span><span class="p">(</span>
     <span class="n">input_risk_map</span><span class="o">=</span><span class="n">ifile</span><span class="p">,</span>
     <span class="n">maxpixels</span><span class="o">=</span><span class="mf">1e8</span><span class="p">,</span>
@@ -342,8 +469,8 @@
 </pre></div>
 </div>
 <div class="figure align-default" id="id4">
-<span id="fig-riskmap"></span><a class="reference internal image-reference" href="../_images/riskmap_ws5_ei.png"><img alt="../_images/riskmap_ws5_ei.png" src="../_images/riskmap_ws5_ei.png" style="width: 600px;" /></a>
-<p class="caption"><span class="caption-text"><strong>Map of the deforestation risk following the JNR methodology</strong>. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 180 m from the forest edge and have a negligible risk of being deforested.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<span id="fig-kenya-riskmap"></span><a class="reference internal image-reference" href="../_images/riskmap_ws5_ea.png"><img alt="../_images/riskmap_ws5_ea.png" src="../_images/riskmap_ws5_ea.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text"><strong>Map of the deforestation risk following the JNR methodology</strong>. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 780 m from the forest edge and have a negligible risk of being deforested.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
 </div>
 </div>
 </div>
@@ -364,7 +491,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/notebooks/get_started.rst.txt"
+      <a href="../_sources/notebooks/kenya.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

@@ -1,8 +1,8 @@
 Changelog
 =========
 
-riskmapjnr 0.2
---------------
+riskmapjnr 0.2 (dev)
+--------------------
 
 * Parallel computation for `makemap()`.
 * Benchmark to estimate advantage of parallel computing.

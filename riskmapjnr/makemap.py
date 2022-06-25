@@ -216,10 +216,10 @@ def makemap(fcc_file, time_interval,
               vs. observations for each window size ``s`` and slicing
               method ``m``.
 
-   :param clean: Logical. Delete the ``calval_dir`` directory at the
+    :param clean: Logical. Delete the ``calval_dir`` directory at the
         end of the computation. Default to False.
 
-   :param dist_bins: Array of bins for distances. It has to be
+    :param dist_bins: Array of bins for distances. It has to be
         1-dimensional and monotonic. The array must also include zero
         as the first value. Default to ``np.arange(0, 1080,
         step=30)``.

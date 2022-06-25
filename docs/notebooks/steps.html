@@ -1,22 +1,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>All steps &#8212; riskmapjnr — Map of deforestation risk following JNR methodology</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -66,6 +62,7 @@
 <li class="toctree-l2"><a class="reference internal" href="get_started.html">Get Started</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">All steps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="parallel.html">Parallel computing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kenya.html">Kenya</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference.html">Python API</a></li>
@@ -94,7 +91,7 @@
     </form>
     </div>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -111,16 +108,16 @@
 
           <div class="body" role="main">
             
-  <section id="all-steps">
-<h1>All steps<a class="headerlink" href="#all-steps" title="Permalink to this heading">¶</a></h1>
-<section id="introduction">
-<h2>1 Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h2>
-<section id="objective">
-<h3>1.1 Objective<a class="headerlink" href="#objective" title="Permalink to this heading">¶</a></h3>
+  <div class="section" id="all-steps">
+<h1>All steps<a class="headerlink" href="#all-steps" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>1 Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="objective">
+<h3>1.1 Objective<a class="headerlink" href="#objective" title="Permalink to this headline">¶</a></h3>
 <p>We present here all the steps of the JNR methodology that need to be followed to derive a map of the deforestation risk in a given jurisdiction.</p>
-</section>
-<section id="importing-python-modules">
-<h3>1.2 Importing Python modules<a class="headerlink" href="#importing-python-modules" title="Permalink to this heading">¶</a></h3>
+</div>
+<div class="section" id="importing-python-modules">
+<h3>1.2 Importing Python modules<a class="headerlink" href="#importing-python-modules" title="Permalink to this headline">¶</a></h3>
 <p>We import the Python modules needed for running the analysis.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -148,9 +145,9 @@
 <span class="n">rmj</span><span class="o">.</span><span class="n">make_dir</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="forest-cover-change-data">
-<h3>1.3 Forest cover change data<a class="headerlink" href="#forest-cover-change-data" title="Permalink to this heading">¶</a></h3>
+</div>
+<div class="section" id="forest-cover-change-data">
+<h3>1.3 Forest cover change data<a class="headerlink" href="#forest-cover-change-data" title="Permalink to this headline">¶</a></h3>
 <p>We use the Guadeloupe archipelago as a case study. Recent forest cover change data for Guadeloupe is included in the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package. The raster file (<code class="docutils literal notranslate"><span class="pre">fcc123_GLP.tif</span></code>) includes the following values: <strong>1</strong> for deforestation on the period 2000–2010, <strong>2</strong> for deforestation on the period 2010–2020, and <strong>3</strong> for the remaining forest in 2020. NoData value is set to <strong>0</strong>. The first period (2000–2010) will be used for calibration and the second period (2010–2020) will be used for validation. This is the only data we need to derive a map of deforestation risk following the JNR methodology.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fcc_file</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s2">&quot;riskmapjnr&quot;</span><span class="p">,</span> <span class="s2">&quot;data/fcc123_GLP.tif&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">)</span>
@@ -174,16 +171,14 @@
 <span class="n">ofile</span>
 </pre></div>
 </div>
-<figure class="align-default" id="id1">
-<span id="fig-steps-fccmap"></span><a class="reference internal image-reference" href="../_images/fcc1231.png"><img alt="../_images/fcc1231.png" src="../_images/fcc1231.png" style="width: 600px;" /></a>
-<figcaption>
-<p><span class="caption-text"><strong>Forest cover change map.</strong> Deforestation on the first period (2000–2010) is in orange, deforestation on the second period (2000–2020) is in red and remaining forest (in 2020) is in green.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
-</figcaption>
-</figure>
-</section>
-</section>
-<section id="deforestation-risk-and-distance-to-forest-edge">
-<h2>2 Deforestation risk and distance to forest edge<a class="headerlink" href="#deforestation-risk-and-distance-to-forest-edge" title="Permalink to this heading">¶</a></h2>
+<div class="figure align-default" id="id1">
+<span id="fig-steps-fccmap"></span><a class="reference internal image-reference" href="../_images/fcc1232.png"><img alt="../_images/fcc1232.png" src="../_images/fcc1232.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text"><strong>Forest cover change map.</strong> Deforestation on the first period (2000–2010) is in orange, deforestation on the second period (2000–2020) is in red and remaining forest (in 2020) is in green.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="deforestation-risk-and-distance-to-forest-edge">
+<h2>2 Deforestation risk and distance to forest edge<a class="headerlink" href="#deforestation-risk-and-distance-to-forest-edge" title="Permalink to this headline">¶</a></h2>
 <p>The first step is to compute the distance to the forest edge after which the risk of deforestation becomes negligible. Indeed, it is known from previous studies on tropical deforestation that the deforestation risk decreases rapidly with the distance to the forest edge and that most of the deforestation occurs close to the forest edge (Vieilledent et al., 2013, Grinand et al., 2020, Vieilledent, 2021, Dezécache et al., 2017). The JNR methodology suggests identifying the distance to the forest edge <span class="math notranslate nohighlight">\(d\)</span>, so that at least 99% of the deforestation occurs within a distance <span class="math notranslate nohighlight">\(\leq d\)</span>. Forest areas located at a distance from the forest edge <span class="math notranslate nohighlight">\(\gt d\)</span> can be considered as having no risk of being deforested. As a consequence, forest pixels with a distance from the forest edge <span class="math notranslate nohighlight">\(\gt d\)</span> are assigned category 0 (zero) for the deforestation risk.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;perc_dist.png&quot;</span><span class="p">)</span>
 <span class="n">dist_edge_thres</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">dist_edge_threshold</span><span class="p">(</span>
@@ -197,12 +192,10 @@
 <span class="n">ofile</span>
 </pre></div>
 </div>
-<figure class="align-default" id="id2">
-<span id="fig-steps-dist-edge"></span><a class="reference internal image-reference" href="../_images/perc_dist1.png"><img alt="../_images/perc_dist1.png" src="../_images/perc_dist1.png" style="width: 600px;" /></a>
-<figcaption>
-<p><span class="caption-text"><strong>Identifying areas for which the risk of deforestation is negligible.</strong> Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge ≤ 120 m. Forest areas located at a distance &gt; 120 m from the forest edge can be considered as having no risk of being deforested.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
-</figcaption>
-</figure>
+<div class="figure align-default" id="id2">
+<span id="fig-steps-dist-edge"></span><a class="reference internal image-reference" href="../_images/perc_dist2.png"><img alt="../_images/perc_dist2.png" src="../_images/perc_dist2.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text"><strong>Identifying areas for which the risk of deforestation is negligible.</strong> Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge ≤ 120 m. Forest areas located at a distance &gt; 120 m from the forest edge can be considered as having no risk of being deforested.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
 <p>The function returns a dictionnary including the distance threshold.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dist_thresh</span> <span class="o">=</span> <span class="n">dist_edge_thres</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The distance threshold is </span><span class="si">{</span><span class="n">dist_thresh</span><span class="si">}</span><span class="s2"> m&quot;</span><span class="p">)</span>
@@ -213,6 +206,13 @@
 </div>
 <p>A table indicating the cumulative percentage of deforestation as a function of the distance is also produced:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 17%" />
+<col style="width: 17%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Distance</p></th>
 <th class="head"><p>Npixels</p></th>
@@ -284,9 +284,9 @@
 </tr>
 </tbody>
 </table>
-</section>
-<section id="local-deforestation-rate">
-<h2>3 Local deforestation rate<a class="headerlink" href="#local-deforestation-rate" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="local-deforestation-rate">
+<h2>3 Local deforestation rate<a class="headerlink" href="#local-deforestation-rate" title="Permalink to this headline">¶</a></h2>
 <p>The second step is to compute a local risk of deforestation at the pixel level using a moving window made of several pixels. The deforestation risk is estimated from the deforestation rate inside the moving window. The deforestation rate <span class="math notranslate nohighlight">\(\theta\)</span> (in %/yr) is computed from the formula <span class="math notranslate nohighlight">\(\theta=(\alpha_2/\alpha_1)^{1/\tau}-1\)</span>, with <span class="math notranslate nohighlight">\(\alpha\)</span> the forest areas (in ha) at time <span class="math notranslate nohighlight">\(t_1\)</span> and <span class="math notranslate nohighlight">\(t_2\)</span>, and <span class="math notranslate nohighlight">\(\tau\)</span>, the time interval (in yr) between time <span class="math notranslate nohighlight">\(t_1\)</span> and <span class="math notranslate nohighlight">\(t_2\)</span>. Using the deforestation rate formula, the moving window and the past forest cover change map, we can derive a raster map describing the local risk of deforestation at the same resolution as the input map.</p>
 <p>To save space on disk, deforestation rates are converted to integer values between 0 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10<sup>-4</sup>for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set window size</span>
@@ -302,9 +302,9 @@
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="pixels-with-zero-risk-of-deforestation">
-<h2>4 Pixels with zero risk of deforestation<a class="headerlink" href="#pixels-with-zero-risk-of-deforestation" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="pixels-with-zero-risk-of-deforestation">
+<h2>4 Pixels with zero risk of deforestation<a class="headerlink" href="#pixels-with-zero-risk-of-deforestation" title="Permalink to this headline">¶</a></h2>
 <p>This third step sets a value of 10001 to pixels with zero deforestation risk. As explained previously, a risk of deforestation of zero is assumed when distance to forest edge is greater than the distance below which more than 99% of the deforestation occurs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">set_defor_cat_zero</span><span class="p">(</span>
     <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ldefrate.tif&quot;</span><span class="p">),</span>
@@ -315,9 +315,9 @@
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="categories-of-deforestation-risk">
-<h2>5 Categories of deforestation risk<a class="headerlink" href="#categories-of-deforestation-risk" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="categories-of-deforestation-risk">
+<h2>5 Categories of deforestation risk<a class="headerlink" href="#categories-of-deforestation-risk" title="Permalink to this headline">¶</a></h2>
 <p>The fourth step implies converting the continuous values of the raster map of deforestation risk to categorical values. The JNR methodology suggests to use 31 classes of risk from “0” to “30” including the “0” class for the forest pixels with no risk of being deforested (located at a distance to the forest edge <span class="math notranslate nohighlight">\(&gt; d\)</span>, see first step). Following the JNR methodology, at least three slicing algorithms must be compared to derive the categorical map of deforestation risk, such as “equal area”, “equal interval”, and “natural breaks”. With the “equal area” algorithm, each class from “1” to “30” must cover approximately the same area. With the “equal interval” algorithm, classes from “1” to “30” correspond to bins of deforestation risk of the same range. In this case, some risk classes will be in majority in the landscape compared to other classes of lower frequency. With the “natural breaks” algorithm, the continuous deforestation risk is normalized before running an “equal interval” algorithm.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">defor_cat</span><span class="p">(</span>
     <span class="n">ldefrate_with_zero_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ldefrate_with_zero.tif&quot;</span><span class="p">),</span>
@@ -341,15 +341,13 @@
 <span class="n">ofile</span>
 </pre></div>
 </div>
-<figure class="align-default" id="id3">
+<div class="figure align-default" id="id3">
 <span id="fig-steps-riskmap"></span><a class="reference internal image-reference" href="../_images/riskmap.png"><img alt="../_images/riskmap.png" src="../_images/riskmap.png" style="width: 600px;" /></a>
-<figcaption>
-<p><span class="caption-text"><strong>Map of the deforestation risk following the JNR methodology</strong>. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 120 m from the forest edge and have a negligible risk of being deforested.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
-</figcaption>
-</figure>
-</section>
-<section id="deforestation-rates-per-category-of-risk">
-<h2>6 Deforestation rates per category of risk<a class="headerlink" href="#deforestation-rates-per-category-of-risk" title="Permalink to this heading">¶</a></h2>
+<p class="caption"><span class="caption-text"><strong>Map of the deforestation risk following the JNR methodology</strong>. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 120 m from the forest edge and have a negligible risk of being deforested.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="deforestation-rates-per-category-of-risk">
+<h2>6 Deforestation rates per category of risk<a class="headerlink" href="#deforestation-rates-per-category-of-risk" title="Permalink to this headline">¶</a></h2>
 <p>Before the validation step, we need to compute the historical deforestation rates (in %/yr) for each category of spatial deforestation risk. The historical deforestation rates are computed for the calibration period (here 2000–2010). Deforestation rates provide estimates of the percentage of forest (which is then converted to an area of forest) that should be deforested inside each forest pixel which belongs to a given category of deforestation risk.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">defrate_per_cat</span><span class="p">(</span>
     <span class="n">fcc_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
@@ -363,6 +361,12 @@
 </div>
 <p>A table indicating the deforestation rate per category of deforestation is produced:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 19%" />
+<col style="width: 19%" />
+<col style="width: 50%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>cat</p></th>
 <th class="head"><p>nfor</p></th>
@@ -524,9 +528,9 @@
 </tbody>
 </table>
 <p>From this table, we see that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (equal to 0), and category 30 represents well a category with very high deforestation risk (close to 1).</p>
-</section>
-<section id="validation">
-<h2>7 Validation<a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h2>
+</div>
+<div class="section" id="validation">
+<h2>7 Validation<a class="headerlink" href="#validation" title="Permalink to this headline">¶</a></h2>
 <p>The fifth step focuses on comparing the map of deforestation risk with a deforestation map corresponding to the validation period. The validation period follows the calibration period and provides independent observations of deforestation.</p>
 <p>To do so, we consider a square grid of at least 1000 spatial cells containing at least one forest pixel at the beginning of the validation period. Following JNR specification, the cell size should be <span class="math notranslate nohighlight">\(\leq\)</span> 10 km. Note that with the map of deforestation risk, each forest pixel at the beginning of the validation period falls into a category of deforestation risk. For each cell of the grid, we compute the predicted area of deforestation (in ha) given the map of deforestation risk and the historical deforestation rates for each category of deforestation risk computed on the calibration period (see previous step).</p>
 <p>We can then compare the predicted deforestation with the observed deforestation in that spatial cell for the validation period. Because all cells don’t have the same forest cover at the beginning of the validation period, a weight <span class="math notranslate nohighlight">\(w_j\)</span> is computed for each grid cell <span class="math notranslate nohighlight">\(j\)</span> such that <span class="math notranslate nohighlight">\(w_j=\beta_j / B\)</span>, with <span class="math notranslate nohighlight">\(\beta_j\)</span> the forest cover (in ha) in the cell <span class="math notranslate nohighlight">\(j\)</span> at the beginning of the validation period and <span class="math notranslate nohighlight">\(B\)</span> the total forest cover in the jurisdiction (in ha) at the same date. We then calculate the weighted root mean squared error (wRMSE) from the observed and predicted deforestation for each cell and the cell weights.</p>
@@ -544,18 +548,16 @@
 <span class="n">ofile</span>
 </pre></div>
 </div>
-<figure class="align-default" id="id4">
+<div class="figure align-default" id="id4">
 <span id="fig-steps-pred-obs"></span><a class="reference internal image-reference" href="../_images/pred_obs.png"><img alt="../_images/pred_obs.png" src="../_images/pred_obs.png" style="width: 600px;" /></a>
-<figcaption>
-<p><span class="caption-text"><strong>Relationship between observed and predicted deforestation in 1 x 1 km grid cells</strong>. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (<span class="math notranslate nohighlight">\(n\)</span>, the number of spatial cells) are reported on the graph.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
-</figcaption>
-</figure>
-</section>
-<section id="final-risk-map">
-<h2>8 Final risk map<a class="headerlink" href="#final-risk-map" title="Permalink to this heading">¶</a></h2>
+<p class="caption"><span class="caption-text"><strong>Relationship between observed and predicted deforestation in 1 x 1 km grid cells</strong>. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (<span class="math notranslate nohighlight">\(n\)</span>, the number of spatial cells) are reported on the graph.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="final-risk-map">
+<h2>8 Final risk map<a class="headerlink" href="#final-risk-map" title="Permalink to this headline">¶</a></h2>
 <p>The user must repeat the procedure and obtain risk maps for various window size and slicing algorithms. Following the JNR methodology, at least 25 different sizes for the moving window must be tested together with two slicing algorithms (“Equal Interval” and “Equal Area”), thus leading to a minimum of 50 different maps of deforestation risk. The map with the smallest wRMSE value is considered the best risk map. Once the best risk map is identified, with the corresponding window size and slicing algorithm, a final risk map is derived considering both the calibration and validation period (see the <a class="reference external" href="https://ecology.ghislainv.fr/riskmapjnr/notebooks/get_started.html">Get Started</a> tutorial).</p>
-</section>
-</section>
+</div>
+</div>
 
 
           </div>
@@ -568,7 +570,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
