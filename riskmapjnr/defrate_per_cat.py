@@ -118,7 +118,7 @@ def defrate_per_cat(fcc_file, defor_values, riskmap_file, time_interval,
         df["ndefor"] += cat_defor.value_counts().values
 
     # Annual deforestation rates per category
-    df["rate"] = 1 - (1 - df["ndefor"] / df["nfor"]) ** time_interval
+    df["rate"] = 1 - (1 - df["ndefor"] / df["nfor"]) ** (1 / time_interval)
 
     # Export the table of results
     df.to_csv(tab_file_defrate, sep=",", header=True,

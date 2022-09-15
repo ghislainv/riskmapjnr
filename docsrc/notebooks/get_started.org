@@ -51,7 +51,7 @@
 
 Import the Python modules needed to run the analysis.
 
-#+begin_src python :results output :session :exports both
+#+begin_src python :results none :session :exports both
 # Imports
 import os
 import multiprocessing as mp
@@ -64,33 +64,25 @@ from tabulate import tabulate
 import riskmapjnr as rmj
 #+end_src
 
-#+RESULTS:
-
 Increase the cache for GDAL to increase computational speed.
 
-#+begin_src python :results output :session :exports both
+#+begin_src python :results none :session :exports both
 # GDAL
 os.environ["GDAL_CACHEMAX"] = "1024"
 #+end_src
 
-#+RESULTS:
-
 Set the =PROJ_LIB= environmental variable.
 
-#+begin_src python :results output :session :exports both
+#+begin_src python :results none :session :exports both
 os.environ["PROJ_LIB"] = "/home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/share/proj"
 #+end_src
 
-#+RESULTS:
-
 Create a directory to save results.
 
-#+begin_src python :results output :session :exports both
+#+begin_src python :results none :session :exports both
 out_dir = "outputs_makemap"
 rmj.make_dir(out_dir)
 #+end_src
-
-#+RESULTS:
 
 ** Forest cover change data
 
@@ -159,6 +151,14 @@ results_makemap = rmj.makemap(
 #+end_src
 
 #+RESULTS:
+: Model calibration and validation
+: .. Model 0: window size = 5, slicing method = ei.
+: .. Model 2: window size = 21, slicing method = ei.
+: .. Model 4: window size = 37, slicing method = ei.
+: .. Model 1: window size = 5, slicing method = ea.
+: .. Model 5: window size = 37, slicing method = ea.
+: .. Model 3: window size = 21, slicing method = ea.
+: Deriving risk map for entire historical period
 
 * Results
 
@@ -224,6 +224,7 @@ print(f"The best slicing algorithm is '{m_hat}'.")
 : The best moving window size is 5 pixels.
 : The best slicing algorithm is 'ei'.
 
+
 ** Validation
 
 #+begin_src python :results file :session :exports both
@@ -242,8 +243,8 @@ ofile
 We plot the risk map using the =plot.riskmap()= function.
 
 #+begin_src python :results file :session :exports both
-ifile = os.path.join(out_dir, "riskmap_ws{ws_hat}_{m_hat}.tif")
-ofile = os.path.join(out_dir, "riskmap_ws{ws_hat}_{m_hat}.png")
+ifile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.tif")
+ofile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.png")
 riskmap_fig = rmj.plot.riskmap(
     input_risk_map=ifile,
     maxpixels=1e8,

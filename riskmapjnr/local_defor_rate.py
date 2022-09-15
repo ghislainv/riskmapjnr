@@ -118,26 +118,29 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
 
         # Read block data
         in_data = in_band.ReadAsArray(0, yoff, xsize, rows)
-        # defor (during first period)
+        # defor (during period)
         defor_data = np.zeros(in_data.shape, int)
         defor_data[np.isin(in_data, defor_values)] = 1
-        win_defor = scipy.ndimage.filters.uniform_filter(
+        # Use uniform filter to get the mean then multiply to obtain the sum
+        win_defor = scipy.ndimage.uniform_filter(
             defor_data, size=win_size, mode="constant", cval=0,
-            output=float)
+            output=float) * (win_size ** 2)
+        # Round to nearest inter to remove approximation due to float precision
+        win_defor = np.rint(win_defor).astype(int)
         # for (start of first period)
         for_data = np.zeros(in_data.shape, int)
         w = np.where(in_data > 0)
         for_data[w] = 1
-        win_for = scipy.ndimage.filters.uniform_filter(
+        # Use uniform filter to get the mean then multiply to obtain the sum
+        win_for = scipy.ndimage.uniform_filter(
             for_data, size=win_size, mode="constant", cval=0,
-            output=float)
-        # percentage
+            output=float) * (win_size ** 2)
+        # Round to nearest inter to remove approximation due to float precision
+        win_for = np.rint(win_for).astype(int)
+        # Annual deforestation rate
         out_data = np.ones(in_data.shape, int) * 65535
-        # w = np.where(win_for >= (1 / win_size ** 2))
-        # w = np.where(win_for > np.finfo(float).eps)
-        out_data[w] = np.rint(10000 * (1 - (1 - win_defor[w] / win_for[w]) **
-                                       time_interval)).astype(int)
-
+        theta = 1 - (1 - win_defor[w] / win_for[w]) ** (1 / time_interval)
+        out_data[w] = np.rint(10000 * theta).astype(int)
         if yoff == 0:
             out_band.WriteArray(out_data)
         else:

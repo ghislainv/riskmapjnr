@@ -140,7 +140,7 @@ print(f"Number of CPUs: {ncpu}.")
 #+RESULTS:
 : Number of CPUs: 6.
  
-#+begin_src python :results output :session :exports both
+#+begin_src python :results output :session :exports code
 start_time = time.time()
 results_makemap = rmj.makemap(
     fcc_file=fcc_file,
@@ -158,11 +158,17 @@ results_makemap = rmj.makemap(
     dpi=100,
     blk_rows=128,
     verbose=True)
-sec_seq = time.time() - start_time
-print('Time Taken:', time.strftime("%H:%M:%S",time.gmtime(sec_seq)))
 #+end_src
 
 #+RESULTS:
+
+#+begin_src python :results output :session :exports both
+sec_seq = time.time() - start_time
+print('Computation time:', time.strftime("%H:%M:%S",time.gmtime(sec_seq)))
+#+end_src
+
+#+RESULTS:
+: Computation time: 00:20:56
 
 * Results
 
