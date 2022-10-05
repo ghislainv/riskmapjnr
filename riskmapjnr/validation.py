@@ -155,8 +155,12 @@ def validation(fcc_file, time_interval,
             x[px], y[py], nx[px], ny[py])
         defor_cat = pd.Categorical(defor_cat_data.flatten(), categories=cat)
         defor_cat_count = defor_cat.value_counts().values
+        # Deforestation rate on validation period
+        defrate_per_cat_period = (
+            1 - (1 - defrate_per_cat["rate"].values) ** time_interval)
+        # Predicted deforestation (area)
         df.loc[s, "ndefor_pred"] = np.nansum(defor_cat_count *
-                                             defrate_per_cat["rate"].values)
+                                             defrate_per_cat_period)
         # Note: np.nansum is used here as some cat might not exist and
         # have nan for defrate (eg. in the case of Equal Interval).
 

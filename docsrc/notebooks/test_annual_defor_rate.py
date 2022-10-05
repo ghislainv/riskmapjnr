@@ -68,12 +68,12 @@ ax.plot(D, p_clark, label="Clark U.")
 ax.plot(D, p_fao, label="FAO")
 ax.plot(D, p_puyravaud, label="Puyravaud")
 ax.hlines(y=0, xmin=0, xmax=100, colors="black", linestyles="dashed")
-ax.set_xlabel("A2 / A1 (%)")
+ax.set_xlabel("A_T / A_0 (%)")
 ax.set_ylabel("Annual deforestation rate (%/yr)\n"
               "(FAO: rate of change)")
 ax.set_title("Comparing formulas for computing\n"
              "the annual deforestation rate")
-ax.annotate("T = t2 - t1 = 5 years", xy=(0, 0.3))
+ax.annotate("T = 5 years", xy=(0, 0.3))
 ax.legend()
 fig.savefig("outputs_tests/D-perc-relationship.png")
 
@@ -92,12 +92,12 @@ ax.plot(T, p_clark, label="Clark U.")
 ax.plot(T, p_fao, label="FAO")
 ax.plot(T, p_puyravaud, label="Puyravaud")
 ax.hlines(y=0, xmin=1, xmax=10, colors="black", linestyles="dashed")
-ax.set_xlabel("T = t2 - t1 (yr)")
+ax.set_xlabel("T (yr)")
 ax.set_ylabel("Annual deforestation rate (%/yr)\n"
               "(FAO: rate of change)")
 ax.set_title("Comparing formulas for computing\n"
              "the annual deforestation rate")
-ax.annotate("A2 / A1 = 50%", xy=(8, 0.3))
+ax.annotate("A_T / A_0 = 50%", xy=(8, 0.3))
 ax.legend()
 fig.savefig("outputs_tests/D-T-relationship.png")
 
