@@ -46,7 +46,7 @@ def validation(fcc_file, time_interval,
         period. No data value must be 0 (zero).
 
     :param time_interval: Time interval (in years) for forest cover
-        change observations.
+        change observations during the **validation** period.
 
     :param riskmap_file: Input raster file with categories of
         spatial deforestation risk. This file is typically obtained

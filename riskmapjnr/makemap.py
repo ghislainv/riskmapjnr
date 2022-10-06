@@ -137,7 +137,7 @@ def makemap(fcc_file, time_interval,
         period. No data value must be 0 (zero).
 
     :param time_interval: A list of two numbers. Time interval (in
-        years) for forest cover change observations for the two period
+        years) for forest cover change observations for the two periods
         of time.
 
     :param output_dir: Output directory for files (rasters, tables, and
@@ -450,7 +450,7 @@ def makemap(fcc_file, time_interval,
         fcc_file,
         defor_values=[1, 2],
         riskmap_file=riskmap_file,
-        time_interval=time_interval[0],
+        time_interval=np.array(time_interval).sum(),
         tab_file_defrate=tab_file_defrate,
         blk_rows=blk_rows,
         verbose=False)
