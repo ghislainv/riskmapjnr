@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,9 +11,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -57,6 +55,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/get_started.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../articles.html">Articles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference.html">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../indices.html">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
@@ -81,7 +80,7 @@
     </form>
     </div>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -121,7 +120,7 @@
 
 
 <span class="c1"># local_defor_rate</span>
-<div class="viewcode-block" id="local_defor_rate"><a class="viewcode-back" href="../../reference.html#riskmapjnr.local_defor_rate.local_defor_rate">[docs]</a><span class="k">def</span> <span class="nf">local_defor_rate</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">defor_values</span><span class="p">,</span> <span class="n">ldefrate_file</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span>
+<div class="viewcode-block" id="local_defor_rate"><a class="viewcode-back" href="../../reference.html#riskmapjnr.local_defor_rate">[docs]</a><span class="k">def</span> <span class="nf">local_defor_rate</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">defor_values</span><span class="p">,</span> <span class="n">ldefrate_file</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span>
                      <span class="n">time_interval</span><span class="p">,</span> <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computing the local deforestation rate using a moving window.</span>
 
@@ -219,26 +218,29 @@
 
         <span class="c1"># Read block data</span>
         <span class="n">in_data</span> <span class="o">=</span> <span class="n">in_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">yoff</span><span class="p">,</span> <span class="n">xsize</span><span class="p">,</span> <span class="n">rows</span><span class="p">)</span>
-        <span class="c1"># defor (during first period)</span>
+        <span class="c1"># defor (during period)</span>
         <span class="n">defor_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">in_data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="n">defor_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">in_data</span><span class="p">,</span> <span class="n">defor_values</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">win_defor</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">uniform_filter</span><span class="p">(</span>
+        <span class="c1"># Use uniform filter to get the mean then multiply to obtain the sum</span>
+        <span class="n">win_defor</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">uniform_filter</span><span class="p">(</span>
             <span class="n">defor_data</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">win_size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">output</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">output</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">win_size</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># Round to nearest inter to remove approximation due to float precision</span>
+        <span class="n">win_defor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">win_defor</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="c1"># for (start of first period)</span>
         <span class="n">for_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">in_data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">in_data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">for_data</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">win_for</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">uniform_filter</span><span class="p">(</span>
+        <span class="c1"># Use uniform filter to get the mean then multiply to obtain the sum</span>
+        <span class="n">win_for</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">ndimage</span><span class="o">.</span><span class="n">uniform_filter</span><span class="p">(</span>
             <span class="n">for_data</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">win_size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">output</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-        <span class="c1"># percentage</span>
+            <span class="n">output</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">win_size</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># Round to nearest inter to remove approximation due to float precision</span>
+        <span class="n">win_for</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">win_for</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="c1"># Annual deforestation rate</span>
         <span class="n">out_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">in_data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="o">*</span> <span class="mi">65535</span>
-        <span class="c1"># w = np.where(win_for &gt;= (1 / win_size ** 2))</span>
-        <span class="c1"># w = np.where(win_for &gt; np.finfo(float).eps)</span>
-        <span class="n">out_data</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="mi">10000</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">win_defor</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">/</span> <span class="n">win_for</span><span class="p">[</span><span class="n">w</span><span class="p">])</span> <span class="o">**</span>
-                                       <span class="n">time_interval</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-
+        <span class="n">theta</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">win_defor</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">/</span> <span class="n">win_for</span><span class="p">[</span><span class="n">w</span><span class="p">])</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">time_interval</span><span class="p">)</span>
+        <span class="n">out_data</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="mi">10000</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">yoff</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">out_band</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">out_data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -274,7 +276,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

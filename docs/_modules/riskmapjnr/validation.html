@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,9 +11,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -57,6 +55,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/get_started.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../articles.html">Articles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference.html">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../indices.html">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
@@ -81,7 +80,7 @@
     </form>
     </div>
 </div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -147,7 +146,7 @@
 <span class="sd">        period. No data value must be 0 (zero).</span>
 
 <span class="sd">    :param time_interval: Time interval (in years) for forest cover</span>
-<span class="sd">        change observations.</span>
+<span class="sd">        change observations during the **validation** period.</span>
 
 <span class="sd">    :param riskmap_file: Input raster file with categories of</span>
 <span class="sd">        spatial deforestation risk. This file is typically obtained</span>
@@ -256,8 +255,12 @@
             <span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
         <span class="n">defor_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">defor_cat_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">categories</span><span class="o">=</span><span class="n">cat</span><span class="p">)</span>
         <span class="n">defor_cat_count</span> <span class="o">=</span> <span class="n">defor_cat</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+        <span class="c1"># Deforestation rate on validation period</span>
+        <span class="n">defrate_per_cat_period</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">defrate_per_cat</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">**</span> <span class="n">time_interval</span><span class="p">)</span>
+        <span class="c1"># Predicted deforestation (area)</span>
         <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="s2">&quot;ndefor_pred&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">defor_cat_count</span> <span class="o">*</span>
-                                             <span class="n">defrate_per_cat</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+                                             <span class="n">defrate_per_cat_period</span><span class="p">)</span>
         <span class="c1"># Note: np.nansum is used here as some cat might not exist and</span>
         <span class="c1"># have nan for defrate (eg. in the case of Equal Interval).</span>
 
@@ -349,7 +352,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

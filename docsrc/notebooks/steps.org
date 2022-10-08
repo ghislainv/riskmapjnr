@@ -190,7 +190,7 @@ tabulate(perc_df.head(10), headers=col_names, tablefmt="orgtbl", showindex=False
 
 * Local deforestation rate
 
-The second step is to compute a local risk of deforestation at the pixel level using a moving window made of several pixels. The deforestation risk is estimated from the deforestation rate inside the moving window. The deforestation rate $\theta$ (in %/yr) is computed from the formula $\theta=(\alpha_2/\alpha_1)^{1/\tau}-1$, with $\alpha$ the forest areas (in ha) at time $t_1$ and $t_2$, and $\tau$, the time interval (in yr) between time $t_1$ and $t_2$. Using the deforestation rate formula, the moving window and the past forest cover change map, we can derive a raster map describing the local risk of deforestation at the same resolution as the input map.
+The second step is to compute a local risk of deforestation at the pixel level using a moving window made of several pixels. The deforestation risk is estimated from the deforestation rate inside the moving window. The deforestation rate $\theta$ (in %/yr) is computed from the formula $\theta=1-(\alpha_2/\alpha_1)^{1/\tau}$, with $\alpha$ the forest areas (in ha) at time $t_1$ and $t_2$, and $\tau$, the time interval (in yr) between time $t_1$ and $t_2$. Using the deforestation rate formula, the moving window and the past forest cover change map, we can derive a raster map describing the local risk of deforestation at the same resolution as the input map.
 
 To save space on disk, deforestation rates are converted to integer values between 0 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10^{-4} for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.
 
