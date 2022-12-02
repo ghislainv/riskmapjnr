@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,6 +11,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -80,7 +81,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -124,6 +125,7 @@
 <div class="viewcode-block" id="validation"><a class="viewcode-back" href="../../reference.html#riskmapjnr.validation">[docs]</a><span class="k">def</span> <span class="nf">validation</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
                <span class="n">riskmap_file</span><span class="p">,</span> <span class="n">tab_file_defrate</span><span class="p">,</span>
                <span class="n">csize</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+               <span class="n">no_quantity_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                <span class="n">tab_file_pred</span><span class="o">=</span><span class="s2">&quot;pred_obs.csv&quot;</span><span class="p">,</span>
                <span class="n">fig_file_pred</span><span class="o">=</span><span class="s2">&quot;pred_obs.png&quot;</span><span class="p">,</span>
                <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">),</span>
@@ -160,6 +162,11 @@
 <span class="sd">    :param csize: Spatial cell size in number of pixels. Must</span>
 <span class="sd">        correspond to a distance &lt; 10 km. Default to 300 corresponding</span>
 <span class="sd">        to 9 km for a 30 m resolution raster.</span>
+
+<span class="sd">    :param no_quantity_error: Correct the deforestation rates to avoid</span>
+<span class="sd">        a &quot;quantity&quot; error on deforestation due to differences in</span>
+<span class="sd">        total deforestation between first and second periods. This</span>
+<span class="sd">        point is being discussed to improve the JNR methodology.</span>
 
 <span class="sd">    :param tab_file_pred: Path to the ``.csv`` output file with validation</span>
 <span class="sd">        data.</span>
@@ -250,11 +257,16 @@
         <span class="n">fcc_data</span> <span class="o">=</span> <span class="n">fcc_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
         <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="s2">&quot;nfor_obs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fcc_data</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="s2">&quot;ndefor_obs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fcc_data</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+
         <span class="c1"># Predicted deforestation for validation period</span>
         <span class="n">defor_cat_data</span> <span class="o">=</span> <span class="n">defor_cat_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span>
             <span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
+        <span class="c1"># The risk map includes risk for first period</span>
+        <span class="c1"># So, we need to set not data value for fcc == 1</span>
+        <span class="n">defor_cat_data</span><span class="p">[</span><span class="n">fcc_data</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
         <span class="n">defor_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">defor_cat_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">categories</span><span class="o">=</span><span class="n">cat</span><span class="p">)</span>
         <span class="n">defor_cat_count</span> <span class="o">=</span> <span class="n">defor_cat</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+
         <span class="c1"># Deforestation rate on validation period</span>
         <span class="n">defrate_per_cat_period</span> <span class="o">=</span> <span class="p">(</span>
             <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">defrate_per_cat</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">**</span> <span class="n">time_interval</span><span class="p">)</span>
@@ -276,9 +288,14 @@
     <span class="n">ncell</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">ncell</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Number of cells with forest cover &gt; 0 ha is &lt; 1000. &quot;</span>
-               <span class="s2">&quot;Please decrease the spatial cell size &#39;csize&#39; to get&quot;</span>
+               <span class="s2">&quot;Please decrease the spatial cell size &#39;csize&#39; to get &quot;</span>
                <span class="s2">&quot;more cells.&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Correction for no_quantity_error (correction factor cf)</span>
+    <span class="k">if</span> <span class="n">no_quantity_error</span><span class="p">:</span>
+        <span class="n">cf</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor_obs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor_pred&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor_pred&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor_pred&quot;</span><span class="p">]</span>
 
     <span class="c1"># Compute areas in ha</span>
     <span class="n">df</span><span class="p">[</span><span class="s2">&quot;nfor_obs_ha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;nfor_obs&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">pix_area</span> <span class="o">/</span> <span class="mi">10000</span>
@@ -298,7 +315,7 @@
     <span class="c1"># Plot title</span>
     <span class="n">title</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Predicted vs. observed deforestation (ha) &quot;</span>
              <span class="s2">&quot;in &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">csize_km</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; x &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">csize_km</span><span class="p">)</span> <span class="o">+</span>
-             <span class="s2">&quot; km grid cells&quot;</span><span class="p">)</span>
+             <span class="s2">&quot; km grid cells.&quot;</span><span class="p">)</span>
 
     <span class="c1"># Points or identity line</span>
     <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor_obs_ha&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor_obs_ha&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span>
@@ -310,6 +327,9 @@
                 <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">no_quantity_error</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Predictions have been corrected to avoid &quot;</span>
+                     <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">quantity</span><span class="se">\&quot;</span><span class="s2"> error.&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Observed deforestation (ha)&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Predicted deforestation (ha)&quot;</span><span class="p">)</span>
     <span class="c1"># Text wRMSE and ncell</span>
@@ -325,16 +345,19 @@
             <span class="s1">&#39;csize&#39;</span><span class="p">:</span> <span class="n">csize</span><span class="p">,</span> <span class="s1">&#39;csize_km&#39;</span><span class="p">:</span> <span class="n">csize_km</span><span class="p">}</span></div>
 
 
-<span class="c1"># # Test</span>
-<span class="c1"># fcc_file = &quot;data/fcc123.tif&quot;</span>
+<span class="c1"># Test</span>
+<span class="c1"># import os</span>
+<span class="c1"># os.chdir(&quot;../docsrc/notebooks&quot;)</span>
+<span class="c1"># fcc_file = &quot;data/fcc123_GLP.tif&quot;</span>
 <span class="c1"># time_interval = 10</span>
-<span class="c1"># riskmap_file = &quot;outputs/defor_cat.tif&quot;</span>
-<span class="c1"># defrate_per_cat_file = &quot;outputs/defrate_per_cat.csv&quot;</span>
-<span class="c1"># csize = 500</span>
-<span class="c1"># tab_file_pred = &quot;outputs/validation_data.csv&quot;</span>
-<span class="c1"># fig_file_pred = &quot;outputs/pred_obs.png&quot;</span>
+<span class="c1"># riskmap_file = &quot;outputs_steps/riskmap.tif&quot;</span>
+<span class="c1"># tab_file_defrate = &quot;outputs_steps/defrate_per_cat.csv&quot;</span>
+<span class="c1"># csize = 40</span>
+<span class="c1"># tab_file_pred = &quot;outputs_steps/pred_obs.csv&quot;</span>
+<span class="c1"># fig_file_pred = &quot;outputs_steps/pred_obs.png&quot;</span>
 <span class="c1"># figsize = (6.4, 4.8)</span>
 <span class="c1"># dpi = 100</span>
+<span class="c1"># verbose = True</span>
 
 <span class="c1"># validation(fcc_file, time_interval, riskmap_file, tab_file_defrate,</span>
 <span class="c1">#            csize, tab_file_pred, fig_file_pred)</span>
@@ -352,7 +375,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

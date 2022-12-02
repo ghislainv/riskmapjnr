@@ -75,7 +75,7 @@ ax.set_title("Comparing formulas for computing\n"
              "the annual deforestation rate")
 ax.annotate("T = 5 years", xy=(0, 0.3))
 ax.legend()
-fig.savefig("outputs_tests/D-perc-relationship.png")
+fig.savefig("outputs_test_annual_defor_rate/D-perc-relationship.png")
 
 # D-T relationship
 # Data
@@ -99,6 +99,6 @@ ax.set_title("Comparing formulas for computing\n"
              "the annual deforestation rate")
 ax.annotate("A_T / A_0 = 50%", xy=(8, 0.3))
 ax.legend()
-fig.savefig("outputs_tests/D-T-relationship.png")
+fig.savefig("outputs_test_annual_defor_rate/D-T-relationship.png")
 
 #

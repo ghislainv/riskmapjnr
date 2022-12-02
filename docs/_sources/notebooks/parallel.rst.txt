@@ -78,6 +78,7 @@ We set ``parallel`` argument to ``False`` in the call to ``makemap()`` function.
         ncpu=None,
         methods=["Equal Interval", "Equal Area"],
         csize=40,
+        no_quantity_error=True,
         figsize=(6.4, 4.8),
         dpi=100,
         blk_rows=128,
@@ -105,7 +106,7 @@ We set ``parallel`` argument to ``False`` in the call to ``makemap()`` function.
     .. Model 14: window size = 47, slicing method = ei.
     .. Model 15: window size = 47, slicing method = ea.
     Deriving risk map for entire historical period
-    Time Taken: 00:01:27
+    Time Taken: 00:01:32
 
 3 Parallel computing
 --------------------
@@ -137,6 +138,7 @@ We use parallel computing using several CPUs. We set ``parallel`` argument to ``
         ncpu=ncpu,
         methods=["Equal Interval", "Equal Area"],
         csize=40,
+        no_quantity_error=True,
         figsize=(6.4, 4.8),
         dpi=100,
         blk_rows=128,
@@ -148,23 +150,23 @@ We use parallel computing using several CPUs. We set ``parallel`` argument to ``
 
     Model calibration and validation
     .. Model 0: window size = 5, slicing method = ei.
-    .. Model 2: window size = 11, slicing method = ei.
-    .. Model 8: window size = 29, slicing method = ei.
     .. Model 4: window size = 17, slicing method = ei.
+    .. Model 2: window size = 11, slicing method = ei.
     .. Model 6: window size = 23, slicing method = ei.
     .. Model 10: window size = 35, slicing method = ei.
+    .. Model 8: window size = 29, slicing method = ei.
     .. Model 12: window size = 41, slicing method = ei.
     .. Model 14: window size = 47, slicing method = ei.
-    .. Model 9: window size = 29, slicing method = ea.
     .. Model 3: window size = 11, slicing method = ea.
     .. Model 1: window size = 5, slicing method = ea.
+    .. Model 7: window size = 23, slicing method = ea.
+    .. Model 13: window size = 41, slicing method = ea.
+    .. Model 5: window size = 17, slicing method = ea.
     .. Model 11: window size = 35, slicing method = ea.
     .. Model 15: window size = 47, slicing method = ea.
-    .. Model 13: window size = 41, slicing method = ea.
-    .. Model 7: window size = 23, slicing method = ea.
-    .. Model 5: window size = 17, slicing method = ea.
+    .. Model 9: window size = 29, slicing method = ea.
     Deriving risk map for entire historical period
-    Time Taken: 00:00:36
+    Time Taken: 00:00:35
 
 4 Results
 ---------

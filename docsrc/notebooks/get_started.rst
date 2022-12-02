@@ -43,7 +43,7 @@ Create a directory to save results.
 
 .. code:: python
 
-    out_dir = "outputs_makemap"
+    out_dir = "outputs_get_started"
     rmj.make_dir(out_dir)
 
 1.2 Forest cover change data
@@ -80,7 +80,7 @@ We plot the forest cover change map with the ``plot.fcc123()`` function.
 
 .. _fig:fccmap:
 
-.. figure:: outputs_makemap/fcc123.png
+.. figure:: outputs_get_started/fcc123.png
     :width: 600
 
 
@@ -115,10 +115,22 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
         ncpu=ncpu,
         methods=["Equal Interval", "Equal Area"],
         csize=40,
+        no_quantity_error=True,
         figsize=(6.4, 4.8),
         dpi=100,
         blk_rows=128,
         verbose=True)
+
+::
+
+    Model calibration and validation
+    .. Model 0: window size = 5, slicing method = ei.
+    .. Model 2: window size = 21, slicing method = ei.
+    .. Model 4: window size = 37, slicing method = ei.
+    .. Model 1: window size = 5, slicing method = ea.
+    .. Model 3: window size = 21, slicing method = ea.
+    .. Model 5: window size = 37, slicing method = ea.
+    Deriving risk map for entire historical period
 
 3 Results
 ---------
@@ -175,7 +187,7 @@ We also have access to a plot showing how the cumulative percentage of deforesta
 
 .. _fig:perc_dist:
 
-.. figure:: outputs_makemap/perc_dist.png
+.. figure:: outputs_get_started/perc_dist.png
     :width: 600
 
 
@@ -208,7 +220,7 @@ We identify the moving window size and the slicing algorithm of the best model.
 
 .. _fig:pred_obs:
 
-.. figure:: outputs_makemap/pred_obs_ws5_ei.png
+.. figure:: outputs_get_started/pred_obs_ws5_ei.png
     :width: 600
 
 
@@ -221,8 +233,8 @@ We plot the risk map using the ``plot.riskmap()`` function.
 
 .. code:: python
 
-    ifile = os.path.join(out_dir, "riskmap_ws{ws_hat}_{m_hat}.tif")
-    ofile = os.path.join(out_dir, "riskmap_ws{ws_hat}_{m_hat}.png")
+    ifile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.tif")
+    ofile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.png")
     riskmap_fig = rmj.plot.riskmap(
         input_risk_map=ifile,
         maxpixels=1e8,
@@ -234,7 +246,7 @@ We plot the risk map using the ``plot.riskmap()`` function.
 
 .. _fig:riskmap:
 
-.. figure:: outputs_makemap/riskmap_ws5_ei.png
+.. figure:: outputs_get_started/riskmap_ws5_ei.png
     :width: 600
 
 

@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,6 +11,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -80,7 +81,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -127,7 +128,7 @@
 <span class="c1"># Function for computing by window size</span>
 <span class="k">def</span> <span class="nf">makemap_ws</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span> <span class="n">dist_file</span><span class="p">,</span>
                <span class="n">dist_edge_thres</span><span class="p">,</span> <span class="n">calval_dir</span><span class="p">,</span> <span class="n">ncat</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span> <span class="n">meth</span><span class="p">,</span> <span class="n">n_m</span><span class="p">,</span>
-               <span class="n">csize</span><span class="p">,</span> <span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">blk_rows</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+               <span class="n">csize</span><span class="p">,</span> <span class="n">nqe</span><span class="p">,</span> <span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">blk_rows</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
 
     <span class="c1"># Window size</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">win_size</span>
@@ -200,6 +201,7 @@
             <span class="n">riskmap_file</span><span class="o">=</span><span class="n">riskmap_file</span><span class="p">,</span>
             <span class="n">tab_file_defrate</span><span class="o">=</span><span class="n">tab_file_defrate</span><span class="p">,</span>
             <span class="n">csize</span><span class="o">=</span><span class="n">csize</span><span class="p">,</span>
+            <span class="n">no_quantity_error</span><span class="o">=</span><span class="n">nqe</span><span class="p">,</span>
             <span class="n">tab_file_pred</span><span class="o">=</span><span class="n">tab_file_pred</span><span class="p">,</span>
             <span class="n">fig_file_pred</span><span class="o">=</span><span class="n">fig_file_pred</span><span class="p">,</span>
             <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span>
@@ -220,6 +222,7 @@
             <span class="n">ncat</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
             <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Equal Interval&quot;</span><span class="p">,</span> <span class="s2">&quot;Equal Area&quot;</span><span class="p">],</span>
             <span class="n">csize</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+            <span class="n">no_quantity_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">ncpu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">),</span>
@@ -339,6 +342,11 @@
 <span class="sd">        correspond to a distance &lt; 10 km. Default to 300 corresponding</span>
 <span class="sd">        to 9 km for a 30 m resolution raster.</span>
 
+<span class="sd">    :param no_quantity_error: Correct the deforestation rates to avoid</span>
+<span class="sd">        a &quot;quantity&quot; error on deforestation due to differences in</span>
+<span class="sd">        total deforestation between first and second periods. This</span>
+<span class="sd">        point is being discussed to improve the JNR methodology.</span>
+
 <span class="sd">    :param parallel: Logical. Parallel (if ``True``) or sequential (if</span>
 <span class="sd">        ``False``) computing. Default to ``False``.</span>
 
@@ -364,6 +372,7 @@
 <span class="sd">          the beginning of the validation period.</span>
 <span class="sd">        * ``csize``: the cell size in number of pixels.</span>
 <span class="sd">        * ``csize_km``: the cell size in kilometers.</span>
+<span class="sd">        * ``no_quantity_error``: no_quantity_error argument.</span>
 <span class="sd">        * ``ws_hat``: window size of the best risk map.</span>
 <span class="sd">        * ``m_hat``: slicing method of the best risk map.</span>
 <span class="sd">        * ``wRMSE_hat``: weighted Root Mean Squared Error (in hectares)</span>
@@ -430,8 +439,8 @@
             <span class="n">i</span><span class="p">,</span> <span class="n">wRMSE_list</span><span class="p">,</span> <span class="n">ncell</span><span class="p">,</span> <span class="n">csize_km</span> <span class="o">=</span> <span class="n">makemap_ws</span><span class="p">(</span>
                 <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span> <span class="n">dist_file</span><span class="p">,</span>
                 <span class="n">dist_edge_thres</span><span class="p">,</span> <span class="n">calval_dir</span><span class="p">,</span> <span class="n">ncat</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span>
-                <span class="n">meth</span><span class="p">,</span> <span class="n">n_m</span><span class="p">,</span> <span class="n">csize</span><span class="p">,</span> <span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">blk_rows</span><span class="p">,</span>
-                <span class="n">verbose</span><span class="p">)</span>
+                <span class="n">meth</span><span class="p">,</span> <span class="n">n_m</span><span class="p">,</span> <span class="n">csize</span><span class="p">,</span> <span class="n">no_quantity_error</span><span class="p">,</span>
+                <span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">blk_rows</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
             <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;ws&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">,</span> <span class="s2">&quot;wRMSE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wRMSE_list</span>
 
     <span class="c1"># Parallel computing</span>
@@ -439,7 +448,8 @@
         <span class="n">pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">ncpu</span><span class="p">)</span>
         <span class="n">args</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span> <span class="n">dist_file</span><span class="p">,</span>
                 <span class="n">dist_edge_thres</span><span class="p">,</span> <span class="n">calval_dir</span><span class="p">,</span> <span class="n">ncat</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span>
-                <span class="n">meth</span><span class="p">,</span> <span class="n">n_m</span><span class="p">,</span> <span class="n">csize</span><span class="p">,</span> <span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">blk_rows</span><span class="p">,</span>
+                 <span class="n">meth</span><span class="p">,</span> <span class="n">n_m</span><span class="p">,</span> <span class="n">csize</span><span class="p">,</span> <span class="n">no_quantity_error</span><span class="p">,</span>
+                 <span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">blk_rows</span><span class="p">,</span>
                  <span class="n">verbose</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">win_sizes</span><span class="p">)]</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">starmap_async</span><span class="p">(</span><span class="n">makemap_ws</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="n">ncell</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
@@ -568,6 +578,7 @@
             <span class="s1">&#39;perc_thresh&#39;</span><span class="p">:</span> <span class="n">dist_edge_thres</span><span class="p">[</span><span class="s2">&quot;perc_thresh&quot;</span><span class="p">],</span>
             <span class="s1">&#39;ncell&#39;</span><span class="p">:</span> <span class="n">ncell</span><span class="p">,</span> <span class="s1">&#39;csize&#39;</span><span class="p">:</span> <span class="n">csize</span><span class="p">,</span>
             <span class="s1">&#39;csize_km&#39;</span><span class="p">:</span> <span class="n">csize_km</span><span class="p">,</span>
+            <span class="s1">&#39;no_quantity_error&#39;</span><span class="p">:</span> <span class="n">no_quantity_error</span><span class="p">,</span>
             <span class="s1">&#39;ws_hat&#39;</span><span class="p">:</span> <span class="n">ws_hat</span><span class="p">,</span> <span class="s1">&#39;m_hat&#39;</span><span class="p">:</span> <span class="n">m_hat</span><span class="p">,</span>
             <span class="s1">&#39;wRMSE_hat&#39;</span><span class="p">:</span> <span class="n">wRMSE_hat</span><span class="p">}</span></div>
 
@@ -601,7 +612,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -24,6 +24,7 @@ from .misc import progress_bar, make_square
 def validation(fcc_file, time_interval,
                riskmap_file, tab_file_defrate,
                csize=300,
+               no_quantity_error=False,
                tab_file_pred="pred_obs.csv",
                fig_file_pred="pred_obs.png",
                figsize=(6.4, 4.8),
@@ -60,6 +61,11 @@ def validation(fcc_file, time_interval,
     :param csize: Spatial cell size in number of pixels. Must
         correspond to a distance < 10 km. Default to 300 corresponding
         to 9 km for a 30 m resolution raster.
+
+    :param no_quantity_error: Correct the deforestation rates to avoid
+        a "quantity" error on deforestation due to differences in
+        total deforestation between first and second periods. This
+        point is being discussed to improve the JNR methodology.
 
     :param tab_file_pred: Path to the ``.csv`` output file with validation
         data.
@@ -150,11 +156,16 @@ def validation(fcc_file, time_interval,
         fcc_data = fcc_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
         df.loc[s, "nfor_obs"] = np.sum(fcc_data > 1)
         df.loc[s, "ndefor_obs"] = np.sum(fcc_data == 2)
+
         # Predicted deforestation for validation period
         defor_cat_data = defor_cat_band.ReadAsArray(
             x[px], y[py], nx[px], ny[py])
+        # The risk map includes risk for first period
+        # So, we need to set not data value for fcc == 1
+        defor_cat_data[fcc_data == 1] = 255
         defor_cat = pd.Categorical(defor_cat_data.flatten(), categories=cat)
         defor_cat_count = defor_cat.value_counts().values
+
         # Deforestation rate on validation period
         defrate_per_cat_period = (
             1 - (1 - defrate_per_cat["rate"].values) ** time_interval)
@@ -176,9 +187,14 @@ def validation(fcc_file, time_interval,
     ncell = df.shape[0]
     if ncell < 1000:
         msg = ("Number of cells with forest cover > 0 ha is < 1000. "
-               "Please decrease the spatial cell size 'csize' to get"
+               "Please decrease the spatial cell size 'csize' to get "
                "more cells.")
         raise ValueError(msg)
+
+    # Correction for no_quantity_error (correction factor cf)
+    if no_quantity_error:
+        cf = df["ndefor_obs"].sum() / df["ndefor_pred"].sum()
+        df["ndefor_pred"] = cf * df["ndefor_pred"]
 
     # Compute areas in ha
     df["nfor_obs_ha"] = df["nfor_obs"] * pix_area / 10000
@@ -198,7 +214,7 @@ def validation(fcc_file, time_interval,
     # Plot title
     title = ("Predicted vs. observed deforestation (ha) "
              "in " + str(csize_km) + " x " + str(csize_km) +
-             " km grid cells")
+             " km grid cells.")
 
     # Points or identity line
     p = [df["ndefor_obs_ha"].min(), df["ndefor_obs_ha"].max()]
@@ -210,6 +226,9 @@ def validation(fcc_file, time_interval,
                 color=None, marker="o", edgecolor="k")
     plt.plot(p, p, "r-")
     plt.title(title)
+    if no_quantity_error:
+        plt.suptitle("Predictions have been corrected to avoid "
+                     "\"quantity\" error.")
     plt.xlabel("Observed deforestation (ha)")
     plt.ylabel("Predicted deforestation (ha)")
     # Text wRMSE and ncell
@@ -225,16 +244,19 @@ def validation(fcc_file, time_interval,
             'csize': csize, 'csize_km': csize_km}
 
 
-# # Test
-# fcc_file = "data/fcc123.tif"
+# Test
+# import os
+# os.chdir("../docsrc/notebooks")
+# fcc_file = "data/fcc123_GLP.tif"
 # time_interval = 10
-# riskmap_file = "outputs/defor_cat.tif"
-# defrate_per_cat_file = "outputs/defrate_per_cat.csv"
-# csize = 500
-# tab_file_pred = "outputs/validation_data.csv"
-# fig_file_pred = "outputs/pred_obs.png"
+# riskmap_file = "outputs_steps/riskmap.tif"
+# tab_file_defrate = "outputs_steps/defrate_per_cat.csv"
+# csize = 40
+# tab_file_pred = "outputs_steps/pred_obs.csv"
+# fig_file_pred = "outputs_steps/pred_obs.png"
 # figsize = (6.4, 4.8)
 # dpi = 100
+# verbose = True
 
 # validation(fcc_file, time_interval, riskmap_file, tab_file_defrate,
 #            csize, tab_file_pred, fig_file_pred)

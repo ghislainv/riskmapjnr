@@ -80,7 +80,7 @@ os.environ["PROJ_LIB"] = "/home/ghislain/.pyenv/versions/miniconda3-latest/envs/
 Create a directory to save results.
 
 #+begin_src python :results none :session :exports both
-out_dir = "outputs_makemap"
+out_dir = "outputs_get_started"
 rmj.make_dir(out_dir)
 #+end_src
 
@@ -117,7 +117,7 @@ ofile
 #+ATTR_RST: :width 600
 #+CAPTION: *Forest cover change map.* Deforestation on the first period (2000--2010) is in orange, deforestation on the second period (2000--2020) is in red and remaining forest (in 2020) is in green.
 #+RESULTS:
-[[file:outputs_makemap/fcc123.png]]
+[[file:outputs_get_started/fcc123.png]]
 
 * Derive the deforestation risk map
  
@@ -144,6 +144,7 @@ results_makemap = rmj.makemap(
     ncpu=ncpu,
     methods=["Equal Interval", "Equal Area"],
     csize=40,
+    no_quantity_error=True,
     figsize=(6.4, 4.8),
     dpi=100,
     blk_rows=128,
@@ -156,9 +157,11 @@ results_makemap = rmj.makemap(
 : .. Model 2: window size = 21, slicing method = ei.
 : .. Model 4: window size = 37, slicing method = ei.
 : .. Model 1: window size = 5, slicing method = ea.
-: .. Model 5: window size = 37, slicing method = ea.
 : .. Model 3: window size = 21, slicing method = ea.
+: .. Model 5: window size = 37, slicing method = ea.
 : Deriving risk map for entire historical period
+
+
 
 * Results
 
@@ -207,7 +210,7 @@ ofile
 #+ATTR_RST: :width 600
 #+CAPTION: *Identifying areas for which the risk of deforestation is negligible.* Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge ≤ 180 m. Forest areas located at a distance > 180 m from the forest edge can be considered as having no risk of being deforested.
 #+RESULTS:
-[[file:outputs_makemap/perc_dist.png]]
+[[file:outputs_get_started/perc_dist.png]]
 
 ** Best model
 
@@ -236,7 +239,7 @@ ofile
 #+ATTR_RST: :width 600
 #+CAPTION: *Relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model*. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations ($n$, the number of spatial cells) are reported on the graph.
 #+RESULTS:
-[[file:outputs_makemap/pred_obs_ws5_ei.png]]
+[[file:outputs_get_started/pred_obs_ws5_ei.png]]
 
 ** Risk map of deforestation
 
@@ -259,7 +262,7 @@ ofile
 #+ATTR_RST: :width 600
 #+CAPTION: *Map of the deforestation risk following the JNR methodology*. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 180 m from the forest edge and have a negligible risk of being deforested.
 #+RESULTS:
-[[file:outputs_makemap/riskmap_ws5_ei.png]]
+[[file:outputs_get_started/riskmap_ws5_ei.png]]
 
 * Environment setup and test :noexport:
 

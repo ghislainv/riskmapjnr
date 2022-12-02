@@ -148,27 +148,28 @@ results_makemap = rmj.makemap(
     output_dir=out_dir,
     clean=False,
     dist_bins=np.arange(0, 1080, step=30),
-    win_sizes=np.arange(5, 120, 16),
+    win_sizes=np.arange(5, 200, 16),
     ncat=30,
     parallel=True,
     ncpu=ncpu,
     methods=["Equal Interval", "Equal Area"],
     csize=400,  # 12 km
+    no_quantity_error=True,
     figsize=(6.4, 4.8),
     dpi=100,
-    blk_rows=128,
+    blk_rows=200,
     verbose=True)
+sec_seq = time.time() - start_time
 #+end_src
 
 #+RESULTS:
 
 #+begin_src python :results output :session :exports both
-sec_seq = time.time() - start_time
 print('Computation time:', time.strftime("%H:%M:%S",time.gmtime(sec_seq)))
 #+end_src
 
 #+RESULTS:
-: Computation time: 00:20:56
+: Computation time: 00:34:48
 
 * Results
 
@@ -251,8 +252,8 @@ print(f"The best slicing algorithm is '{m_hat}'.")
 #+end_src
 
 #+RESULTS:
-: The best moving window size is 5 pixels.
-: The best slicing algorithm is 'ea'.
+: The best moving window size is 37 pixels.
+: The best slicing algorithm is 'ei'.
 
 ** Validation
 
@@ -265,7 +266,7 @@ ofile
 #+ATTR_RST: :width 600
 #+CAPTION: *Relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model*. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations ($n$, the number of spatial cells) are reported on the graph.
 #+RESULTS:
-[[file:outputs_kenya/pred_obs_ws5_ea.png]]
+[[file:outputs_kenya/pred_obs_ws37_ei.png]]
 
 ** Risk map of deforestation
 
@@ -288,7 +289,7 @@ ofile
 #+ATTR_RST: :width 600
 #+CAPTION: *Map of the deforestation risk following the JNR methodology*. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 780 m from the forest edge and have a negligible risk of being deforested.
 #+RESULTS:
-[[file:outputs_kenya/riskmap_ws5_ea.png]]
+[[file:outputs_kenya/riskmap_ws37_ei.png]]
 
 * Environment setup and test :noexport:
 

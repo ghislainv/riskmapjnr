@@ -111,18 +111,26 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
         output_dir=out_dir,
         clean=False,
         dist_bins=np.arange(0, 1080, step=30),
-        win_sizes=np.arange(5, 120, 16),
+        win_sizes=np.arange(5, 200, 16),
         ncat=30,
         parallel=True,
         ncpu=ncpu,
         methods=["Equal Interval", "Equal Area"],
         csize=400,  # 12 km
+        no_quantity_error=True,
         figsize=(6.4, 4.8),
         dpi=100,
-        blk_rows=128,
+        blk_rows=200,
         verbose=True)
     sec_seq = time.time() - start_time
-    print('Time Taken:', time.strftime("%H:%M:%S",time.gmtime(sec_seq)))
+
+.. code:: python
+
+    print('Computation time:', time.strftime("%H:%M:%S",time.gmtime(sec_seq)))
+
+::
+
+    Computation time: 00:34:48
 
 3 Results
 ---------
@@ -239,8 +247,8 @@ We identify the moving window size and the slicing algorithm of the best model.
 
 ::
 
-    The best moving window size is 5 pixels.
-    The best slicing algorithm is 'ea'.
+    The best moving window size is 37 pixels.
+    The best slicing algorithm is 'ei'.
 
 3.3 Validation
 ~~~~~~~~~~~~~~
@@ -252,7 +260,7 @@ We identify the moving window size and the slicing algorithm of the best model.
 
 .. _fig:kenya-pred_obs:
 
-.. figure:: outputs_kenya/pred_obs_ws5_ea.png
+.. figure:: outputs_kenya/pred_obs_ws37_ei.png
     :width: 600
 
 
@@ -278,7 +286,7 @@ We plot the risk map using the ``plot.riskmap()`` function.
 
 .. _fig:kenya-riskmap:
 
-.. figure:: outputs_kenya/riskmap_ws5_ea.png
+.. figure:: outputs_kenya/riskmap_ws37_ei.png
     :width: 600
 
 

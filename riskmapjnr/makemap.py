@@ -27,7 +27,7 @@ from . import defor_cat, defrate_per_cat, validation
 # Function for computing by window size
 def makemap_ws(i, win_size, fcc_file, time_interval, dist_file,
                dist_edge_thres, calval_dir, ncat, methods, meth, n_m,
-               csize, figsize, dpi, blk_rows, verbose):
+               csize, nqe, figsize, dpi, blk_rows, verbose):
 
     # Window size
     s = win_size
@@ -100,6 +100,7 @@ def makemap_ws(i, win_size, fcc_file, time_interval, dist_file,
             riskmap_file=riskmap_file,
             tab_file_defrate=tab_file_defrate,
             csize=csize,
+            no_quantity_error=nqe,
             tab_file_pred=tab_file_pred,
             fig_file_pred=fig_file_pred,
             figsize=figsize,
@@ -120,6 +121,7 @@ def makemap(fcc_file, time_interval,
             ncat=30,
             methods=["Equal Interval", "Equal Area"],
             csize=300,
+            no_quantity_error=False,
             parallel=False,
             ncpu=None,
             figsize=(6.4, 4.8),
@@ -239,6 +241,11 @@ def makemap(fcc_file, time_interval,
         correspond to a distance < 10 km. Default to 300 corresponding
         to 9 km for a 30 m resolution raster.
 
+    :param no_quantity_error: Correct the deforestation rates to avoid
+        a "quantity" error on deforestation due to differences in
+        total deforestation between first and second periods. This
+        point is being discussed to improve the JNR methodology.
+
     :param parallel: Logical. Parallel (if ``True``) or sequential (if
         ``False``) computing. Default to ``False``.
 
@@ -264,6 +271,7 @@ def makemap(fcc_file, time_interval,
           the beginning of the validation period.
         * ``csize``: the cell size in number of pixels.
         * ``csize_km``: the cell size in kilometers.
+        * ``no_quantity_error``: no_quantity_error argument.
         * ``ws_hat``: window size of the best risk map.
         * ``m_hat``: slicing method of the best risk map.
         * ``wRMSE_hat``: weighted Root Mean Squared Error (in hectares)
@@ -330,8 +338,8 @@ def makemap(fcc_file, time_interval,
             i, wRMSE_list, ncell, csize_km = makemap_ws(
                 i, s, fcc_file, time_interval, dist_file,
                 dist_edge_thres, calval_dir, ncat, methods,
-                meth, n_m, csize, figsize, dpi, blk_rows,
-                verbose)
+                meth, n_m, csize, no_quantity_error,
+                figsize, dpi, blk_rows, verbose)
             df.loc[df["ws"] == s, "wRMSE"] = wRMSE_list
 
     # Parallel computing
@@ -339,7 +347,8 @@ def makemap(fcc_file, time_interval,
         pool = mp.Pool(processes=ncpu)
         args = [(i, s, fcc_file, time_interval, dist_file,
                 dist_edge_thres, calval_dir, ncat, methods,
-                meth, n_m, csize, figsize, dpi, blk_rows,
+                 meth, n_m, csize, no_quantity_error,
+                 figsize, dpi, blk_rows,
                  verbose) for i, s in enumerate(win_sizes)]
         res = pool.starmap_async(makemap_ws, args).get()
         ncell = res[0][2]
@@ -468,6 +477,7 @@ def makemap(fcc_file, time_interval,
             'perc_thresh': dist_edge_thres["perc_thresh"],
             'ncell': ncell, 'csize': csize,
             'csize_km': csize_km,
+            'no_quantity_error': no_quantity_error,
             'ws_hat': ws_hat, 'm_hat': m_hat,
             'wRMSE_hat': wRMSE_hat}
 
