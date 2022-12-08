@@ -21,6 +21,7 @@
 #+OPTIONS: html-postamble:nil
 #+EXPORT_SELECT_TAGS: export
 #+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: inlineimages
 #+HTML_DOCTYPE: html5
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css"/>
 
@@ -188,7 +189,7 @@ tabulate(perc_df.head(10), headers=col_names, tablefmt="orgtbl", showindex=False
 
 The second step is to compute a local risk of deforestation at the pixel level using a moving window made of several pixels. The deforestation risk is estimated from the deforestation rate inside the moving window. The deforestation rate $\theta$ (in %/yr) is computed from the formula $\theta=1-(\alpha_2/\alpha_1)^{1/\tau}$, with $\alpha$ the forest areas (in ha) at time $t_1$ and $t_2$, and $\tau$, the time interval (in yr) between time $t_1$ and $t_2$. Using the deforestation rate formula, the moving window and the past forest cover change map, we can derive a raster map describing the local risk of deforestation at the same resolution as the input map.
 
-To save space on disk, deforestation rates are converted to integer values between 0 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10^{-4} for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.
+To save space on disk, deforestation rates are converted to integer values between 1 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10^{-4} for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.
 
 #+begin_src python :results output :session :exports both
 # Set window size
@@ -197,7 +198,7 @@ s = 5
 rmj.local_defor_rate(
     fcc_file=fcc_file,
     defor_values=1,
-    ldefrate_file=os.path.join(out_dir, f"ldefrate.tif"),
+    ldefrate_file=os.path.join(out_dir, "ldefrate.tif"),
     win_size=s,
     time_interval=10,
     blk_rows=100,
@@ -212,10 +213,10 @@ This third step sets a value of 10001 to pixels with zero deforestation risk. As
 
 #+begin_src python :results output :session :exports both
 rmj.set_defor_cat_zero(
-    ldefrate_file=os.path.join(out_dir, f"ldefrate.tif"),
+    ldefrate_file=os.path.join(out_dir, "ldefrate.tif"),
     dist_file=os.path.join(out_dir, "dist_edge.tif"),
     dist_thresh=dist_thresh,
-    ldefrate_with_zero_file=os.path.join(out_dir, f"ldefrate_with_zero.tif"),
+    ldefrate_with_zero_file=os.path.join(out_dir, "ldefrate_with_zero.tif"),
     blk_rows=128,
     verbose=False)
 #+end_src
@@ -227,8 +228,8 @@ rmj.set_defor_cat_zero(
 The fourth step implies converting the continuous values of the raster map of deforestation risk to categorical values. The JNR methodology suggests to use 31 classes of risk from "0" to "30" including the "0" class for the forest pixels with no risk of being deforested (located at a distance to the forest edge $> d$, see first step). Following the JNR methodology, at least three slicing algorithms must be compared to derive the categorical map of deforestation risk, such as "equal area", "equal interval", and "natural breaks". With the "equal area" algorithm, each class from "1" to "30" must cover approximately the same area. With the "equal interval" algorithm, classes from "1" to "30" correspond to bins of deforestation risk of the same range. In this case, some risk classes will be in majority in the landscape compared to other classes of lower frequency. With the "natural breaks" algorithm, the continuous deforestation risk is normalized before running an "equal interval" algorithm.
 
 #+begin_src python :results output :session :exports both
-rmj.defor_cat(
-    ldefrate_with_zero_file=os.path.join(out_dir, f"ldefrate_with_zero.tif"),
+bins = rmj.defor_cat(
+    ldefrate_with_zero_file=os.path.join(out_dir, "ldefrate_with_zero.tif"),
     riskmap_file=os.path.join(out_dir, "riskmap.tif"),
     ncat=30,
     method="Equal Interval",
@@ -258,7 +259,6 @@ ofile
 #+CAPTION: *Map of the deforestation risk following the JNR methodology*. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 120 m from the forest edge and have a negligible risk of being deforested.
 #+RESULTS:
 [[file:outputs_steps/riskmap.png]]
-
 
 * Deforestation rates per category of risk
 
@@ -319,7 +319,15 @@ tabulate(defrate_per_cat, headers=col_names, tablefmt="orgtbl", showindex=False)
 |  29 |      0 |      0 |                      |
 |  30 |   6304 |   6304 |                  1.0 |
 
-From this table, we see that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (equal to 0), and category 30 represents well a category with very high deforestation risk (close to 1).
+From this table, we see that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (close to 0), and category 30 represents well a category with very high deforestation risk (close to 1).
+
+* Derive a risk map at the beginning of the validation period
+
+To derive the risk map at the beginning of the validation period, we consider (i) the forest cover at this date, (ii) the map of local deforestation rates, (ii) the threshold distance, and (iii) the bins used to categorize the deforestation rates. All these data are obtained from previous steps and based on the deforestation for the historical period. The approach is the following: first, we identify the forest pixels at the beginning of the validation period. Second, we assign category zero to pixels at a distance from the forest edge which is greater than the distance threshold. Third, we categorize the deforestation rates using the previous bins identified for the historical period. In addition to the risk map, two additional raster files are produced: the raster file of the distance to forest edge at the beginning of the validation period, and the raster file of local deforestation rates including the zero deforestation risk.
+
+#+begin_src python :results output :session :exports both
+
+#+end_src
 
 * Validation
 

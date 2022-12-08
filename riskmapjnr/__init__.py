@@ -21,12 +21,13 @@ if os.environ.get("DISPLAY", "") == "":
 
 # Local imports
 from .misc import invlogit, make_dir, tree
-from .dist_edge_threshold import dist_edge_threshold
+from .dist_edge_threshold import dist_values, dist_edge_threshold
 from .local_defor_rate import local_defor_rate
 from .set_defor_cat_zero import set_defor_cat_zero
 from .defrate_per_cat import defrate_per_cat
 from .defor_cat import defor_cat
 from .validation import validation
+from .validation_fcc import validation_fcc
 from .makemap import makemap
 from .plot import fcc123, riskmap
 

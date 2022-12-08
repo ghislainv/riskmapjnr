@@ -23,11 +23,11 @@ import pandas as pd
 from .misc import progress_bar, makeblock
 
 
-# dist_value
-def dist_value(input_file,
-               dist_file,
-               value=0,
-               verbose=True):
+# dist_values
+def dist_values(input_file,
+                dist_file,
+                values=0,
+                verbose=True):
     """Computing the shortest distance to a pixel with a specific value in
     a raster file.
 
@@ -40,8 +40,9 @@ def dist_value(input_file,
     :param dist_file: Path to the distance raster file that is
         created.
 
-    :param value: Value of the raster to compute the distance
-        to. Default to 0.
+    :param values: Values of the raster to compute the distance to. If
+        several values, they must be separated with a comma in a
+        string (eg. '0,1'). Default to 0.
 
     :param verbose: Logical. Whether to print messages or not. Default
         to ``True``.
@@ -67,7 +68,7 @@ def dist_value(input_file,
     dstband = dst_ds.GetRasterBand(1)
 
     # Compute distance
-    val = "VALUES=" + str(value)
+    val = "VALUES=" + str(values)
     cb = gdal.TermProgress if verbose else 0
     gdal.ComputeProximity(srcband, dstband,
                           [val, "DISTUNITS=GEO"],
@@ -86,7 +87,7 @@ def dist_value(input_file,
 # dist_edge_threshold
 def dist_edge_threshold(fcc_file,
                         defor_values,
-                        dist_file,
+                        dist_file="dist_edge.tif",
                         dist_bins=np.arange(0, 1080, step=30),
                         tab_file_dist="perc_dist.csv",
                         fig_file_dist="perc_dist.png",
@@ -119,7 +120,7 @@ def dist_edge_threshold(fcc_file,
        considered.
 
     :param dist_file: Path to the output raster file of distance to
-        forest edge.
+        forest edge. Default to ``dist_edge.tif``.
 
     :param dist_bins: Array of bins for distances. It has to be
         1-dimensional and monotonic. The array must also include zero
@@ -158,7 +159,7 @@ def dist_edge_threshold(fcc_file,
     """
 
     # Compute the distance to the forest edge
-    dist_value(fcc_file, dist_file, value=0, verbose=verbose)
+    dist_values(fcc_file, dist_file, values=0, verbose=verbose)
 
     # Create a table to save the results
     data = {"distance": dist_bins[1:], "npix": 0, "area": 0,

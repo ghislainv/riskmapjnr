@@ -59,7 +59,7 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
         to ``True``.
 
     :return: None. A raster with the local deforestation rate will be
-        created (see ``ldefrate_file``). Data range from 0 to
+        created (see ``ldefrate_file``). Data range from 1 to
         10000. Raster type is UInt16 ([0, 65535]). NoData value is set
         to 65535.
 
@@ -140,7 +140,7 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
         # Annual deforestation rate
         out_data = np.ones(in_data.shape, int) * 65535
         theta = 1 - (1 - win_defor[w] / win_for[w]) ** (1 / time_interval)
-        out_data[w] = np.rint(10000 * theta).astype(int)
+        out_data[w] = np.rint(9999 * theta + 1).astype(int)  # min=1, max=10000
         if yoff == 0:
             out_band.WriteArray(out_data)
         else:

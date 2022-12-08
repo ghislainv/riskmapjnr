@@ -42,9 +42,9 @@ def defor_cat(ldefrate_with_zero_file,
 
     :param ldefrate_with_zero_file: Input raster file of local
         deforestation rates. Deforestation rates are defined by
-        integer values between 0 and 10000 (ten thousand)). Pixels
+        integer values between 1 and 10000 (ten thousand)). Pixels
         with zero deforestation risk (beyond a given distance from the
-        forest edge) have value 10001. This file is typically obtained
+        forest edge) have value 0. This file is typically obtained
         with function ``set_defor_cat_zero()``.
 
     :param riskmap_file: Output raster file with categories of
@@ -61,9 +61,10 @@ def defor_cat(ldefrate_with_zero_file,
     :param verbose: Logical. Whether to print messages or not. Default
         to ``True``.
 
-    :return: None. A raster file with deforestation categories will be
-        created (see ``riskmap_file``). Data range from 0 to 30. Raster
-        type is Byte ([0, 255]). NoData value is set to 255.
+    :return: Bins used to categorize the deforestation risk. A raster
+        file with deforestation categories will be created (see
+        ``riskmap_file``). Data range from 0 to 30. Raster type is
+        Byte ([0, 255]). NoData value is set to 255.
 
     """
 
@@ -103,41 +104,43 @@ def defor_cat(ldefrate_with_zero_file,
     cat_band.SetNoDataValue(255)
 
     # =================
-    # Find categories
+    # Compute bins
     # =================
 
     # Equal Interval
     if method == "Equal Interval":
-        bin_size = round(10000 / ncat)
-        bins = [i * bin_size for i in range(ncat)]
-        bins = bins + [10000, 10001]
+        bin_size = (10000 - 1) / ncat
+        bins = [1 + i * bin_size for i in range(ncat)]
+        bins = np.rint([0] + bins + [10000]).astype(int)
 
     # Equal Area
     if method == "Equal Area":
         # Compute histogram
-        nvalues = 10000 + 1
-        counts = catzero_band.GetHistogram(-0.5, 10000.5, nvalues, 0, 0)
+        nvalues = 10000
+        counts = catzero_band.GetHistogram(0.5, 10000.5, nvalues, 0, 0)
         npix = sum(counts)
         # Percentage
         perc = np.array(counts) / npix
         # Cumulative percentage
         cum_perc = np.cumsum(perc)
-        # Correction of the approximation
+        # Correction of the approximation for last value
         cum_perc[-1] = 1.0
         # Quantiles
-        q = [i * 1 / ncat for i in range(1, ncat + 1)]
+        q = [i * 1 / ncat for i in range(1, ncat + 1)]  # len(q)=30
         # Bins
-        bins = [0]
+        bins = [0, 1]
         # Loop on quantiles
         for qi in q:
             comp = (cum_perc <= qi)
             sum_comp = np.sum(comp)
-            if sum_comp != 0:
-                bins.append(sum_comp - 1)
+            if sum_comp > 1:
+                bins.append(sum_comp)
         # Remove duplicate
         bins = list(np.unique(bins))
-        # Add category 10001
-        bins.append(10001)
+
+    # Replace last bin value 10000 by 10001 to include 10000 in
+    # last category with pd.cut(right=False).
+    bins[-1] = 10001
 
     # =================
     # Categorizing
@@ -155,10 +158,9 @@ def defor_cat(ldefrate_with_zero_file,
         catzero_data = catzero_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
         # Categorize
         cat_data = pd.cut(catzero_data.flatten(), bins=bins,
-                          labels=False, include_lowest=True)
-        cat_data = cat_data + 1
+                          labels=False, include_lowest=True,
+                          right=False)
         cat_data[np.isnan(cat_data)] = 255
-        cat_data[cat_data == (len(bins) - 1)] = 0
         cat_data = cat_data.reshape(catzero_data.shape)
         # Write to file
         cat_band.WriteArray(cat_data, x[px], y[py])
@@ -172,12 +174,12 @@ def defor_cat(ldefrate_with_zero_file,
     cat_band = None
     del cat_ds, catzero_ds
 
-    return None
+    return bins
 
 
 # # Test
-# ldefrate_with_zero_file = "outputs/defor_cat_zero.tif"
-# riskmap_file = "outputs/riskmap.tif"
+# ldefrate_with_zero_file = "outputs_steps/ldefrate_with_zero.tif"
+# riskmap_file = "outputs_steps/riskmap.tif"
 # ncat = 30
 # method = "Equal Area"
 # blk_rows = 128
