@@ -105,8 +105,6 @@ def set_defor_cat_zero(ldefrate_file,
         # Data
         catzero_data = ldefrate_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
         dist_data = dist_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
-        # Replace nodata value (65535) in dist_data with 0
-        dist_data[dist_data == 65535] = 0
         # Set 0 risk beyond distance threshold
         catzero_data[dist_data >= dist_thresh] = 0
         catzero_band.WriteArray(catzero_data, x[px], y[py])
