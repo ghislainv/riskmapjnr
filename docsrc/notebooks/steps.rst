@@ -162,7 +162,7 @@ A table indicating the cumulative percentage of deforestation as a function of t
 
 The second step is to compute a local risk of deforestation at the pixel level using a moving window made of several pixels. The deforestation risk is estimated from the deforestation rate inside the moving window. The deforestation rate :math:`\theta` (in %/yr) is computed from the formula :math:`\theta=1-(\alpha_2/\alpha_1)^{1/\tau}`, with :math:`\alpha` the forest areas (in ha) at time :math:`t_1` and :math:`t_2`, and :math:`\tau`, the time interval (in yr) between time :math:`t_1` and :math:`t_2`. Using the deforestation rate formula, the moving window and the past forest cover change map, we can derive a raster map describing the local risk of deforestation at the same resolution as the input map.
 
-To save space on disk, deforestation rates are converted to integer values between 0 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10\ :sup:`-4`\ for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.
+To save space on disk, deforestation rates are converted to integer values between 1 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10\ :sup:`-4`\ for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.
 
 .. code:: python
 
@@ -172,7 +172,7 @@ To save space on disk, deforestation rates are converted to integer values betwe
     rmj.local_defor_rate(
         fcc_file=fcc_file,
         defor_values=1,
-        ldefrate_file=os.path.join(out_dir, f"ldefrate.tif"),
+        ldefrate_file=os.path.join(out_dir, "ldefrate.tif"),
         win_size=s,
         time_interval=10,
         blk_rows=100,
@@ -186,10 +186,10 @@ This third step sets a value of 10001 to pixels with zero deforestation risk. As
 .. code:: python
 
     rmj.set_defor_cat_zero(
-        ldefrate_file=os.path.join(out_dir, f"ldefrate.tif"),
+        ldefrate_file=os.path.join(out_dir, "ldefrate.tif"),
         dist_file=os.path.join(out_dir, "dist_edge.tif"),
         dist_thresh=dist_thresh,
-        ldefrate_with_zero_file=os.path.join(out_dir, f"ldefrate_with_zero.tif"),
+        ldefrate_with_zero_file=os.path.join(out_dir, "ldefrate_with_zero.tif"),
         blk_rows=128,
         verbose=False)
 
@@ -200,13 +200,22 @@ The fourth step implies converting the continuous values of the raster map of de
 
 .. code:: python
 
-    rmj.defor_cat(
-        ldefrate_with_zero_file=os.path.join(out_dir, f"ldefrate_with_zero.tif"),
+    bins = rmj.defor_cat(
+        ldefrate_with_zero_file=os.path.join(out_dir, "ldefrate_with_zero.tif"),
         riskmap_file=os.path.join(out_dir, "riskmap.tif"),
         ncat=30,
         method="Equal Interval",
         blk_rows=128,
         verbose=False)
+    print(f"Bins:\n{bins}")
+
+::
+
+    Bins:
+    [    0     1   334   668  1001  1334  1668  2001  2334  2667  3001  3334
+      3667  4001  4334  4667  5000  5334  5667  6000  6334  6667  7000  7334
+      7667  8000  8334  8667  9000  9333  9667 10001]
+
 
 The risk map can be plotted using the ``plot.riskmap()`` function.
 
@@ -315,9 +324,27 @@ A table indicating the deforestation rate per category of deforestation is produ
     |  30 |   6304 |   6304 |                  1.0 |
     +-----+--------+--------+----------------------+
 
-From this table, we see that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (equal to 0), and category 30 represents well a category with very high deforestation risk (close to 1).
+From this table, we see that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (close to 0), and category 30 represents well a category with very high deforestation risk (close to 1).
 
-7 Validation
+7 Derive a risk map at the beginning of the validation period
+-------------------------------------------------------------
+
+To derive the risk map at the beginning of the validation period, we consider (i) the forest cover at this date, (ii) the map of local deforestation rates, (ii) the threshold distance, and (iii) the bins used to categorize the deforestation rates. All these data are obtained from previous steps and based on the deforestation for the historical period. The approach is the following: first, we identify the forest pixels at the beginning of the validation period. Second, we assign category zero to pixels at a distance from the forest edge which is greater than the distance threshold. Third, we categorize the deforestation rates using the previous bins identified for the historical period. In addition to the risk map, two additional raster files are produced: the raster file of the distance to forest edge at the beginning of the validation period, and the raster file of local deforestation rates including the zero deforestation risk.
+
+.. code:: python
+
+    rmj.get_riskmap_v(
+        ldefrate_file=os.path.join(out_dir, "ldefrate.tif"),
+        fcc_file=fcc_file,
+        dist_thresh=dist_thresh,
+        bins=bins,
+        dist_v_file=os.path.join(out_dir, "dist_edge_v.tif"),
+        ldefrate_with_zero_v_file=os.path.join(out_dir, "ldefrate_with_zero_v.tif"),
+        riskmap_v_file=os.path.join(out_dir, "riskmap_v.tif"),
+        blk_rows=128,
+        verbose=False)
+
+8 Validation
 ------------
 
 The fifth step focuses on comparing the map of deforestation risk with a deforestation map corresponding to the validation period. The validation period follows the calibration period and provides independent observations of deforestation.
@@ -334,7 +361,7 @@ We set the argument ``no_quantity_error`` to ``True`` to correct the total defor
     rmj.validation(
         fcc_file=fcc_file,
         time_interval=10,
-        riskmap_file=os.path.join(out_dir, "riskmap.tif"),
+        riskmap_file=os.path.join(out_dir, "riskmap_v.tif"),
         tab_file_defrate=os.path.join(out_dir, "defrate_per_cat.csv"),
         csize=40,
         no_quantity_error=True,
@@ -352,7 +379,7 @@ We set the argument ``no_quantity_error`` to ``True`` to correct the total defor
 
     **Relationship between observed and predicted deforestation in 1 x 1 km grid cells**. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (:math:`n`, the number of spatial cells) are reported on the graph.
 
-8 Final risk map
+9 Final risk map
 ----------------
 
 The user must repeat the procedure and obtain risk maps for various window size and slicing algorithms. Following the JNR methodology, at least 25 different sizes for the moving window must be tested together with two slicing algorithms (“Equal Interval” and “Equal Area”), thus leading to a minimum of 50 different maps of deforestation risk. The map with the smallest wRMSE value is considered the best risk map. Once the best risk map is identified, with the corresponding window size and slicing algorithm, a final risk map is derived considering both the calibration and validation period (see the `Get Started <https://ecology.ghislainv.fr/riskmapjnr/notebooks/get_started.html>`_ tutorial).
