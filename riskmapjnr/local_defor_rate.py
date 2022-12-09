@@ -157,7 +157,7 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
 
 # # Test
 # ws = 7
-# local_defor_rate(fcc_file="data/fcc123.tif",
+# local_defor_rate(fcc_file="data/fcc123_GLP.tif",
 #                  ldefrate_file="outputs/ldefrate_ws{}.tif".format(ws),
 #                  win_size=ws,
 #                  time_interval=10,

@@ -235,9 +235,14 @@ bins = rmj.defor_cat(
     method="Equal Interval",
     blk_rows=128,
     verbose=False)
+print(f"Bins:\n{bins}")
 #+end_src
 
 #+RESULTS:
+: Bins:
+: [    0     1   334   668  1001  1334  1668  2001  2334  2667  3001  3334
+:   3667  4001  4334  4667  5000  5334  5667  6000  6334  6667  7000  7334
+:   7667  8000  8334  8667  9000  9333  9667 10001]
 
 The risk map can be plotted using the =plot.riskmap()= function.
 

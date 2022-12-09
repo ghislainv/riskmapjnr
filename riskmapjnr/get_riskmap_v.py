@@ -101,4 +101,112 @@ def get_riskmap_v(fcc_file,
                 values="0,1",
                 verbose=False)
 
-    
+    # ================================
+    # Create ldefrate_with_zero_v_file
+    # ================================
+
+    # Get fcc
+    fcc_ds = gdal.Open(fcc_file)
+    fcc_band = fcc_ds.GetRasterBand(1)
+
+    # Get ldefrate_file
+    ldef_ds = gdal.Open(ldefrate_file)
+    ldef_band = ldef_ds.GetRasterBand(1)
+
+    # Get dist_v_file
+    distv_ds = gdal.Open(dist_v_file)
+    distv_band = distv_ds.GetRasterBand(1)
+
+    # Raster size
+    xsize = ldef_band.XSize
+    ysize = ldef_band.YSize
+
+    # Create ldefrate_with_zero_v raster file
+    driver = gdal.GetDriverByName("GTiff")
+    ldefzv_ds = driver.Create(ldefrate_with_zero_v_file, xsize, ysize, 1,
+                              gdal.GDT_UInt16,
+                              ["COMPRESS=LZW", "PREDICTOR=2",
+                               "BIGTIFF=YES"])
+    ldefzv_ds.SetProjection(ldef_ds.GetProjection())
+    ldefzv_ds.SetGeoTransform(ldef_ds.GetGeoTransform())
+    ldefzv_band = ldefzv_ds.GetRasterBand(1)
+    ldefzv_band.SetNoDataValue(65535)
+
+    # Create riskmap_v raster file
+    driver = gdal.GetDriverByName("GTiff")
+    riskv_ds = driver.Create(riskmap_v_file, xsize, ysize, 1,
+                             gdal.GDT_Byte,
+                             ["COMPRESS=LZW", "PREDICTOR=2",
+                              "BIGTIFF=YES"])
+    riskv_ds.SetProjection(ldef_ds.GetProjection())
+    riskv_ds.SetGeoTransform(ldef_ds.GetGeoTransform())
+    riskv_band = riskv_ds.GetRasterBand(1)
+    riskv_band.SetNoDataValue(255)
+
+    # Make blocks
+    blockinfo = makeblock(ldefrate_file, blk_rows=blk_rows)
+    nblock = blockinfo[0]
+    nblock_x = blockinfo[1]
+    x = blockinfo[3]
+    y = blockinfo[4]
+    nx = blockinfo[5]
+    ny = blockinfo[6]
+
+    # Loop on blocks of data
+    for b in range(nblock):
+        # Progress bar
+        if verbose:
+            progress_bar(nblock, b + 1)
+        # Position
+        px = b % nblock_x
+        py = b // nblock_x
+        # Data
+        fcc_data = fcc_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
+        ldef_data = ldef_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
+        distv_data = distv_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
+        # Remove defor rate for fcc == 1
+        ldefzv_data = ldef_data
+        ldefzv_data[fcc_data == 1] = 65535
+        # Replace nodata value (65535) in distv_data with 0
+        distv_data[distv_data == 65535] = 0
+        # Set 0 risk beyond distance threshold
+        ldefzv_data[distv_data >= dist_thresh] = 0
+        # Categorize
+        riskv_data = pd.cut(ldefzv_data.flatten(), bins=bins,
+                            labels=False, include_lowest=True,
+                            right=False)
+        riskv_data[np.isnan(riskv_data)] = 255
+        riskv_data = riskv_data.reshape(ldefzv_data.shape)
+        # Write to files
+        ldefzv_band.WriteArray(ldefzv_data, x[px], y[py])
+        riskv_band.WriteArray(riskv_data, x[px], y[py])
+
+    # Compute statistics
+    ldefzv_band.FlushCache()
+    riskv_band.FlushCache()
+    cb = gdal.TermProgress if verbose else 0
+    ldefzv_band.ComputeStatistics(False, cb)
+    riskv_band.ComputeStatistics(False, cb)
+
+    # Dereference drivers
+    ldefzv_band, riskv_band = None, None
+    del fcc_ds, ldef_ds, distv_ds, ldefzv_ds, riskv_ds
+
+    return None
+
+
+# # Test
+# ldefrate_file = "outputs_steps/ldefrate.tif"
+# fcc_file = "data/fcc123_GLP.tif"
+# dist_thresh = 120
+# bins = [0, 1, 334, 668, 1001, 1334, 1668, 2001, 2334, 2667,
+#         3001, 3334, 3667, 4001, 4334, 4667, 5000, 5334, 5667,
+#         6000, 6334, 6667, 7000, 7334, 7667, 8000, 8334, 8667,
+#         9000, 9333, 9667, 10001]
+# dist_v_file = "outputs_steps/dist_edge_v.tif"
+# ldefrate_with_zero_v_file = "outputs_steps/ldefrate_with_zero_v.tif"
+# riskmap_v_file = "outputs_steps/riskmap_v.tif"
+# blk_rows = 128
+# verbose = True
+
+# End
