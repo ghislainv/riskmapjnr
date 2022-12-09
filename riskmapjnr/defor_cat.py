@@ -62,7 +62,7 @@ def defor_cat(ldefrate_with_zero_file,
         to ``True``.
 
     :return: Bins used to categorize the deforestation risk. A raster
-        file with deforestation categories will be created (see
+        file with deforestation categories is created (see
         ``riskmap_file``). Data range from 0 to 30. Raster type is
         Byte ([0, 255]). NoData value is set to 255.
 

@@ -30,6 +30,7 @@ from .validation import validation
 from .validation_fcc import validation_fcc
 from .makemap import makemap
 from .plot import fcc123, riskmap
+from .get_ldefz_v import get_ldefz_v
 from .get_riskmap_v import get_riskmap_v
 
 # # Welcome message
