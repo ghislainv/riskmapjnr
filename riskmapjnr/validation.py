@@ -103,21 +103,7 @@ def validation(fcc_file, time_interval,
 
     # Get defrate per cat
     defrate_per_cat = pd.read_csv(tab_file_defrate)
-    cat_csv = defrate_per_cat["cat"].values
-
-    # Number of deforestation categories
-    stats = defor_cat_band.GetStatistics(False, True)
-    n_cat = int(stats[1])  # Get the maximum
-    cat_raster = np.array([c + 1 for c in range(n_cat)])
-
-    # Check categories
-    if not np.array_equal(cat_csv, cat_raster):
-        msg = ("Categories in the 'defrate_per_cat_file' csv file do not"
-               "correspond to categories in the 'riskmap_file' raster"
-               "file.")
-        raise ValueError(msg)
-    else:
-        cat = cat_csv
+    cat = defrate_per_cat["cat"].values
 
     # Pixel area (in unit square, eg. meter square)
     gt = fcc_ds.GetGeoTransform()
@@ -160,9 +146,6 @@ def validation(fcc_file, time_interval,
         # Predicted deforestation for validation period
         defor_cat_data = defor_cat_band.ReadAsArray(
             x[px], y[py], nx[px], ny[py])
-        # The risk map includes risk for first period
-        # So, we need to set not data value for fcc == 1
-        defor_cat_data[fcc_data == 1] = 255
         defor_cat = pd.Categorical(defor_cat_data.flatten(), categories=cat)
         defor_cat_count = defor_cat.value_counts().values
 
