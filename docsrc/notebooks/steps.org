@@ -376,7 +376,7 @@ To do so, we consider a square grid of at least 1000 spatial cells containing at
 
 We can then compare the predicted deforestation with the observed deforestation in that spatial cell for the validation period. Because all cells don't have the same forest cover at the beginning of the validation period, a weight $w_j$ is computed for each grid cell $j$ such that $w_j=\beta_j / B$, with $\beta_j$ the forest cover (in ha) in the cell $j$ at the beginning of the validation period and $B$ the total forest cover in the jurisdiction (in ha) at the same date. We then calculate the weighted root mean squared error (wRMSE) from the observed and predicted deforestation for each cell and the cell weights.
 
-We set the argument =no_quantity_error= to =True= to correct the total deforestation for the predictions and avoid a "quantity" error (sensu Pontius) due to the difference in total deforestation between periods. This is currently being discussed for improving the JNR methodology.
+We set the argument =no_quantity_error= to =True= to correct the total deforestation for the predictions and avoid a "quantity" error (/sensu/ Pontius) due to the difference in total deforestation between periods. This is currently being discussed for improving the JNR methodology.
 
 #+begin_src python :results file :session :exports both
 ofile = os.path.join(out_dir, "pred_obs.png")

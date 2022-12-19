@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +11,9 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -80,7 +82,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -159,7 +161,7 @@
 <span class="sd">        to ``True``.</span>
 
 <span class="sd">    :return: None. A raster with the local deforestation rate will be</span>
-<span class="sd">        created (see ``ldefrate_file``). Data range from 0 to</span>
+<span class="sd">        created (see ``ldefrate_file``). Data range from 1 to</span>
 <span class="sd">        10000. Raster type is UInt16 ([0, 65535]). NoData value is set</span>
 <span class="sd">        to 65535.</span>
 
@@ -240,7 +242,7 @@
         <span class="c1"># Annual deforestation rate</span>
         <span class="n">out_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">in_data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="o">*</span> <span class="mi">65535</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">win_defor</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">/</span> <span class="n">win_for</span><span class="p">[</span><span class="n">w</span><span class="p">])</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">time_interval</span><span class="p">)</span>
-        <span class="n">out_data</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="mi">10000</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">out_data</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="mi">9999</span> <span class="o">*</span> <span class="n">theta</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># min=1, max=10000</span>
         <span class="k">if</span> <span class="n">yoff</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">out_band</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">out_data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -257,7 +259,7 @@
 
 <span class="c1"># # Test</span>
 <span class="c1"># ws = 7</span>
-<span class="c1"># local_defor_rate(fcc_file=&quot;data/fcc123.tif&quot;,</span>
+<span class="c1"># local_defor_rate(fcc_file=&quot;data/fcc123_GLP.tif&quot;,</span>
 <span class="c1">#                  ldefrate_file=&quot;outputs/ldefrate_ws{}.tif&quot;.format(ws),</span>
 <span class="c1">#                  win_size=ws,</span>
 <span class="c1">#                  time_interval=10,</span>
@@ -276,7 +278,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

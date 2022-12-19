@@ -91,7 +91,7 @@
 (defun export-to-pdf nil
   "Export to pdf.
 This function exports an org file to a pdf"
-  (find-file "report1.org")
+  (find-file "report2.org")
   (org-latex-export-to-pdf nil nil nil nil nil))
 
 ;; Call to the function

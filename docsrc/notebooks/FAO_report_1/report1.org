@@ -355,10 +355,10 @@ rmj.set_defor_cat_zero(
 
 ** Categories of deforestation risk
 
-The fourth step implies converting the continuous values of the raster map of deforestation risk to categorical values. The JNR methodology suggests to use 31 classes of risk from "0" to "30" including the "0" class for the forest pixels with no risk of being deforested (located at a distance to the forest edge $> d$, see first step). Following the JNR methodology, at least three slicing algorithms must be compared to derive the categorical map of deforestation risk, such as "equal area", "equal interval", and "natural breaks". With the "equal area" algorithm, each class from "1" to "30" must cover approximately the same area. With the "equal interval" algorithm, classes from "1" to "30" correspond to bins of deforestation risk of the same range. In this case, some risk classes will be in majority in the landscape compared to other classes of lower frequency. With the "natural breaks" algorithm, the continuous deforestation risk is normalized before running an "equal interval" algorithm.
+The fourth step implies converting the continuous values of the raster map of deforestation risk to categorical values. The JNR methodology suggests to use 31 classes of risk from "0" to "30" including the "0" class for the forest pixels with no risk of being deforested (located at a distance to the forest edge $> d$, see first step). Following the JNR methodology, at least three slicing algorithms must be compared to derive the categorical map of deforestation risk, such as "equal area", "equal interval", and "natural breaks". With the "equal area" algorithm, each class from "1" to "30" must cover approximately the same area. With the "equal interval" algorithm, classes from "1" to "30" correspond to bins of deforestation risk of the same range. In this case, some risk classes will be in majority in the landscape compared to other classes of lower frequency. With the "natural breaks" algorithm, the continuous deforestation risk is normalized before running an "equal interval" algorithm. To perform this step, we use the function =defor_cat()= which returns the corresponding bins of deforestation probability.
 
 #+begin_src python :results output :session :exports both
-rmj.defor_cat(
+bins = rmj.defor_cat(
     ldefrate_with_zero_file=os.path.join(
         out_dir, f"ldefrate_with_zero_steps.tif"),
     riskmap_file=os.path.join(out_dir, "riskmap_steps.tif"),
@@ -419,35 +419,80 @@ tabulate(defrate_per_cat, headers=col_names, tablefmt="orgtbl", showindex=False)
 #+RESULTS:
 | cat |  nfor | ndefor |        rate |
 |-----+-------+--------+-------------|
-|   1 | 73800 |     10 |  1.3551e-05 |
-|   2 | 17904 |     52 | 0.000290818 |
-|   3 |  8820 |     51 | 0.000579741 |
-|   4 | 12108 |     71 | 0.000587942 |
-|   5 | 18220 |    145 | 0.000798693 |
-|   6 | 10443 |     92 | 0.000884485 |
-|   7 | 13950 |    173 |  0.00124712 |
-|   8 | 11894 |    163 |  0.00137896 |
-|   9 | 14615 |    284 |  0.00196041 |
-|  10 | 12857 |    327 |  0.00257295 |
-|  11 | 14174 |    430 |  0.00307595 |
-|  12 | 12767 |    453 |  0.00360617 |
-|  13 | 13669 |    555 |  0.00413643 |
-|  14 | 13775 |    637 |  0.00472347 |
-|  15 | 13135 |    678 |  0.00528575 |
-|  16 | 12782 |    740 |  0.00594599 |
-|  17 | 13445 |   1039 |  0.00801045 |
-|  18 | 12760 |   1081 |  0.00881323 |
-|  19 | 13137 |   1378 |   0.0110202 |
-|  20 | 13253 |   1500 |   0.0119397 |
-|  21 | 13437 |   1987 |   0.0158749 |
-|  22 | 13263 |   2488 |   0.0205606 |
-|  23 | 12975 |   3017 |   0.0261177 |
-|  24 | 13270 |   4376 |    0.039223 |
-|  25 | 13122 |   7887 |   0.0877966 |
+|   1 | 70257 |      0 |           0 |
+|   2 | 17189 |     47 | 0.000273768 |
+|   3 |  4258 |     15 | 0.000352838 |
+|   4 | 15311 |     92 | 0.000602506 |
+|   5 | 17683 |    110 | 0.000623815 |
+|   6 | 11130 |    105 | 0.000947425 |
+|   7 | 14920 |    177 |  0.00119271 |
+|   8 | 12727 |    164 |  0.00129613 |
+|   9 | 14891 |    265 |  0.00179401 |
+|  10 | 13132 |    299 |  0.00230055 |
+|  11 | 14465 |    426 |  0.00298481 |
+|  12 | 13178 |    465 |  0.00358592 |
+|  13 | 13776 |    528 |  0.00390051 |
+|  14 | 14171 |    670 |  0.00483168 |
+|  15 | 13476 |    665 |  0.00504783 |
+|  16 | 12955 |    740 |  0.00586445 |
+|  17 | 13664 |   1032 |  0.00782238 |
+|  18 | 13135 |   1101 |  0.00871624 |
+|  19 | 13244 |   1383 |   0.0109683 |
+|  20 | 13504 |   1520 |   0.0118703 |
+|  21 | 13482 |   1969 |   0.0156639 |
+|  22 | 13273 |   2491 |   0.0205709 |
+|  23 | 13219 |   3053 |   0.0259188 |
+|  24 | 13364 |   4382 |   0.0389551 |
+|  25 | 13171 |   7915 |   0.0877714 |
 
 From this table, we see that the deforestation rate increases with the deforestation risk category which is expected. We also see that the "Equal Area" slicing algorithm provides categories with similar forest cover at the beginning of the period (see similar values in the "nfor" column).
 
-** Map validation
+** Derive a risk map at the beginning of the validation period
+
+To derive the risk map at the beginning of the validation period, we consider (i) the forest cover at this date, (ii) the map of local deforestation rates, (ii) the threshold distance, and (iii) the bins used to categorize the deforestation rates. All these data are obtained from previous steps and based on the deforestation for the historical period. The approach is the following: first, we consider the forest cover at the beginning of the validation period. Second, we assign category zero to pixels at a distance from the forest edge which is greater than the distance threshold. Third, we categorize the deforestation rates using the previous bins identified for the historical period. In addition to the risk map, two additional raster files are produced: the raster file of the distance to forest edge at the beginning of the validation period, and the raster file of local deforestation rates including the zero deforestation risk.
+
+*** Distance to forest edge at the beginning of the validation period
+
+#+begin_src python :results output :session :exports both
+rmj.dist_values(input_file=fcc_file,
+                dist_file=os.path.join(out_dir, "dist_edge_v_steps.tif"),
+                values="0,1",
+                verbose=False)
+#+end_src
+
+#+RESULTS:
+
+*** Raster of local deforestation rate at the beginning of the validation period
+
+#+begin_src python :results output :session :exports both
+rmj.get_ldefz_v(
+    ldefrate_file=os.path.join(out_dir, "ldefrate_steps.tif"),
+    dist_v_file=os.path.join(out_dir, "dist_edge_v_steps.tif"),
+    dist_thresh=120,
+    ldefrate_with_zero_v_file=os.path.join(out_dir, "ldefrate_with_zero_v_steps.tif"),
+    blk_rows=128,
+    verbose=False)
+#+end_src
+
+#+RESULTS:
+
+*** Risk map at the beginning of the validation period
+
+#+begin_src python :results output :session :exports both
+rmj.get_riskmap_v(
+    ldefrate_with_zero_v_file=os.path.join(out_dir, "ldefrate_with_zero_v_steps.tif"),
+    bins=bins,  
+    riskmap_v_file=os.path.join(out_dir, "riskmap_v_steps.tif"),
+    blk_rows=128,
+    verbose=False)
+#+end_src
+
+#+RESULTS:
+
+
+* Map validation
+
+** Without correcting for quantity disagreement
 
 The fifth step focuses on comparing the map of deforestation risk with a deforestation map corresponding to the validation period. The validation period follows the calibration period and provides independent observations of deforestation. To do so, we consider a square grid of at least 1000 spatial cells containing at least one forest pixel at the beginning of the validation period. Following JNR specifications, the cell size should be $\leq$ 10 km. Note that with the map of deforestation risk, each forest pixel at the beginning of the validation period falls into a category of deforestation risk. For each cell of the grid, we compute the predicted area of deforestation (in ha) given the map of deforestation risk and the historical deforestation rates for each category of deforestation risk computed on the calibration period (see previous step). We can then compare the predicted deforestation with the observed deforestation in that spatial cell for the validation period. Because all cells don't have the same forest cover at the beginning of the validation period, a weight $w_j$ is computed for each grid cell $j$ such that $w_j=\beta_j / B$, with $\beta_j$ the forest cover (in ha) in the cell $j$ at the beginning of the validation period and $B$ the total forest cover in the jurisdiction (in ha) at the same date. We then calculate the weighted root mean squared error (wRMSE) from the observed and predicted deforestation for each cell and the cell weights.
 
@@ -456,7 +501,7 @@ ofile = os.path.join(out_dir, "pred_obs_steps.png")
 rmj.validation(
     fcc_file=fcc_file,
     time_interval=10,
-    riskmap_file=os.path.join(out_dir, "riskmap_steps.tif"),
+    riskmap_file=os.path.join(out_dir, "riskmap_v_steps.tif"),
     tab_file_defrate=os.path.join(out_dir, "defrate_per_cat_steps.csv"),
     csize=40,
     tab_file_pred=os.path.join(out_dir, "pred_obs_steps.csv"),
@@ -472,6 +517,32 @@ ofile
 #+RESULTS:
 [[file:outputs_steps/pred_obs_steps.png]]
 
+** Correcting for quantity disagreement
+
+We set the argument =no_quantity_error= to =True= to correct the total deforestation for the predictions and avoid a "quantity" error (/sensu/ Pontius) due to the difference in total deforestation between the calibration and validation periods. This is currently being discussed for improving the JNR methodology.
+
+#+begin_src python :results file :session :exports both
+ofile = os.path.join(out_dir, "pred_obs_corrected_steps.png")
+rmj.validation(
+    fcc_file=fcc_file,
+    time_interval=10,
+    riskmap_file=os.path.join(out_dir, "riskmap_v_steps.tif"),
+    tab_file_defrate=os.path.join(out_dir, "defrate_per_cat_steps.csv"),
+    csize=40,
+    no_quantity_error=True,
+    tab_file_pred=os.path.join(out_dir, "pred_obs_corrected_step.csv"),
+    fig_file_pred=ofile,
+    figsize=(6.4, 4.8),
+    dpi=100, verbose=False)
+ofile
+#+end_src
+
+#+NAME: fig:pred_obs_corr_steps
+#+ATTR_LATEX: :width 0.8\linewidth :placement [H]
+#+CAPTION: *Relationship between observed and predicted deforestation in 1 x 1 km grid cells /after correction for quantity disagreement/*. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations ($n$, the number of spatial cells) are reported on the graph.
+#+RESULTS:
+[[file:outputs_steps/pred_obs_corrected_steps.png]]
+
 * Final risk map
 
 ** Obtaining several categorical maps with the =makemap= function
@@ -479,12 +550,12 @@ ofile
 The user must repeat the procedure detailed above and obtain risk maps for varying window size and slicing algorithms. Following the JNR methodology, at least 25 different sizes for the moving window must be tested together with two slicing algorithms ("Equal Interval" and "Equal Area"), thus leading to a minimum of 50 different maps of deforestation risk. The map with the smallest wRMSE value is considered the best risk map. Once the best risk map is identified, with the corresponding window size and slicing algorithm, a final risk map is derived considering both the calibration and validation period. The =makemap()= function can be used to run all the procedure with varying window size and slicing algorithm. This function calls a sequence of functions from the =riskmapjnr= package which perform all the steps detailed in the JNR methodology. The function can use parallel computing on several CPUs to reduce computation time. In this case, each map is obtained and validated on one CPU. 
 
 #+begin_src python :results output :session :exports both
-ncpu = mp.cpu_count()
-print(f"Total number of CPUs: {ncpu}.") 
+ncpu = mp.cpu_count() - 2
+print(f"Number of CPUs to use: {ncpu}.") 
 #+end_src
 
 #+RESULTS:
-: Total number of CPUs: 8.
+: Number of CPUs to use: 6.
  
 #+begin_src python :results output :session :exports both
 results_makemap = rmj.makemap(
@@ -499,52 +570,53 @@ results_makemap = rmj.makemap(
     ncpu=ncpu,
     methods=["Equal Interval", "Equal Area"],
     csize=40,
+    no_quantity_error=True,
     figsize=(6.4, 4.8),
     dpi=100,
-    blk_rows=300,
+    blk_rows=300,  # Set blk_rows > win_size to avoid error
     verbose=True)
 #+end_src
 
 #+RESULTS:
 #+begin_example
 Model calibration and validation
-.. Model 0: window size = 5, slicing method = ei
-.. Model 2: window size = 21, slicing method = ei.
-.. Model 4: window size = 37, slicing method = ei.
 .. Model 6: window size = 53, slicing method = ei.
+.. Model 2: window size = 21, slicing method = ei.
 .. Model 8: window size = 69, slicing method = ei.
-.. Model 12: window size = 101, slicing method = ei.
+.. Model 0: window size = 5, slicing method = ei.
+.. Model 4: window size = 37, slicing method = ei.
 .. Model 10: window size = 85, slicing method = ei.
-.. Model 14: window size = 117, slicing method = ei.
-.. Model 3: window size = 21, slicing method = ea.
-.. Model 1: window size = 5, slicing method = ea.
 .. Model 7: window size = 53, slicing method = ea.
-.. Model 5: window size = 37, slicing method = ea.
 .. Model 9: window size = 69, slicing method = ea.
 .. Model 11: window size = 85, slicing method = ea.
-.. Model 13: window size = 101, slicing method = ea.
-.. Model 15: window size = 117, slicing method = ea.
+.. Model 1: window size = 5, slicing method = ea.
+.. Model 3: window size = 21, slicing method = ea.
+.. Model 5: window size = 37, slicing method = ea.
+.. Model 12: window size = 101, slicing method = ei.
+.. Model 14: window size = 117, slicing method = ei.
 .. Model 16: window size = 133, slicing method = ei.
 .. Model 18: window size = 149, slicing method = ei.
 .. Model 20: window size = 165, slicing method = ei.
 .. Model 22: window size = 181, slicing method = ei.
+.. Model 13: window size = 101, slicing method = ea.
+.. Model 15: window size = 117, slicing method = ea.
+.. Model 19: window size = 149, slicing method = ea.
+.. Model 17: window size = 133, slicing method = ea.
+.. Model 21: window size = 165, slicing method = ea.
+.. Model 23: window size = 181, slicing method = ea.
 .. Model 24: window size = 197, slicing method = ei.
 .. Model 26: window size = 213, slicing method = ei.
 .. Model 28: window size = 229, slicing method = ei.
 .. Model 30: window size = 245, slicing method = ei.
-.. Model 17: window size = 133, slicing method = ea.
-.. Model 19: window size = 149, slicing method = ea.
-.. Model 21: window size = 165, slicing method = ea.
-.. Model 23: window size = 181, slicing method = ea.
-.. Model 29: window size = 229, slicing method = ea.
-.. Model 31: window size = 245, slicing method = ea.
-.. Model 25: window size = 197, slicing method = ea.
-.. Model 27: window size = 213, slicing method = ea.
 .. Model 32: window size = 261, slicing method = ei.
+.. Model 25: window size = 197, slicing method = ea.
 .. Model 34: window size = 277, slicing method = ei.
-.. Model 36: window size = 293, slicing method = ei.
+.. Model 27: window size = 213, slicing method = ea.
+.. Model 29: window size = 229, slicing method = ea.
 .. Model 33: window size = 261, slicing method = ea.
 .. Model 35: window size = 277, slicing method = ea.
+.. Model 36: window size = 293, slicing method = ei.
+.. Model 31: window size = 245, slicing method = ea.
 .. Model 37: window size = 293, slicing method = ea.
 Deriving risk map for entire historical period
 #+end_example
@@ -621,10 +693,10 @@ print(f"The best slicing algorithm is '{m_hat}'.")
 #+end_src
 
 #+RESULTS:
-: The best moving window size is 85 pixels.
+: The best moving window size is 5 pixels.
 : The best slicing algorithm is 'ei'.
 
-We can look at the relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model. We can see that the best model underestimates largely deforestation when deforestation is > 10 ha in 1.2 $\times$ 1.2 km cells.
+We can look at the relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model.
 
 #+begin_src python :results file :session :exports both
 ofile = os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
@@ -635,24 +707,7 @@ ofile
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model*. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations ($n$, the number of spatial cells) are reported on the graph.
 #+RESULTS:
-[[file:outputs_steps/pred_obs_ws85_ei.png]]
-
-We can check if the predicted deforestation intensity (in ha) is similar to the observed deforestation intensity for the validation period.
-
-#+begin_src python :results output :session :exports both
-ofile = os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.csv")
-pred_obs = pd.read_csv(ofile)
-tot_defor_obs = pred_obs["ndefor_obs"].sum()
-tot_defor_pred = np.around(pred_obs["ndefor_pred"].sum())
-print(f"Observed deforestation: {tot_defor_obs} ha")
-print(f"Predicted deforestation: {tot_defor_pred} ha")
-#+end_src
-
-#+RESULTS:
-: Observed deforestation: 40956 ha
-: Predicted deforestation: 29457.0 ha
-
-Using the JNR methodology, there is a large underestimation of the total amount of deforestation for the validation period.
+[[file:outputs_steps/pred_obs_ws5_ei.png]]
 
 ** Final map of the deforestation risk
 
@@ -675,11 +730,11 @@ ofile
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Map of the deforestation risk following the JNR methodology*. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 180 m from the forest edge and have a negligible risk of being deforested.
 #+RESULTS:
-[[file:outputs_steps/riskmap_ws85_ei.png]]
+[[file:outputs_steps/riskmap_ws5_ei.png]]
 
 * Conclusion
 
-We have presented the use of the =riskmapjnr= Python package to obtain a map of the deforestation risk following the JNR methodology. As said previously, the JNR methodology is currently being discussed and will likely be subject to changes. The first results we have obtained applying the JNR methodology to a small-scale study area allow us to make some recommendations regarding how the JNR methodology could be improved to obtain an accurate map of the deforestation risk. First, the distance threshold above which deforestation become negligible is changing between the calibration period and the whole period (combining the calibration and validation periods) for the final risk map. This is unavoidable as the deforestation generally progresses towards the forest core and the whole period to derive the final map is longer than the calibration period. Here we used the second distance threshold value of 180 m identified using forest cover change data for the whole period 2000--2020. The JNR methodology should be more precise regarding the distance threshold which should be used. Second, it seems that the "Equal Area" slicing algorithm always provides higher wRMSE values than compared with the "Equal Interval" algorithm (Fig. [[fig:map_comp]]). As, a consequence, it might be useless to compute maps using this slicing algorithm. This result must be confirmed with other case studies. Third, there is a large underestimation of the total amount of deforestation for the validation period (Fig. [[fig:pred_obs]]). To be able to properly compare deforestation risk maps (each map providing a different way of allocating deforestation spatially /sensus/ [cite/t:@Pontius2011]) there should be no quantity error between deforestation predictions and observations (/sensus/ [cite/t:@Pontius2011]). We suggest not mixing quantity and allocation of deforestation for predictions while the methodology suggests to estimate historical deforestation rates for each category of risk from the calibration period. On the contrary, for the prediction, we suggest to fix the intensity of the deforestation to the one observed on the validation period and use the risk map to identify pixels which should be deforested first. 
+We have presented the use of the =riskmapjnr= Python package to obtain a map of the deforestation risk following the JNR methodology. As said previously, the JNR methodology is currently being discussed and will likely be subject to changes. The first results we have obtained applying the JNR methodology to a small-scale study area allow us to make some recommendations regarding how the JNR methodology could be improved to obtain an accurate map of the deforestation risk. First, the distance threshold above which deforestation become negligible is changing between the calibration period and the whole period (combining the calibration and validation periods) for the final risk map. This is unavoidable as the deforestation generally progresses towards the forest core and the whole period to derive the final map is longer than the calibration period. Here we used the second distance threshold value of 180 m identified using forest cover change data for the whole period 2000--2020. The JNR methodology should be more precise regarding the distance threshold which should be used. Second, it seems that the "Equal Area" slicing algorithm always provides higher wRMSE values than compared with the "Equal Interval" algorithm (Fig. [[fig:map_comp]]). As, a consequence, it might be useless to compute maps using this slicing algorithm. This result must be confirmed with other case studies. Third, there is a large underestimation of the total amount of deforestation for the validation period (Fig. [[fig:pred_obs]]). To be able to properly compare deforestation risk maps (each map providing a different way of allocating deforestation spatially /sensu/ [cite/t:@Pontius2011]) there should be no quantity error between deforestation predictions and observations (/sensu/ [cite/t:@Pontius2011]). We suggest not mixing quantity and allocation of deforestation for predictions while the methodology suggests to estimate historical deforestation rates for each category of risk from the calibration period. On the contrary, for the prediction, we suggest to fix the intensity of the deforestation to the one observed on the validation period and use the risk map to identify pixels which should be deforested first. 
 
 * References
 

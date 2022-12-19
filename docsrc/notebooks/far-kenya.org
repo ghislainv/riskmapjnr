@@ -95,12 +95,6 @@ print(dataset.head(5))
 #+end_src
 
 #+RESULTS:
-:    dist_edge_2010  fcc12_KEN_1014              X             Y   cell  trial
-: 0            30.0             0.0  123509.463749  1.059872e+07   19.0      1
-: 1            30.0             0.0  140309.463749  1.059470e+07   20.0      1
-: 2            30.0             0.0  113429.463749  1.059110e+07   18.0      1
-: 3            30.0             0.0  113249.463749  1.058402e+07  107.0      1
-: 4            30.0             0.0   70439.463749  1.057115e+07  191.0      1
 
 #+begin_src python :results output :session :exports both
 # Rename columns
@@ -110,12 +104,6 @@ print(dataset.head(5))
 #+end_src
 
 #+RESULTS:
-:    dist_edge  fcc12              X             Y   cell  trial
-: 0       30.0    0.0  123509.463749  1.059872e+07   19.0      1
-: 1       30.0    0.0  140309.463749  1.059470e+07   20.0      1
-: 2       30.0    0.0  113429.463749  1.059110e+07   18.0      1
-: 3       30.0    0.0  113249.463749  1.058402e+07  107.0      1
-: 4       30.0    0.0   70439.463749  1.057115e+07  191.0      1
 
 * Model
 
@@ -138,9 +126,6 @@ priorVrho = -1  # -1="1/Gamma"
 #+end_src
 
 #+RESULTS:
-: Compute number of 10 x 10 km spatial cells
-: ... 9968 cells (112 x 89)
-: Identify adjacent cells and compute number of neighbors
 
 ** iCAR model
 
@@ -160,22 +145,6 @@ mod_binomial_iCAR = far.model_binomial_iCAR(
 #+end_src
 
 #+RESULTS:
-#+begin_example
-Using estimates from classic logistic regression as starting values for betas
-
-Running the Gibbs sampler. It may be long, please keep cool :)
-
-,**********:10.0%, mean accept. rates= beta:0.090, rho:0.598
-,**********:20.0%, mean accept. rates= beta:0.255, rho:0.487
-,**********:30.0%, mean accept. rates= beta:0.345, rho:0.452
-,**********:40.0%, mean accept. rates= beta:0.490, rho:0.451
-,**********:50.0%, mean accept. rates= beta:0.400, rho:0.435
-,**********:60.0%, mean accept. rates= beta:0.435, rho:0.452
-,**********:70.0%, mean accept. rates= beta:0.475, rho:0.454
-,**********:80.0%, mean accept. rates= beta:0.540, rho:0.441
-,**********:90.0%, mean accept. rates= beta:0.425, rho:0.441
-,**********:100.0%, mean accept. rates= beta:0.385, rho:0.445
-#+end_example
 
 
 ** Model summary
@@ -192,14 +161,6 @@ with open(os.path.join(out_dir, "summary_icar.txt"), "w") as f:
 #+end_src
 
 #+RESULTS:
-: Binomial logistic regression with iCAR process
-:   Model: I(1 - fcc12) + trial ~ 1 + scale(dist_edge) + cell
-:   Posteriors:
-:                        Mean        Std     CI_low    CI_high
-:        Intercept     -0.822     0.0916     -0.996     -0.651
-: scale(dist_edge)      -3.87      0.152      -4.19       -3.6
-:             Vrho       7.05      0.486        6.2       7.96
-:         Deviance   1.85e+04       72.3   1.84e+04   1.86e+04
 
 * Predicting deforestation risk
 
@@ -245,9 +206,7 @@ os.rename(os.path.join(data_dir, "dist_edge_2010.tif.bak"), os.path.join(data_di
 
 * Projecting future forest cover
 
-** With the forestatrisk risk map
-
-*** Computing mean annual deforestation rate for 2014--2018
+** Computing deforestation for period 2014--2018
 
 #+begin_src python :results none :session :exports code
 # Forest cover
@@ -258,29 +217,15 @@ for i in range(ndates):
     rast = os.path.join(data_dir, "forest/forest_KEN_" + dates[i] + ".tif")
     val = far.countpix(input_raster=rast, value=1)
     fc.append(val["area"])  # area in ha
-# Save results to disk
-f = open(os.path.join(out_dir, "forest_cover.txt"), "w")
-for i in fc:
-    f.write(str(i) + "\n")
-f.close()
-# Annual deforestation
-T = 4.0
-annual_defor = round((fc[0] - fc[1]) / T)
+# Deforestation
+defor = round(fc[0] - fc[1])
 #+end_src
 
-#+begin_src python :results output :session :exports both
-print("Mean annual deforested area during the period 2014-2018: {} ha/yr".format(annual_defor))
-#+end_src
+** Projecting deforestation on 2014--2018
 
-#+RESULTS:
-: Mean annual deforested area during the period 2014-2018: 343577 ha/yr
-
-*** Projecting deforestation on 2014--2018
+*** With the forestatrisk risk map
 
 #+begin_src python :results none :session :exports code
-# Projected deforestation (ha) during 2014-2018
-defor = annual_defor * 4
-
 # Compute future forest cover in 2050
 stats = far.deforest(
     input_raster=os.path.join(out_dir, "prob.tif"),
@@ -289,15 +234,22 @@ stats = far.deforest(
     blk_rows=128)
 #+end_src
 
-** With the riskmapjnr risk map
+*** With the riskmapjnr risk map
 
 #+begin_src python :results output :session :exports both
-
+ifile = "outputs_kenya/calval/ldefrate_with_zero_v_ws37.tif"
+stats_rmj = rmj.deforest(
+    input_raster=ifile,
+    hectares=defor,
+    output_file=os.path.join(out_dir, "fcc_proj_1418_rmj.tif"),
+    blk_rows=128)
 #+end_src
+
+#+RESULTS:
 
 * Validation
 
-** Using JNR approach and wRMSE
+** Using the JNR approach and wRMSE
 
 #+begin_src python :results file :session :exports both
 ofile = os.path.join(out_dir, "pred_obs.png")
@@ -319,4 +271,22 @@ ofile
 #+ATTR_RST: :width 600
 #+CAPTION: *Relationship between observed and predicted deforestation in 1 x 1 km grid cells*. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations ($n$, the number of spatial cells) are reported on the graph.
 #+RESULTS:
+
+#+begin_src python :results file :session :exports both
+ofile = os.path.join(out_dir, "pred_obs_rmj.png")
+rmj.validation_fcc(
+    fcc_file=os.path.join(data_dir, "forest/fcc123_KEN_101418.tif"),
+    fcc_proj_file=os.path.join(out_dir, "fcc_proj_1418_rmj.tif"),
+    csize=400,
+    tab_file_pred=os.path.join(out_dir, "pred_obs.csv"),
+    fig_file_pred=ofile,
+    figsize=(6.4, 4.8),
+    dpi=100, verbose=False)
+ofile
+#+end_src
+
+#+RESULTS:
+[[file:outputs_far-kenya/pred_obs_rmj.png]]
+
+** Using the Total Operating Characteristics (TOC)
 

@@ -169,7 +169,7 @@ print('Computation time:', time.strftime("%H:%M:%S",time.gmtime(sec_seq)))
 #+end_src
 
 #+RESULTS:
-: Computation time: 00:34:48
+: Computation time: 00:38:44
 
 * Results
 

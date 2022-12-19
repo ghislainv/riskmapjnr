@@ -14,6 +14,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -287,14 +288,14 @@
 <section id="local-deforestation-rate">
 <h2>3 Local deforestation rate<a class="headerlink" href="#local-deforestation-rate" title="Permalink to this heading">¶</a></h2>
 <p>The second step is to compute a local risk of deforestation at the pixel level using a moving window made of several pixels. The deforestation risk is estimated from the deforestation rate inside the moving window. The deforestation rate <span class="math notranslate nohighlight">\(\theta\)</span> (in %/yr) is computed from the formula <span class="math notranslate nohighlight">\(\theta=1-(\alpha_2/\alpha_1)^{1/\tau}\)</span>, with <span class="math notranslate nohighlight">\(\alpha\)</span> the forest areas (in ha) at time <span class="math notranslate nohighlight">\(t_1\)</span> and <span class="math notranslate nohighlight">\(t_2\)</span>, and <span class="math notranslate nohighlight">\(\tau\)</span>, the time interval (in yr) between time <span class="math notranslate nohighlight">\(t_1\)</span> and <span class="math notranslate nohighlight">\(t_2\)</span>. Using the deforestation rate formula, the moving window and the past forest cover change map, we can derive a raster map describing the local risk of deforestation at the same resolution as the input map.</p>
-<p>To save space on disk, deforestation rates are converted to integer values between 0 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10<sup>-4</sup>for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.</p>
+<p>To save space on disk, deforestation rates are converted to integer values between 1 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10<sup>-4</sup>for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set window size</span>
 <span class="n">s</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="c1"># Compute local deforestation rate</span>
 <span class="n">rmj</span><span class="o">.</span><span class="n">local_defor_rate</span><span class="p">(</span>
     <span class="n">fcc_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
     <span class="n">defor_values</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ldefrate.tif&quot;</span><span class="p">),</span>
+    <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate.tif&quot;</span><span class="p">),</span>
     <span class="n">win_size</span><span class="o">=</span><span class="n">s</span><span class="p">,</span>
     <span class="n">time_interval</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="n">blk_rows</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
@@ -306,10 +307,10 @@
 <h2>4 Pixels with zero risk of deforestation<a class="headerlink" href="#pixels-with-zero-risk-of-deforestation" title="Permalink to this heading">¶</a></h2>
 <p>This third step sets a value of 10001 to pixels with zero deforestation risk. As explained previously, a risk of deforestation of zero is assumed when distance to forest edge is greater than the distance below which more than 99% of the deforestation occurs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">set_defor_cat_zero</span><span class="p">(</span>
-    <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ldefrate.tif&quot;</span><span class="p">),</span>
+    <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate.tif&quot;</span><span class="p">),</span>
     <span class="n">dist_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;dist_edge.tif&quot;</span><span class="p">),</span>
     <span class="n">dist_thresh</span><span class="o">=</span><span class="n">dist_thresh</span><span class="p">,</span>
-    <span class="n">ldefrate_with_zero_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ldefrate_with_zero.tif&quot;</span><span class="p">),</span>
+    <span class="n">ldefrate_with_zero_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate_with_zero.tif&quot;</span><span class="p">),</span>
     <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
@@ -318,13 +319,20 @@
 <section id="categories-of-deforestation-risk">
 <h2>5 Categories of deforestation risk<a class="headerlink" href="#categories-of-deforestation-risk" title="Permalink to this heading">¶</a></h2>
 <p>The fourth step implies converting the continuous values of the raster map of deforestation risk to categorical values. The JNR methodology suggests to use 31 classes of risk from “0” to “30” including the “0” class for the forest pixels with no risk of being deforested (located at a distance to the forest edge <span class="math notranslate nohighlight">\(&gt; d\)</span>, see first step). Following the JNR methodology, at least three slicing algorithms must be compared to derive the categorical map of deforestation risk, such as “equal area”, “equal interval”, and “natural breaks”. With the “equal area” algorithm, each class from “1” to “30” must cover approximately the same area. With the “equal interval” algorithm, classes from “1” to “30” correspond to bins of deforestation risk of the same range. In this case, some risk classes will be in majority in the landscape compared to other classes of lower frequency. With the “natural breaks” algorithm, the continuous deforestation risk is normalized before running an “equal interval” algorithm.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">defor_cat</span><span class="p">(</span>
-    <span class="n">ldefrate_with_zero_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ldefrate_with_zero.tif&quot;</span><span class="p">),</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bins</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">defor_cat</span><span class="p">(</span>
+    <span class="n">ldefrate_with_zero_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate_with_zero.tif&quot;</span><span class="p">),</span>
     <span class="n">riskmap_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;riskmap.tif&quot;</span><span class="p">),</span>
     <span class="n">ncat</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
     <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Equal Interval&quot;</span><span class="p">,</span>
     <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bins:</span><span class="se">\n</span><span class="si">{</span><span class="n">bins</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Bins</span><span class="p">:</span>
+<span class="p">[</span>    <span class="mi">0</span>     <span class="mi">1</span>   <span class="mi">334</span>   <span class="mi">668</span>  <span class="mi">1001</span>  <span class="mi">1334</span>  <span class="mi">1668</span>  <span class="mi">2001</span>  <span class="mi">2334</span>  <span class="mi">2667</span>  <span class="mi">3001</span>  <span class="mi">3334</span>
+  <span class="mi">3667</span>  <span class="mi">4001</span>  <span class="mi">4334</span>  <span class="mi">4667</span>  <span class="mi">5000</span>  <span class="mi">5334</span>  <span class="mi">5667</span>  <span class="mi">6000</span>  <span class="mi">6334</span>  <span class="mi">6667</span>  <span class="mi">7000</span>  <span class="mi">7334</span>
+  <span class="mi">7667</span>  <span class="mi">8000</span>  <span class="mi">8334</span>  <span class="mi">8667</span>  <span class="mi">9000</span>  <span class="mi">9333</span>  <span class="mi">9667</span> <span class="mi">10001</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>The risk map can be plotted using the <code class="docutils literal notranslate"><span class="pre">plot.riskmap()</span></code> function.</p>
@@ -522,19 +530,55 @@
 </tr>
 </tbody>
 </table>
-<p>From this table, we see that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (equal to 0), and category 30 represents well a category with very high deforestation risk (close to 1).</p>
+<p>From this table, we see that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (close to 0), and category 30 represents well a category with very high deforestation risk (close to 1).</p>
+</section>
+<section id="derive-a-risk-map-at-the-beginning-of-the-validation-period">
+<h2>7 Derive a risk map at the beginning of the validation period<a class="headerlink" href="#derive-a-risk-map-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h2>
+<p>To derive the risk map at the beginning of the validation period, we consider (i) the forest cover at this date, (ii) the map of local deforestation rates, (ii) the threshold distance, and (iii) the bins used to categorize the deforestation rates. All these data are obtained from previous steps and based on the deforestation for the historical period. The approach is the following: first, we identify the forest pixels at the beginning of the validation period. Second, we assign category zero to pixels at a distance from the forest edge which is greater than the distance threshold. Third, we categorize the deforestation rates using the previous bins identified for the historical period. In addition to the risk map, two additional raster files are produced: the raster file of the distance to forest edge at the beginning of the validation period, and the raster file of local deforestation rates including the zero deforestation risk.</p>
+<section id="distance-to-forest-edge-at-the-beginning-of-the-validation-period">
+<h3>7.1 Distance to forest edge at the beginning of the validation period<a class="headerlink" href="#distance-to-forest-edge-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">dist_values</span><span class="p">(</span><span class="n">input_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
+                <span class="n">dist_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;dist_edge_v.tif&quot;</span><span class="p">),</span>
+                <span class="n">values</span><span class="o">=</span><span class="s2">&quot;0,1&quot;</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="raster-of-local-deforestation-rate-at-the-beginning-of-the-validation-period">
+<h3>7.2 Raster of local deforestation rate at the beginning of the validation period<a class="headerlink" href="#raster-of-local-deforestation-rate-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">get_ldefz_v</span><span class="p">(</span>
+    <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate.tif&quot;</span><span class="p">),</span>
+    <span class="n">dist_v_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;dist_edge_v.tif&quot;</span><span class="p">),</span>
+    <span class="n">dist_thresh</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+    <span class="n">ldefrate_with_zero_v_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate_with_zero_v.tif&quot;</span><span class="p">),</span>
+    <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="risk-map-at-the-beginning-of-the-validation-period">
+<h3>7.3 Risk map at the beginning of the validation period<a class="headerlink" href="#risk-map-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">get_riskmap_v</span><span class="p">(</span>
+    <span class="n">ldefrate_with_zero_v_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate_with_zero_v.tif&quot;</span><span class="p">),</span>
+    <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
+    <span class="n">riskmap_v_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;riskmap_v.tif&quot;</span><span class="p">),</span>
+    <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="validation">
-<h2>7 Validation<a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h2>
+<h2>8 Validation<a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h2>
 <p>The fifth step focuses on comparing the map of deforestation risk with a deforestation map corresponding to the validation period. The validation period follows the calibration period and provides independent observations of deforestation.</p>
 <p>To do so, we consider a square grid of at least 1000 spatial cells containing at least one forest pixel at the beginning of the validation period. Following JNR specification, the cell size should be <span class="math notranslate nohighlight">\(\leq\)</span> 10 km. Note that with the map of deforestation risk, each forest pixel at the beginning of the validation period falls into a category of deforestation risk. For each cell of the grid, we compute the predicted area of deforestation (in ha) given the map of deforestation risk and the historical deforestation rates for each category of deforestation risk computed on the calibration period (see previous step).</p>
 <p>We can then compare the predicted deforestation with the observed deforestation in that spatial cell for the validation period. Because all cells don’t have the same forest cover at the beginning of the validation period, a weight <span class="math notranslate nohighlight">\(w_j\)</span> is computed for each grid cell <span class="math notranslate nohighlight">\(j\)</span> such that <span class="math notranslate nohighlight">\(w_j=\beta_j / B\)</span>, with <span class="math notranslate nohighlight">\(\beta_j\)</span> the forest cover (in ha) in the cell <span class="math notranslate nohighlight">\(j\)</span> at the beginning of the validation period and <span class="math notranslate nohighlight">\(B\)</span> the total forest cover in the jurisdiction (in ha) at the same date. We then calculate the weighted root mean squared error (wRMSE) from the observed and predicted deforestation for each cell and the cell weights.</p>
-<p>We set the argument <code class="docutils literal notranslate"><span class="pre">no_quantity_error</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> to correct the total deforestation for the predictions and avoid a “quantity” error (sensu Pontius) due to the difference in total deforestation between periods. This is currently being discussed for improving the JNR methodology.</p>
+<p>We set the argument <code class="docutils literal notranslate"><span class="pre">no_quantity_error</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> to correct the total deforestation for the predictions and avoid a “quantity” error (<em>sensu</em> Pontius) due to the difference in total deforestation between periods. This is currently being discussed for improving the JNR methodology.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;pred_obs.png&quot;</span><span class="p">)</span>
 <span class="n">rmj</span><span class="o">.</span><span class="n">validation</span><span class="p">(</span>
     <span class="n">fcc_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
     <span class="n">time_interval</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">riskmap_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;riskmap.tif&quot;</span><span class="p">),</span>
+    <span class="n">riskmap_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;riskmap_v.tif&quot;</span><span class="p">),</span>
     <span class="n">tab_file_defrate</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;defrate_per_cat.csv&quot;</span><span class="p">),</span>
     <span class="n">csize</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
     <span class="n">no_quantity_error</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -553,7 +597,7 @@
 </figure>
 </section>
 <section id="final-risk-map">
-<h2>8 Final risk map<a class="headerlink" href="#final-risk-map" title="Permalink to this heading">¶</a></h2>
+<h2>9 Final risk map<a class="headerlink" href="#final-risk-map" title="Permalink to this heading">¶</a></h2>
 <p>The user must repeat the procedure and obtain risk maps for various window size and slicing algorithms. Following the JNR methodology, at least 25 different sizes for the moving window must be tested together with two slicing algorithms (“Equal Interval” and “Equal Area”), thus leading to a minimum of 50 different maps of deforestation risk. The map with the smallest wRMSE value is considered the best risk map. Once the best risk map is identified, with the corresponding window size and slicing algorithm, a final risk map is derived considering both the calibration and validation period (see the <a class="reference external" href="https://ecology.ghislainv.fr/riskmapjnr/notebooks/get_started.html">Get Started</a> tutorial).</p>
 </section>
 </section>
@@ -569,7 +613,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

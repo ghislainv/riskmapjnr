@@ -12,5 +12,6 @@
 from .miscellaneous import invlogit, make_dir, tree
 from .miscellaneous import makeblock, progress_bar
 from .miscellaneous import make_square
+from .countpix import countpix
 
 # EOF

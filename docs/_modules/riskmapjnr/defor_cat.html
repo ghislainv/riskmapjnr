@@ -13,7 +13,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -57,6 +57,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/get_started.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../articles.html">Articles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference.html">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../indices.html">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
@@ -143,9 +144,9 @@
 
 <span class="sd">    :param ldefrate_with_zero_file: Input raster file of local</span>
 <span class="sd">        deforestation rates. Deforestation rates are defined by</span>
-<span class="sd">        integer values between 0 and 10000 (ten thousand)). Pixels</span>
+<span class="sd">        integer values between 1 and 10000 (ten thousand)). Pixels</span>
 <span class="sd">        with zero deforestation risk (beyond a given distance from the</span>
-<span class="sd">        forest edge) have value 10001. This file is typically obtained</span>
+<span class="sd">        forest edge) have value 0. This file is typically obtained</span>
 <span class="sd">        with function ``set_defor_cat_zero()``.</span>
 
 <span class="sd">    :param riskmap_file: Output raster file with categories of</span>
@@ -162,9 +163,10 @@
 <span class="sd">    :param verbose: Logical. Whether to print messages or not. Default</span>
 <span class="sd">        to ``True``.</span>
 
-<span class="sd">    :return: None. A raster file with deforestation categories will be</span>
-<span class="sd">        created (see ``riskmap_file``). Data range from 0 to 30. Raster</span>
-<span class="sd">        type is Byte ([0, 255]). NoData value is set to 255.</span>
+<span class="sd">    :return: Bins used to categorize the deforestation risk. A raster</span>
+<span class="sd">        file with deforestation categories is created (see</span>
+<span class="sd">        ``riskmap_file``). Data range from 0 to 30. Raster type is</span>
+<span class="sd">        Byte ([0, 255]). NoData value is set to 255.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -204,41 +206,43 @@
     <span class="n">cat_band</span><span class="o">.</span><span class="n">SetNoDataValue</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
 
     <span class="c1"># =================</span>
-    <span class="c1"># Find categories</span>
+    <span class="c1"># Compute bins</span>
     <span class="c1"># =================</span>
 
     <span class="c1"># Equal Interval</span>
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Equal Interval&quot;</span><span class="p">:</span>
-        <span class="n">bin_size</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">10000</span> <span class="o">/</span> <span class="n">ncat</span><span class="p">)</span>
-        <span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">bin_size</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncat</span><span class="p">)]</span>
-        <span class="n">bins</span> <span class="o">=</span> <span class="n">bins</span> <span class="o">+</span> <span class="p">[</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10001</span><span class="p">]</span>
+        <span class="n">bin_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10000</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">ncat</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">bin_size</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncat</span><span class="p">)]</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">bins</span> <span class="o">+</span> <span class="p">[</span><span class="mi">10000</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="c1"># Equal Area</span>
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Equal Area&quot;</span><span class="p">:</span>
         <span class="c1"># Compute histogram</span>
-        <span class="n">nvalues</span> <span class="o">=</span> <span class="mi">10000</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">counts</span> <span class="o">=</span> <span class="n">catzero_band</span><span class="o">.</span><span class="n">GetHistogram</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">10000.5</span><span class="p">,</span> <span class="n">nvalues</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">nvalues</span> <span class="o">=</span> <span class="mi">10000</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">catzero_band</span><span class="o">.</span><span class="n">GetHistogram</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">10000.5</span><span class="p">,</span> <span class="n">nvalues</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">npix</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
         <span class="c1"># Percentage</span>
         <span class="n">perc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span> <span class="o">/</span> <span class="n">npix</span>
         <span class="c1"># Cumulative percentage</span>
         <span class="n">cum_perc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">perc</span><span class="p">)</span>
-        <span class="c1"># Correction of the approximation</span>
+        <span class="c1"># Correction of the approximation for last value</span>
         <span class="n">cum_perc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="c1"># Quantiles</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">ncat</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncat</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">ncat</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncat</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>  <span class="c1"># len(q)=30</span>
         <span class="c1"># Bins</span>
-        <span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
         <span class="c1"># Loop on quantiles</span>
         <span class="k">for</span> <span class="n">qi</span> <span class="ow">in</span> <span class="n">q</span><span class="p">:</span>
             <span class="n">comp</span> <span class="o">=</span> <span class="p">(</span><span class="n">cum_perc</span> <span class="o">&lt;=</span> <span class="n">qi</span><span class="p">)</span>
             <span class="n">sum_comp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">sum_comp</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">bins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sum_comp</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sum_comp</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">bins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sum_comp</span><span class="p">)</span>
         <span class="c1"># Remove duplicate</span>
         <span class="n">bins</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">bins</span><span class="p">))</span>
-        <span class="c1"># Add category 10001</span>
-        <span class="n">bins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">10001</span><span class="p">)</span>
+
+    <span class="c1"># Replace last bin value 10000 by 10001 to include 10000 in</span>
+    <span class="c1"># last category with pd.cut(right=False).</span>
+    <span class="n">bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10001</span>
 
     <span class="c1"># =================</span>
     <span class="c1"># Categorizing</span>
@@ -256,10 +260,9 @@
         <span class="n">catzero_data</span> <span class="o">=</span> <span class="n">catzero_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
         <span class="c1"># Categorize</span>
         <span class="n">cat_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">catzero_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
-                          <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_lowest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">cat_data</span> <span class="o">=</span> <span class="n">cat_data</span> <span class="o">+</span> <span class="mi">1</span>
+                          <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_lowest</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                          <span class="n">right</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">cat_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">cat_data</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">255</span>
-        <span class="n">cat_data</span><span class="p">[</span><span class="n">cat_data</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">cat_data</span> <span class="o">=</span> <span class="n">cat_data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">catzero_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="c1"># Write to file</span>
         <span class="n">cat_band</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">cat_data</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
@@ -273,12 +276,12 @@
     <span class="n">cat_band</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">del</span> <span class="n">cat_ds</span><span class="p">,</span> <span class="n">catzero_ds</span>
 
-    <span class="k">return</span> <span class="kc">None</span></div>
+    <span class="k">return</span> <span class="n">bins</span></div>
 
 
 <span class="c1"># # Test</span>
-<span class="c1"># ldefrate_with_zero_file = &quot;outputs/defor_cat_zero.tif&quot;</span>
-<span class="c1"># riskmap_file = &quot;outputs/riskmap.tif&quot;</span>
+<span class="c1"># ldefrate_with_zero_file = &quot;outputs_steps/ldefrate_with_zero.tif&quot;</span>
+<span class="c1"># riskmap_file = &quot;outputs_steps/riskmap.tif&quot;</span>
 <span class="c1"># ncat = 30</span>
 <span class="c1"># method = &quot;Equal Area&quot;</span>
 <span class="c1"># blk_rows = 128</span>
@@ -308,7 +311,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

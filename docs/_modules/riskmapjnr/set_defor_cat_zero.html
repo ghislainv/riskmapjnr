@@ -13,7 +13,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -57,6 +57,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/get_started.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../articles.html">Articles</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference.html">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../indices.html">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
@@ -119,19 +120,19 @@
 
 
 <span class="c1"># set_defor_cat_zero</span>
-<div class="viewcode-block" id="set_defor_cat_zero"><a class="viewcode-back" href="../../reference.html#riskmapjnr.set_defor_cat_zero.set_defor_cat_zero">[docs]</a><span class="k">def</span> <span class="nf">set_defor_cat_zero</span><span class="p">(</span><span class="n">ldefrate_file</span><span class="p">,</span>
+<div class="viewcode-block" id="set_defor_cat_zero"><a class="viewcode-back" href="../../reference.html#riskmapjnr.set_defor_cat_zero">[docs]</a><span class="k">def</span> <span class="nf">set_defor_cat_zero</span><span class="p">(</span><span class="n">ldefrate_file</span><span class="p">,</span>
                        <span class="n">dist_file</span><span class="p">,</span>
                        <span class="n">dist_thresh</span><span class="p">,</span>
                        <span class="n">ldefrate_with_zero_file</span><span class="o">=</span><span class="s2">&quot;ldefrate_with_zero.tif&quot;</span><span class="p">,</span>
                        <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
                        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set a value of 10001 to pixels with zero deforestation risk. A</span>
+    <span class="sd">&quot;&quot;&quot;Set a value of zero (0) to pixels with zero deforestation risk. A</span>
 <span class="sd">    risk of deforestation of zero is assumed when distance to forest</span>
 <span class="sd">    edge is greater than the distance threshold.</span>
 
 <span class="sd">    :param ldefrate_file: Input raster file of local deforestation</span>
 <span class="sd">        rates. Deforestation rates are defined by integer values</span>
-<span class="sd">        between 0 and 10000 (ten thousand). This file is typically</span>
+<span class="sd">        between 1 and 10000 (ten thousand). This file is typically</span>
 <span class="sd">        obtained with function ``local_defor_rate()``.</span>
 
 <span class="sd">    :param dist_file: Path to the distance to forest edge raster file.</span>
@@ -143,7 +144,7 @@
 <span class="sd">    :param ldefrate_with_zero_file: Output raster file. Default to</span>
 <span class="sd">        &quot;ldefrate_with_zero.tif&quot; in the current working</span>
 <span class="sd">        directory. Pixels with zero deforestation risk are assigned a</span>
-<span class="sd">        value of 10001.</span>
+<span class="sd">        value of 0.</span>
 
 <span class="sd">    :param blk_rows: If &gt; 0, number of rows for computation by block.</span>
 
@@ -151,7 +152,7 @@
 <span class="sd">        to ``True``.</span>
 
 <span class="sd">    :return: None. A raster file identifying pixels with zero risk of</span>
-<span class="sd">        deforestation (value 10001) will be created (see</span>
+<span class="sd">        deforestation (value 0) will be created (see</span>
 <span class="sd">        ``ldefrate_with_zero_file``).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -206,10 +207,8 @@
         <span class="c1"># Data</span>
         <span class="n">catzero_data</span> <span class="o">=</span> <span class="n">ldefrate_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
         <span class="n">dist_data</span> <span class="o">=</span> <span class="n">dist_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
-        <span class="c1"># Replace nodata value in dist_data with 0</span>
-        <span class="n">dist_data</span><span class="p">[</span><span class="n">dist_data</span> <span class="o">==</span> <span class="mi">65535</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># Set zero category to value 10001</span>
-        <span class="n">catzero_data</span><span class="p">[</span><span class="n">dist_data</span> <span class="o">&gt;=</span> <span class="n">dist_thresh</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10001</span>
+        <span class="c1"># Set 0 risk beyond distance threshold</span>
+        <span class="n">catzero_data</span><span class="p">[</span><span class="n">dist_data</span> <span class="o">&gt;=</span> <span class="n">dist_thresh</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">catzero_band</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">catzero_data</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
 
     <span class="c1"># Compute statistics</span>
@@ -253,7 +252,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

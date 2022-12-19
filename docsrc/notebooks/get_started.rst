@@ -93,12 +93,12 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
 
 .. code:: python
 
-    ncpu = mp.cpu_count()
-    print(f"Total number of CPUs: {ncpu}.") 
+    ncpu = mp.cpu_count() - 2
+    print(f"Number of CPUs to use: {ncpu}.") 
 
 ::
 
-    Total number of CPUs: 8.
+    Number of CPUs: 6.
 
 
 .. code:: python
@@ -109,7 +109,7 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
         output_dir=out_dir,
         clean=False,
         dist_bins=np.arange(0, 1080, step=30),
-        win_sizes=np.arange(5, 48, 16),
+        win_sizes=np.arange(5, 100, 8),
         ncat=30,
         parallel=True,
         ncpu=ncpu,
@@ -124,12 +124,30 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
 ::
 
     Model calibration and validation
+    .. Model 4: window size = 21, slicing method = ei.
+    .. Model 10: window size = 45, slicing method = ei.
+    .. Model 2: window size = 13, slicing method = ei.
     .. Model 0: window size = 5, slicing method = ei.
-    .. Model 2: window size = 21, slicing method = ei.
-    .. Model 4: window size = 37, slicing method = ei.
+    .. Model 6: window size = 29, slicing method = ei.
+    .. Model 8: window size = 37, slicing method = ei.
+    .. Model 11: window size = 45, slicing method = ea.
+    .. Model 5: window size = 21, slicing method = ea.
+    .. Model 7: window size = 29, slicing method = ea.
+    .. Model 9: window size = 37, slicing method = ea.
+    .. Model 3: window size = 13, slicing method = ea.
     .. Model 1: window size = 5, slicing method = ea.
-    .. Model 3: window size = 21, slicing method = ea.
-    .. Model 5: window size = 37, slicing method = ea.
+    .. Model 12: window size = 53, slicing method = ei.
+    .. Model 14: window size = 61, slicing method = ei.
+    .. Model 16: window size = 69, slicing method = ei.
+    .. Model 18: window size = 77, slicing method = ei.
+    .. Model 20: window size = 85, slicing method = ei.
+    .. Model 22: window size = 93, slicing method = ei.
+    .. Model 13: window size = 53, slicing method = ea.
+    .. Model 15: window size = 61, slicing method = ea.
+    .. Model 17: window size = 69, slicing method = ea.
+    .. Model 21: window size = 85, slicing method = ea.
+    .. Model 19: window size = 77, slicing method = ea.
+    .. Model 23: window size = 93, slicing method = ea.
     Deriving risk map for entire historical period
 
 3 Results

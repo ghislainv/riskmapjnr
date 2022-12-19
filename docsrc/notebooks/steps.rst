@@ -331,15 +331,37 @@ From this table, we see that the deforestation rate increases with the deforesta
 
 To derive the risk map at the beginning of the validation period, we consider (i) the forest cover at this date, (ii) the map of local deforestation rates, (ii) the threshold distance, and (iii) the bins used to categorize the deforestation rates. All these data are obtained from previous steps and based on the deforestation for the historical period. The approach is the following: first, we identify the forest pixels at the beginning of the validation period. Second, we assign category zero to pixels at a distance from the forest edge which is greater than the distance threshold. Third, we categorize the deforestation rates using the previous bins identified for the historical period. In addition to the risk map, two additional raster files are produced: the raster file of the distance to forest edge at the beginning of the validation period, and the raster file of local deforestation rates including the zero deforestation risk.
 
+7.1 Distance to forest edge at the beginning of the validation period
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    rmj.dist_values(input_file=fcc_file,
+                    dist_file=os.path.join(out_dir, "dist_edge_v.tif"),
+                    values="0,1",
+                    verbose=False)
+
+7.2 Raster of local deforestation rate at the beginning of the validation period
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    rmj.get_ldefz_v(
+        ldefrate_file=os.path.join(out_dir, "ldefrate.tif"),
+        dist_v_file=os.path.join(out_dir, "dist_edge_v.tif"),
+        dist_thresh=120,
+        ldefrate_with_zero_v_file=os.path.join(out_dir, "ldefrate_with_zero_v.tif"),
+        blk_rows=128,
+        verbose=False)
+
+7.3 Risk map at the beginning of the validation period
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code:: python
 
     rmj.get_riskmap_v(
-        ldefrate_file=os.path.join(out_dir, "ldefrate.tif"),
-        fcc_file=fcc_file,
-        dist_thresh=dist_thresh,
-        bins=bins,
-        dist_v_file=os.path.join(out_dir, "dist_edge_v.tif"),
         ldefrate_with_zero_v_file=os.path.join(out_dir, "ldefrate_with_zero_v.tif"),
+        bins=bins,  
         riskmap_v_file=os.path.join(out_dir, "riskmap_v.tif"),
         blk_rows=128,
         verbose=False)
@@ -353,7 +375,7 @@ To do so, we consider a square grid of at least 1000 spatial cells containing at
 
 We can then compare the predicted deforestation with the observed deforestation in that spatial cell for the validation period. Because all cells don’t have the same forest cover at the beginning of the validation period, a weight :math:`w_j` is computed for each grid cell :math:`j` such that :math:`w_j=\beta_j / B`, with :math:`\beta_j` the forest cover (in ha) in the cell :math:`j` at the beginning of the validation period and :math:`B` the total forest cover in the jurisdiction (in ha) at the same date. We then calculate the weighted root mean squared error (wRMSE) from the observed and predicted deforestation for each cell and the cell weights.
 
-We set the argument ``no_quantity_error`` to ``True`` to correct the total deforestation for the predictions and avoid a “quantity” error (sensu Pontius) due to the difference in total deforestation between periods. This is currently being discussed for improving the JNR methodology.
+We set the argument ``no_quantity_error`` to ``True`` to correct the total deforestation for the predictions and avoid a “quantity” error (*sensu* Pontius) due to the difference in total deforestation between periods. This is currently being discussed for improving the JNR methodology.
 
 .. code:: python
 

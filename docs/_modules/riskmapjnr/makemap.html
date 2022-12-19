@@ -13,6 +13,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -123,20 +124,23 @@
 <span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">make_dir</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dist_edge_threshold</span><span class="p">,</span> <span class="n">local_defor_rate</span><span class="p">,</span> <span class="n">set_defor_cat_zero</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">defor_cat</span><span class="p">,</span> <span class="n">defrate_per_cat</span><span class="p">,</span> <span class="n">validation</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dist_values</span><span class="p">,</span> <span class="n">get_ldefz_v</span><span class="p">,</span> <span class="n">get_riskmap_v</span>
 
 
 <span class="c1"># Function for computing by window size</span>
-<span class="k">def</span> <span class="nf">makemap_ws</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span> <span class="n">dist_file</span><span class="p">,</span>
-               <span class="n">dist_edge_thres</span><span class="p">,</span> <span class="n">calval_dir</span><span class="p">,</span> <span class="n">ncat</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span> <span class="n">meth</span><span class="p">,</span> <span class="n">n_m</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">makemap_ws</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span> <span class="n">dist_file</span><span class="p">,</span> <span class="n">dist_v_file</span><span class="p">,</span>
+               <span class="n">dist_edge_thresh</span><span class="p">,</span> <span class="n">calval_dir</span><span class="p">,</span> <span class="n">ncat</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span> <span class="n">meth</span><span class="p">,</span> <span class="n">n_m</span><span class="p">,</span>
                <span class="n">csize</span><span class="p">,</span> <span class="n">nqe</span><span class="p">,</span> <span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">blk_rows</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Internal function for parallel computing.&quot;&quot;&quot;</span>
 
     <span class="c1"># Window size</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">win_size</span>
 
-    <span class="c1"># Output files for calibration and validation</span>
+    <span class="c1"># Output files depending only on window size</span>
     <span class="n">ldefrate_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ldefrate_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
     <span class="n">ldefrate_with_zero_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span>
-                                           <span class="sa">f</span><span class="s2">&quot;ldefrate_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_with_zero.tif&quot;</span><span class="p">)</span>
+                                           <span class="sa">f</span><span class="s2">&quot;ldefrate_with_zero_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
+    <span class="n">ldefzv_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ldefrate_with_zero_v_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
 
     <span class="c1"># Local deforestation rates</span>
     <span class="n">local_defor_rate</span><span class="p">(</span>
@@ -152,8 +156,17 @@
     <span class="n">set_defor_cat_zero</span><span class="p">(</span>
         <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">ldefrate_file</span><span class="p">,</span>
         <span class="n">dist_file</span><span class="o">=</span><span class="n">dist_file</span><span class="p">,</span>
-        <span class="n">dist_thresh</span><span class="o">=</span><span class="n">dist_edge_thres</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">],</span>
+        <span class="n">dist_thresh</span><span class="o">=</span><span class="n">dist_edge_thresh</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">],</span>
         <span class="n">ldefrate_with_zero_file</span><span class="o">=</span><span class="n">ldefrate_with_zero_file</span><span class="p">,</span>
+        <span class="n">blk_rows</span><span class="o">=</span><span class="n">blk_rows</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># ldefz_v</span>
+    <span class="n">get_ldefz_v</span><span class="p">(</span>
+        <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">ldefrate_file</span><span class="p">,</span>
+        <span class="n">dist_v_file</span><span class="o">=</span><span class="n">dist_v_file</span><span class="p">,</span>
+        <span class="n">dist_thresh</span><span class="o">=</span><span class="n">dist_edge_thresh</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">],</span>
+        <span class="n">ldefrate_with_zero_v_file</span><span class="o">=</span><span class="n">ldefzv_file</span><span class="p">,</span>
         <span class="n">blk_rows</span><span class="o">=</span><span class="n">blk_rows</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -173,12 +186,13 @@
         <span class="c1"># Output files</span>
         <span class="n">riskmap_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span>
                                     <span class="sa">f</span><span class="s2">&quot;riskmap_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
+        <span class="n">riskmap_v_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;riskmap_v_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
         <span class="n">tab_file_defrate</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span>
                                         <span class="sa">f</span><span class="s2">&quot;defrate_per_cat_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
         <span class="n">tab_file_pred</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;pred_obs_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
         <span class="n">fig_file_pred</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;pred_obs_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
         <span class="c1"># Categories of deforestation risk</span>
-        <span class="n">defor_cat</span><span class="p">(</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">defor_cat</span><span class="p">(</span>
             <span class="n">ldefrate_with_zero_file</span><span class="o">=</span><span class="n">ldefrate_with_zero_file</span><span class="p">,</span>
             <span class="n">riskmap_file</span><span class="o">=</span><span class="n">riskmap_file</span><span class="p">,</span>
             <span class="n">ncat</span><span class="o">=</span><span class="n">ncat</span><span class="p">,</span>
@@ -194,11 +208,18 @@
             <span class="n">tab_file_defrate</span><span class="o">=</span><span class="n">tab_file_defrate</span><span class="p">,</span>
             <span class="n">blk_rows</span><span class="o">=</span><span class="n">blk_rows</span><span class="p">,</span>
             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Risk map for validation period</span>
+        <span class="n">get_riskmap_v</span><span class="p">(</span>
+            <span class="n">ldefrate_with_zero_v_file</span><span class="o">=</span><span class="n">ldefzv_file</span><span class="p">,</span>
+            <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
+            <span class="n">riskmap_v_file</span><span class="o">=</span><span class="n">riskmap_v_file</span><span class="p">,</span>
+            <span class="n">blk_rows</span><span class="o">=</span><span class="n">blk_rows</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="c1"># Validation</span>
         <span class="n">val</span> <span class="o">=</span> <span class="n">validation</span><span class="p">(</span>
             <span class="n">fcc_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
             <span class="n">time_interval</span><span class="o">=</span><span class="n">time_interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-            <span class="n">riskmap_file</span><span class="o">=</span><span class="n">riskmap_file</span><span class="p">,</span>
+            <span class="n">riskmap_file</span><span class="o">=</span><span class="n">riskmap_v_file</span><span class="p">,</span>
             <span class="n">tab_file_defrate</span><span class="o">=</span><span class="n">tab_file_defrate</span><span class="p">,</span>
             <span class="n">csize</span><span class="o">=</span><span class="n">csize</span><span class="p">,</span>
             <span class="n">no_quantity_error</span><span class="o">=</span><span class="n">nqe</span><span class="p">,</span>
@@ -247,7 +268,7 @@
 <span class="sd">        figures) produced by calling the ``makemap()`` function:</span>
 
 <span class="sd">        * ``dist_edge.tif``: Raster file of distance to forest edge at</span>
-<span class="sd">          the beginning of the historical period.</span>
+<span class="sd">          the beginning of the total period.</span>
 
 <span class="sd">        * ``map_comp.csv``: Table for relationship between</span>
 <span class="sd">          wRMSE and window size by slicing method.</span>
@@ -261,18 +282,18 @@
 <span class="sd">        * ``perc_dist.png``: Figure of cumulative deforestation with</span>
 <span class="sd">          distance to forest edge for the entire historical period.</span>
 
-<span class="sd">        * ``pred_obs_ws{s}_{m}.csv``: Table for predictions</span>
-<span class="sd">          vs. observations on the validation period for the best model</span>
+<span class="sd">        * ``pred_obs_ws{s}_{m}.csv``: Table of predictions</span>
+<span class="sd">          vs. observations for the validation period for the best model</span>
 <span class="sd">          with window size ``s`` and slicing method ``m``.</span>
 
-<span class="sd">        * ``pred_obs_ws{s}_{m}.png``: Figure for predictions</span>
-<span class="sd">          vs. observations on the validation period for the best model</span>
+<span class="sd">        * ``pred_obs_ws{s}_{m}.png``: Figure of predictions</span>
+<span class="sd">          vs. observations for the validation period for the best model</span>
 <span class="sd">          with window size ``s`` and slicing method ``m``.</span>
 
 <span class="sd">        * ``ldefrate_ws{s}.tif``: Raster of local deforestation rates</span>
 <span class="sd">          for the best model with window size ``s``.</span>
 
-<span class="sd">        * ``ldefrate_ws{s}_with_zero.tif``: Raster of local</span>
+<span class="sd">        * ``ldefrate_with_zero_ws{s}.tif``: Raster of local</span>
 <span class="sd">          deforestation rates with zero category for the best model</span>
 <span class="sd">          with window size ``s``.</span>
 
@@ -290,6 +311,9 @@
 <span class="sd">            + ``dist_edge_cal.tif``: Raster of distance to forest edge</span>
 <span class="sd">              for the calibration period.</span>
 
+<span class="sd">            + ``dist_edge_val.tif``: Raster of distance to forest edge</span>
+<span class="sd">              for the **validation** period.</span>
+
 <span class="sd">            + ``perc_dist_cal.csv``: Table of cumulative deforestation</span>
 <span class="sd">              with distance to forest edge for the calibration period.</span>
 
@@ -299,12 +323,22 @@
 <span class="sd">            + ``ldefrate_ws{s}.tif``: Rasters of local deforestation</span>
 <span class="sd">              rates for each window size ``s``.</span>
 
-<span class="sd">            + ``ldefrate_ws{s}_with_zero.tif``: Rasters of local</span>
+<span class="sd">            + ``ldefrate_with_zero_ws{s}.tif``: Rasters of local</span>
 <span class="sd">              deforestation rates with zero category for each window</span>
+<span class="sd">              size ``s``.</span>
+
+<span class="sd">            + ``ldefrate_with_zero_v_ws{s}.tif``: Rasters of local</span>
+<span class="sd">              deforestation rates with zero category **at the</span>
+<span class="sd">              beginning of the validation period** for each window</span>
 <span class="sd">              size ``s``.</span>
 
 <span class="sd">            + ``riskmap_ws{s}_{m}.tif``: Riskmaps with categories of</span>
 <span class="sd">              deforestation risk for each window size ``s`` and</span>
+<span class="sd">              slicing method ``m``.</span>
+
+<span class="sd">            + ``riskmap_ws_v_{s}_{m}.tif``: Riskmaps with categories</span>
+<span class="sd">              of deforestation risk **at the beginning of the</span>
+<span class="sd">              validation period** for each window size ``s`` and</span>
 <span class="sd">              slicing method ``m``.</span>
 
 <span class="sd">            + ``defrate_per_cat_ws{s}_{m}.csv``: Tables of</span>
@@ -394,6 +428,7 @@
     <span class="c1"># Output files for calibration and validation</span>
     <span class="n">calval_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;calval&quot;</span><span class="p">)</span>
     <span class="n">dist_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span> <span class="s2">&quot;dist_edge_cal.tif&quot;</span><span class="p">)</span>
+    <span class="n">dist_v_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span> <span class="s2">&quot;dist_edge_val.tif&quot;</span><span class="p">)</span>
     <span class="n">tab_file_dist</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span> <span class="s2">&quot;perc_dist_cal.csv&quot;</span><span class="p">)</span>
     <span class="n">fig_file_dist</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calval_dir</span><span class="p">,</span> <span class="s2">&quot;perc_dist_cal.png&quot;</span><span class="p">)</span>
 
@@ -419,7 +454,7 @@
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="c1"># Deforestation risk and distance to forest edge</span>
-    <span class="n">dist_edge_thres</span> <span class="o">=</span> <span class="n">dist_edge_threshold</span><span class="p">(</span>
+    <span class="n">dist_edge_thresh</span> <span class="o">=</span> <span class="n">dist_edge_threshold</span><span class="p">(</span>
         <span class="n">fcc_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
         <span class="n">defor_values</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># First period</span>
         <span class="n">dist_file</span><span class="o">=</span><span class="n">dist_file</span><span class="p">,</span>
@@ -431,14 +466,22 @@
         <span class="n">blk_rows</span><span class="o">=</span><span class="n">blk_rows</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
+    <span class="c1"># Distance to forest edge for validation</span>
+    <span class="n">dist_values</span><span class="p">(</span>
+        <span class="n">input_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
+        <span class="n">dist_file</span><span class="o">=</span><span class="n">dist_v_file</span><span class="p">,</span>
+        <span class="n">values</span><span class="o">=</span><span class="s2">&quot;0,1&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
     <span class="c1"># Sequential computing</span>
     <span class="k">if</span> <span class="n">parallel</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="c1"># Loop on window sizes</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_ws</span><span class="p">):</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">win_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">i</span><span class="p">,</span> <span class="n">wRMSE_list</span><span class="p">,</span> <span class="n">ncell</span><span class="p">,</span> <span class="n">csize_km</span> <span class="o">=</span> <span class="n">makemap_ws</span><span class="p">(</span>
-                <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span> <span class="n">dist_file</span><span class="p">,</span>
-                <span class="n">dist_edge_thres</span><span class="p">,</span> <span class="n">calval_dir</span><span class="p">,</span> <span class="n">ncat</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span>
+                <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
+                <span class="n">dist_file</span><span class="p">,</span> <span class="n">dist_v_file</span><span class="p">,</span>
+                <span class="n">dist_edge_thresh</span><span class="p">,</span> <span class="n">calval_dir</span><span class="p">,</span> <span class="n">ncat</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span>
                 <span class="n">meth</span><span class="p">,</span> <span class="n">n_m</span><span class="p">,</span> <span class="n">csize</span><span class="p">,</span> <span class="n">no_quantity_error</span><span class="p">,</span>
                 <span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">blk_rows</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
             <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;ws&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">,</span> <span class="s2">&quot;wRMSE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wRMSE_list</span>
@@ -446,8 +489,9 @@
     <span class="c1"># Parallel computing</span>
     <span class="k">if</span> <span class="n">parallel</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">ncpu</span><span class="p">)</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span> <span class="n">dist_file</span><span class="p">,</span>
-                <span class="n">dist_edge_thres</span><span class="p">,</span> <span class="n">calval_dir</span><span class="p">,</span> <span class="n">ncat</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">fcc_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
+                 <span class="n">dist_file</span><span class="p">,</span> <span class="n">dist_v_file</span><span class="p">,</span>
+                 <span class="n">dist_edge_thresh</span><span class="p">,</span> <span class="n">calval_dir</span><span class="p">,</span> <span class="n">ncat</span><span class="p">,</span> <span class="n">methods</span><span class="p">,</span>
                  <span class="n">meth</span><span class="p">,</span> <span class="n">n_m</span><span class="p">,</span> <span class="n">csize</span><span class="p">,</span> <span class="n">no_quantity_error</span><span class="p">,</span>
                  <span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">blk_rows</span><span class="p">,</span>
                  <span class="n">verbose</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">win_sizes</span><span class="p">)]</span>
@@ -508,14 +552,14 @@
     <span class="n">fig_file_dist</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;perc_dist.png&quot;</span><span class="p">)</span>
     <span class="n">ldefrate_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ldefrate_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
     <span class="n">ldefrate_with_zero_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span>
-                                           <span class="sa">f</span><span class="s2">&quot;ldefrate_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_with_zero.tif&quot;</span><span class="p">)</span>
+                                           <span class="sa">f</span><span class="s2">&quot;ldefrate_with_zero_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
     <span class="n">riskmap_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span>
                                 <span class="sa">f</span><span class="s2">&quot;riskmap_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
     <span class="n">tab_file_defrate</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span>
                                     <span class="sa">f</span><span class="s2">&quot;defrate_per_cat_ws</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
 
     <span class="c1"># Deforestation risk and distance to forest edge</span>
-    <span class="n">dist_edge_thres</span> <span class="o">=</span> <span class="n">dist_edge_threshold</span><span class="p">(</span>
+    <span class="n">dist_edge_thresh</span> <span class="o">=</span> <span class="n">dist_edge_threshold</span><span class="p">(</span>
         <span class="n">fcc_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
         <span class="n">defor_values</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>  <span class="c1"># Two periods</span>
         <span class="n">dist_file</span><span class="o">=</span><span class="n">dist_file</span><span class="p">,</span>
@@ -541,7 +585,7 @@
     <span class="n">set_defor_cat_zero</span><span class="p">(</span>
         <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">ldefrate_file</span><span class="p">,</span>
         <span class="n">dist_file</span><span class="o">=</span><span class="n">dist_file</span><span class="p">,</span>
-        <span class="n">dist_thresh</span><span class="o">=</span><span class="n">dist_edge_thres</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">],</span>
+        <span class="n">dist_thresh</span><span class="o">=</span><span class="n">dist_edge_thresh</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">],</span>
         <span class="n">ldefrate_with_zero_file</span><span class="o">=</span><span class="n">ldefrate_with_zero_file</span><span class="p">,</span>
         <span class="n">blk_rows</span><span class="o">=</span><span class="n">blk_rows</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -573,9 +617,9 @@
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s2">&quot;calval&quot;</span><span class="p">)</span>
 
     <span class="c1"># Return</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;tot_def&#39;</span><span class="p">:</span> <span class="n">dist_edge_thres</span><span class="p">[</span><span class="s2">&quot;tot_def&quot;</span><span class="p">],</span>
-            <span class="s1">&#39;dist_thresh&#39;</span><span class="p">:</span> <span class="n">dist_edge_thres</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">],</span>
-            <span class="s1">&#39;perc_thresh&#39;</span><span class="p">:</span> <span class="n">dist_edge_thres</span><span class="p">[</span><span class="s2">&quot;perc_thresh&quot;</span><span class="p">],</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;tot_def&#39;</span><span class="p">:</span> <span class="n">dist_edge_thresh</span><span class="p">[</span><span class="s2">&quot;tot_def&quot;</span><span class="p">],</span>
+            <span class="s1">&#39;dist_thresh&#39;</span><span class="p">:</span> <span class="n">dist_edge_thresh</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">],</span>
+            <span class="s1">&#39;perc_thresh&#39;</span><span class="p">:</span> <span class="n">dist_edge_thresh</span><span class="p">[</span><span class="s2">&quot;perc_thresh&quot;</span><span class="p">],</span>
             <span class="s1">&#39;ncell&#39;</span><span class="p">:</span> <span class="n">ncell</span><span class="p">,</span> <span class="s1">&#39;csize&#39;</span><span class="p">:</span> <span class="n">csize</span><span class="p">,</span>
             <span class="s1">&#39;csize_km&#39;</span><span class="p">:</span> <span class="n">csize_km</span><span class="p">,</span>
             <span class="s1">&#39;no_quantity_error&#39;</span><span class="p">:</span> <span class="n">no_quantity_error</span><span class="p">,</span>
@@ -587,17 +631,35 @@
 <span class="c1"># r_makemap = makemap(</span>
 <span class="c1">#     fcc_file=&quot;data/fcc123_GLP.tif&quot;,</span>
 <span class="c1">#     time_interval=[10, 10],</span>
-<span class="c1">#     output_dir=&quot;outputs_makemap&quot;,</span>
+<span class="c1">#     output_dir=&quot;outputs_get_started&quot;,</span>
 <span class="c1">#     clean=False,</span>
 <span class="c1">#     dist_bins=np.arange(0, 1080, step=30),</span>
 <span class="c1">#     win_sizes=np.arange(5, 50, 6),</span>
 <span class="c1">#     ncat=30,</span>
+<span class="c1">#     parallel = False</span>
 <span class="c1">#     methods=[&quot;Equal Interval&quot;, &quot;Equal Area&quot;],</span>
 <span class="c1">#     csize=40,</span>
+<span class="c1">#     no_quantity_error = True</span>
 <span class="c1">#     figsize=(6.4, 4.8),</span>
 <span class="c1">#     dpi=100,</span>
 <span class="c1">#     blk_rows=128,</span>
 <span class="c1">#     verbose=True)</span>
+
+<span class="c1"># fcc_file = &quot;data/fcc123_GLP.tif&quot;</span>
+<span class="c1"># time_interval = [10, 10]</span>
+<span class="c1"># output_dir = &quot;outputs_get_started&quot;</span>
+<span class="c1"># clean = False</span>
+<span class="c1"># dist_bins = np.arange(0, 1080, step=30)</span>
+<span class="c1"># win_sizes = np.arange(5, 50, 6)</span>
+<span class="c1"># ncat = 30</span>
+<span class="c1"># parallel = False</span>
+<span class="c1"># methods = [&quot;Equal Interval&quot;, &quot;Equal Area&quot;]</span>
+<span class="c1"># csize = 40</span>
+<span class="c1"># no_quantity_error = True</span>
+<span class="c1"># figsize = (6.4, 4.8)</span>
+<span class="c1"># dpi = 100</span>
+<span class="c1"># blk_rows = 128</span>
+<span class="c1"># verbose = True</span>
 
 <span class="c1"># End</span>
 </pre></div>
@@ -612,7 +674,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

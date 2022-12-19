@@ -130,7 +130,7 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
 
 ::
 
-    Computation time: 00:34:48
+    Computation time: 00:38:44
 
 3 Results
 ---------

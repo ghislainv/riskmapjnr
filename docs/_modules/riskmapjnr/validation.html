@@ -13,6 +13,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -204,21 +205,7 @@
 
     <span class="c1"># Get defrate per cat</span>
     <span class="n">defrate_per_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">tab_file_defrate</span><span class="p">)</span>
-    <span class="n">cat_csv</span> <span class="o">=</span> <span class="n">defrate_per_cat</span><span class="p">[</span><span class="s2">&quot;cat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-
-    <span class="c1"># Number of deforestation categories</span>
-    <span class="n">stats</span> <span class="o">=</span> <span class="n">defor_cat_band</span><span class="o">.</span><span class="n">GetStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">n_cat</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># Get the maximum</span>
-    <span class="n">cat_raster</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cat</span><span class="p">)])</span>
-
-    <span class="c1"># Check categories</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">cat_csv</span><span class="p">,</span> <span class="n">cat_raster</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Categories in the &#39;defrate_per_cat_file&#39; csv file do not&quot;</span>
-               <span class="s2">&quot;correspond to categories in the &#39;riskmap_file&#39; raster&quot;</span>
-               <span class="s2">&quot;file.&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">cat</span> <span class="o">=</span> <span class="n">cat_csv</span>
+    <span class="n">cat</span> <span class="o">=</span> <span class="n">defrate_per_cat</span><span class="p">[</span><span class="s2">&quot;cat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
     <span class="c1"># Pixel area (in unit square, eg. meter square)</span>
     <span class="n">gt</span> <span class="o">=</span> <span class="n">fcc_ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()</span>
@@ -261,9 +248,6 @@
         <span class="c1"># Predicted deforestation for validation period</span>
         <span class="n">defor_cat_data</span> <span class="o">=</span> <span class="n">defor_cat_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span>
             <span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
-        <span class="c1"># The risk map includes risk for first period</span>
-        <span class="c1"># So, we need to set not data value for fcc == 1</span>
-        <span class="n">defor_cat_data</span><span class="p">[</span><span class="n">fcc_data</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
         <span class="n">defor_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">defor_cat_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">categories</span><span class="o">=</span><span class="n">cat</span><span class="p">)</span>
         <span class="n">defor_cat_count</span> <span class="o">=</span> <span class="n">defor_cat</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
 
@@ -375,7 +359,7 @@
       &copy;2022, Ghislain Vieilledent.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
