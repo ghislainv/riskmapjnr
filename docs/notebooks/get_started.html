@@ -110,10 +110,29 @@
             
   <section id="get-started">
 <h1>Get Started<a class="headerlink" href="#get-started" title="Permalink to this heading">¶</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#preamble" id="id6">1 Preamble</a></p>
+<ul>
+<li><p><a class="reference internal" href="#importing-python-modules" id="id7">1.1 Importing Python modules</a></p></li>
+<li><p><a class="reference internal" href="#forest-cover-change-data" id="id8">1.2 Forest cover change data</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#derive-the-deforestation-risk-map" id="id9">2 Derive the deforestation risk map</a></p></li>
+<li><p><a class="reference internal" href="#results" id="id10">3 Results</a></p>
+<ul>
+<li><p><a class="reference internal" href="#deforestation-risk-and-distance-to-forest-edge" id="id11">3.1 Deforestation risk and distance to forest edge</a></p></li>
+<li><p><a class="reference internal" href="#best-model" id="id12">3.2 Best model</a></p></li>
+<li><p><a class="reference internal" href="#validation" id="id13">3.3 Validation</a></p></li>
+<li><p><a class="reference internal" href="#risk-map-of-deforestation" id="id14">3.4 Risk map of deforestation</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
 <section id="preamble">
-<h2>1 Preamble<a class="headerlink" href="#preamble" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">1 Preamble</a><a class="headerlink" href="#preamble" title="Permalink to this heading">¶</a></h2>
 <section id="importing-python-modules">
-<h3>1.1 Importing Python modules<a class="headerlink" href="#importing-python-modules" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">1.1 Importing Python modules</a><a class="headerlink" href="#importing-python-modules" title="Permalink to this heading">¶</a></h3>
 <p>Import the Python modules needed to run the analysis.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -143,7 +162,7 @@
 </div>
 </section>
 <section id="forest-cover-change-data">
-<h3>1.2 Forest cover change data<a class="headerlink" href="#forest-cover-change-data" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">1.2 Forest cover change data</a><a class="headerlink" href="#forest-cover-change-data" title="Permalink to this heading">¶</a></h3>
 <p>We use the Guadeloupe archipelago as a case study. Recent forest cover change data for Guadeloupe is included in the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package. The raster file (<code class="docutils literal notranslate"><span class="pre">fcc123_GLP.tif</span></code>) includes the following values: <strong>1</strong> for deforestation on the period 2000–2010, <strong>2</strong> for deforestation on the period 2010–2020, and <strong>3</strong> for the remaining forest in 2020. NoData value is set to <strong>0</strong>. The first period (2000–2010) will be used for calibration and the second period (2010–2020) will be used for validation. This is the only data we need to derive a map of deforestation risk following the JNR methodology.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fcc_file</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s2">&quot;riskmapjnr&quot;</span><span class="p">,</span> <span class="s2">&quot;data/fcc123_GLP.tif&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">)</span>
@@ -176,7 +195,7 @@
 </section>
 </section>
 <section id="derive-the-deforestation-risk-map">
-<h2>2 Derive the deforestation risk map<a class="headerlink" href="#derive-the-deforestation-risk-map" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">2 Derive the deforestation risk map</a><a class="headerlink" href="#derive-the-deforestation-risk-map" title="Permalink to this heading">¶</a></h2>
 <p>We derive the deforestation risk map using the <code class="docutils literal notranslate"><span class="pre">makemap()</span></code> function. This function calls a sequence of functions from the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package which perform all the steps detailed in the JNR methodology. We can use parallel computing using several CPUs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ncpu</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of CPUs to use: </span><span class="si">{</span><span class="n">ncpu</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
@@ -234,9 +253,9 @@
 </div>
 </section>
 <section id="results">
-<h2>3 Results<a class="headerlink" href="#results" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">3 Results</a><a class="headerlink" href="#results" title="Permalink to this heading">¶</a></h2>
 <section id="deforestation-risk-and-distance-to-forest-edge">
-<h3>3.1 Deforestation risk and distance to forest edge<a class="headerlink" href="#deforestation-risk-and-distance-to-forest-edge" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">3.1 Deforestation risk and distance to forest edge</a><a class="headerlink" href="#deforestation-risk-and-distance-to-forest-edge" title="Permalink to this heading">¶</a></h3>
 <p>We obtain the threshold for the distance to forest edge beyond which the deforestation risk is negligible.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dist_thresh</span> <span class="o">=</span> <span class="n">results_makemap</span><span class="p">[</span><span class="s2">&quot;dist_thresh&quot;</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The distance theshold is </span><span class="si">{</span><span class="n">dist_thresh</span><span class="si">}</span><span class="s2"> m.&quot;</span><span class="p">)</span>
@@ -319,8 +338,7 @@
 </tbody>
 </table>
 <p>We also have access to a plot showing how the cumulative percentage of deforestation increases with the distance to forest edge.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;perc_dist.png&quot;</span><span class="p">)</span>
-<span class="n">ofile</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;perc_dist.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <figure class="align-default" id="id2">
@@ -331,7 +349,17 @@
 </figure>
 </section>
 <section id="best-model">
-<h3>3.2 Best model<a class="headerlink" href="#best-model" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">3.2 Best model</a><a class="headerlink" href="#best-model" title="Permalink to this heading">¶</a></h3>
+<p>We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the “Equal Interval” (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for the lowest window size.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;map_comp.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id3">
+<span id="fig-map-comp"></span><img alt="../_images/map_comp.png" src="../_images/map_comp.png" />
+<figcaption>
+<p><span class="caption-text"><strong>Change in wRMSE values as a function of both window size and slicing algorithm</strong>. “ei” is the “Equal Interval” algorithm and “ea” is the “Equal Area” algorithm.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>We identify the moving window size and the slicing algorithm of the best model.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ws_hat</span> <span class="o">=</span> <span class="n">results_makemap</span><span class="p">[</span><span class="s2">&quot;ws_hat&quot;</span><span class="p">]</span>
 <span class="n">m_hat</span> <span class="o">=</span> <span class="n">results_makemap</span><span class="p">[</span><span class="s2">&quot;m_hat&quot;</span><span class="p">]</span>
@@ -345,20 +373,19 @@
 </div>
 </section>
 <section id="validation">
-<h3>3.3 Validation<a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;pred_obs_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
-<span class="n">ofile</span>
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">3.3 Validation</a><a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;pred_obs_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<figure class="align-default" id="id3">
+<figure class="align-default" id="id4">
 <span id="fig-pred-obs"></span><a class="reference internal image-reference" href="../_images/pred_obs_ws5_ei.png"><img alt="../_images/pred_obs_ws5_ei.png" src="../_images/pred_obs_ws5_ei.png" style="width: 600px;" /></a>
 <figcaption>
-<p><span class="caption-text"><strong>Relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model</strong>. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (<span class="math notranslate nohighlight">\(n\)</span>, the number of spatial cells) are reported on the graph.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text"><strong>Relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model</strong>. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (<span class="math notranslate nohighlight">\(n\)</span>, the number of spatial cells) are reported on the graph.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
 </figcaption>
 </figure>
 </section>
 <section id="risk-map-of-deforestation">
-<h3>3.4 Risk map of deforestation<a class="headerlink" href="#risk-map-of-deforestation" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">3.4 Risk map of deforestation</a><a class="headerlink" href="#risk-map-of-deforestation" title="Permalink to this heading">¶</a></h3>
 <p>We plot the risk map using the <code class="docutils literal notranslate"><span class="pre">plot.riskmap()</span></code> function.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ifile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;riskmap_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
 <span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;riskmap_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
@@ -372,10 +399,10 @@
 <span class="n">ofile</span>
 </pre></div>
 </div>
-<figure class="align-default" id="id4">
+<figure class="align-default" id="id5">
 <span id="fig-riskmap"></span><a class="reference internal image-reference" href="../_images/riskmap_ws5_ei.png"><img alt="../_images/riskmap_ws5_ei.png" src="../_images/riskmap_ws5_ei.png" style="width: 600px;" /></a>
 <figcaption>
-<p><span class="caption-text"><strong>Map of the deforestation risk following the JNR methodology</strong>. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 180 m from the forest edge and have a negligible risk of being deforested.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text"><strong>Map of the deforestation risk following the JNR methodology</strong>. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 180 m from the forest edge and have a negligible risk of being deforested.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
 </figcaption>
 </figure>
 </section>

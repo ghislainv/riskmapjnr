@@ -113,14 +113,39 @@
             
   <section id="all-steps">
 <h1>All steps<a class="headerlink" href="#all-steps" title="Permalink to this heading">¶</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id5">1 Introduction</a></p>
+<ul>
+<li><p><a class="reference internal" href="#objective" id="id6">1.1 Objective</a></p></li>
+<li><p><a class="reference internal" href="#importing-python-modules" id="id7">1.2 Importing Python modules</a></p></li>
+<li><p><a class="reference internal" href="#forest-cover-change-data" id="id8">1.3 Forest cover change data</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#deforestation-risk-and-distance-to-forest-edge" id="id9">2 Deforestation risk and distance to forest edge</a></p></li>
+<li><p><a class="reference internal" href="#local-deforestation-rate" id="id10">3 Local deforestation rate</a></p></li>
+<li><p><a class="reference internal" href="#pixels-with-zero-risk-of-deforestation" id="id11">4 Pixels with zero risk of deforestation</a></p></li>
+<li><p><a class="reference internal" href="#categories-of-deforestation-risk" id="id12">5 Categories of deforestation risk</a></p></li>
+<li><p><a class="reference internal" href="#deforestation-rates-per-category-of-risk" id="id13">6 Deforestation rates per category of risk</a></p></li>
+<li><p><a class="reference internal" href="#derive-a-risk-map-at-the-beginning-of-the-validation-period" id="id14">7 Derive a risk map at the beginning of the validation period</a></p>
+<ul>
+<li><p><a class="reference internal" href="#distance-to-forest-edge-at-the-beginning-of-the-validation-period" id="id15">7.1 Distance to forest edge at the beginning of the validation period</a></p></li>
+<li><p><a class="reference internal" href="#raster-of-local-deforestation-rate-at-the-beginning-of-the-validation-period" id="id16">7.2 Raster of local deforestation rate at the beginning of the validation period</a></p></li>
+<li><p><a class="reference internal" href="#risk-map-at-the-beginning-of-the-validation-period" id="id17">7.3 Risk map at the beginning of the validation period</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#validation" id="id18">8 Validation</a></p></li>
+<li><p><a class="reference internal" href="#final-risk-map" id="id19">9 Final risk map</a></p></li>
+</ul>
+</nav>
 <section id="introduction">
-<h2>1 Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">1 Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h2>
 <section id="objective">
-<h3>1.1 Objective<a class="headerlink" href="#objective" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">1.1 Objective</a><a class="headerlink" href="#objective" title="Permalink to this heading">¶</a></h3>
 <p>We present here all the steps of the JNR methodology that need to be followed to derive a map of the deforestation risk in a given jurisdiction.</p>
 </section>
 <section id="importing-python-modules">
-<h3>1.2 Importing Python modules<a class="headerlink" href="#importing-python-modules" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">1.2 Importing Python modules</a><a class="headerlink" href="#importing-python-modules" title="Permalink to this heading">¶</a></h3>
 <p>We import the Python modules needed for running the analysis.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -150,7 +175,7 @@
 </div>
 </section>
 <section id="forest-cover-change-data">
-<h3>1.3 Forest cover change data<a class="headerlink" href="#forest-cover-change-data" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">1.3 Forest cover change data</a><a class="headerlink" href="#forest-cover-change-data" title="Permalink to this heading">¶</a></h3>
 <p>We use the Guadeloupe archipelago as a case study. Recent forest cover change data for Guadeloupe is included in the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package. The raster file (<code class="docutils literal notranslate"><span class="pre">fcc123_GLP.tif</span></code>) includes the following values: <strong>1</strong> for deforestation on the period 2000–2010, <strong>2</strong> for deforestation on the period 2010–2020, and <strong>3</strong> for the remaining forest in 2020. NoData value is set to <strong>0</strong>. The first period (2000–2010) will be used for calibration and the second period (2010–2020) will be used for validation. This is the only data we need to derive a map of deforestation risk following the JNR methodology.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fcc_file</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="s2">&quot;riskmapjnr&quot;</span><span class="p">,</span> <span class="s2">&quot;data/fcc123_GLP.tif&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">)</span>
@@ -183,7 +208,7 @@
 </section>
 </section>
 <section id="deforestation-risk-and-distance-to-forest-edge">
-<h2>2 Deforestation risk and distance to forest edge<a class="headerlink" href="#deforestation-risk-and-distance-to-forest-edge" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">2 Deforestation risk and distance to forest edge</a><a class="headerlink" href="#deforestation-risk-and-distance-to-forest-edge" title="Permalink to this heading">¶</a></h2>
 <p>The first step is to compute the distance to the forest edge after which the risk of deforestation becomes negligible. Indeed, it is known from previous studies on tropical deforestation that the deforestation risk decreases rapidly with the distance to the forest edge and that most of the deforestation occurs close to the forest edge (Vieilledent et al., 2013, Grinand et al., 2020, Vieilledent, 2021, Dezécache et al., 2017). The JNR methodology suggests identifying the distance to the forest edge <span class="math notranslate nohighlight">\(d\)</span>, so that at least 99% of the deforestation occurs within a distance <span class="math notranslate nohighlight">\(\leq d\)</span>. Forest areas located at a distance from the forest edge <span class="math notranslate nohighlight">\(\gt d\)</span> can be considered as having no risk of being deforested. As a consequence, forest pixels with a distance from the forest edge <span class="math notranslate nohighlight">\(\gt d\)</span> are assigned category 0 (zero) for the deforestation risk.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;perc_dist.png&quot;</span><span class="p">)</span>
 <span class="n">dist_edge_thres</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">dist_edge_threshold</span><span class="p">(</span>
@@ -286,7 +311,7 @@
 </table>
 </section>
 <section id="local-deforestation-rate">
-<h2>3 Local deforestation rate<a class="headerlink" href="#local-deforestation-rate" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">3 Local deforestation rate</a><a class="headerlink" href="#local-deforestation-rate" title="Permalink to this heading">¶</a></h2>
 <p>The second step is to compute a local risk of deforestation at the pixel level using a moving window made of several pixels. The deforestation risk is estimated from the deforestation rate inside the moving window. The deforestation rate <span class="math notranslate nohighlight">\(\theta\)</span> (in %/yr) is computed from the formula <span class="math notranslate nohighlight">\(\theta=1-(\alpha_2/\alpha_1)^{1/\tau}\)</span>, with <span class="math notranslate nohighlight">\(\alpha\)</span> the forest areas (in ha) at time <span class="math notranslate nohighlight">\(t_1\)</span> and <span class="math notranslate nohighlight">\(t_2\)</span>, and <span class="math notranslate nohighlight">\(\tau\)</span>, the time interval (in yr) between time <span class="math notranslate nohighlight">\(t_1\)</span> and <span class="math notranslate nohighlight">\(t_2\)</span>. Using the deforestation rate formula, the moving window and the past forest cover change map, we can derive a raster map describing the local risk of deforestation at the same resolution as the input map.</p>
 <p>To save space on disk, deforestation rates are converted to integer values between 1 and 10000 (ten thousand) and the raster type is set to UInt16. This ensures a precision of 10<sup>-4</sup>for the deforestation rate which is sufficient to determine the 30 categories of deforestation risk, as imposed by the JNR methodology.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set window size</span>
@@ -304,7 +329,7 @@
 </div>
 </section>
 <section id="pixels-with-zero-risk-of-deforestation">
-<h2>4 Pixels with zero risk of deforestation<a class="headerlink" href="#pixels-with-zero-risk-of-deforestation" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">4 Pixels with zero risk of deforestation</a><a class="headerlink" href="#pixels-with-zero-risk-of-deforestation" title="Permalink to this heading">¶</a></h2>
 <p>This third step sets a value of 10001 to pixels with zero deforestation risk. As explained previously, a risk of deforestation of zero is assumed when distance to forest edge is greater than the distance below which more than 99% of the deforestation occurs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">set_defor_cat_zero</span><span class="p">(</span>
     <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate.tif&quot;</span><span class="p">),</span>
@@ -317,7 +342,7 @@
 </div>
 </section>
 <section id="categories-of-deforestation-risk">
-<h2>5 Categories of deforestation risk<a class="headerlink" href="#categories-of-deforestation-risk" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">5 Categories of deforestation risk</a><a class="headerlink" href="#categories-of-deforestation-risk" title="Permalink to this heading">¶</a></h2>
 <p>The fourth step implies converting the continuous values of the raster map of deforestation risk to categorical values. The JNR methodology suggests to use 31 classes of risk from “0” to “30” including the “0” class for the forest pixels with no risk of being deforested (located at a distance to the forest edge <span class="math notranslate nohighlight">\(&gt; d\)</span>, see first step). Following the JNR methodology, at least three slicing algorithms must be compared to derive the categorical map of deforestation risk, such as “equal area”, “equal interval”, and “natural breaks”. With the “equal area” algorithm, each class from “1” to “30” must cover approximately the same area. With the “equal interval” algorithm, classes from “1” to “30” correspond to bins of deforestation risk of the same range. In this case, some risk classes will be in majority in the landscape compared to other classes of lower frequency. With the “natural breaks” algorithm, the continuous deforestation risk is normalized before running an “equal interval” algorithm.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bins</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">defor_cat</span><span class="p">(</span>
     <span class="n">ldefrate_with_zero_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate_with_zero.tif&quot;</span><span class="p">),</span>
@@ -356,7 +381,7 @@
 </figure>
 </section>
 <section id="deforestation-rates-per-category-of-risk">
-<h2>6 Deforestation rates per category of risk<a class="headerlink" href="#deforestation-rates-per-category-of-risk" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">6 Deforestation rates per category of risk</a><a class="headerlink" href="#deforestation-rates-per-category-of-risk" title="Permalink to this heading">¶</a></h2>
 <p>Before the validation step, we need to compute the historical deforestation rates (in %/yr) for each category of spatial deforestation risk. The historical deforestation rates are computed for the calibration period (here 2000–2010). Deforestation rates provide estimates of the percentage of forest (which is then converted to an area of forest) that should be deforested inside each forest pixel which belongs to a given category of deforestation risk.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">defrate_per_cat</span><span class="p">(</span>
     <span class="n">fcc_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
@@ -533,10 +558,10 @@
 <p>From this table, we see that the deforestation rate increases with the deforestation risk category and that deforestation rates are spread on the interval [0, 1], suggesting that category 1 represents well a category with very low deforestation risk (close to 0), and category 30 represents well a category with very high deforestation risk (close to 1).</p>
 </section>
 <section id="derive-a-risk-map-at-the-beginning-of-the-validation-period">
-<h2>7 Derive a risk map at the beginning of the validation period<a class="headerlink" href="#derive-a-risk-map-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">7 Derive a risk map at the beginning of the validation period</a><a class="headerlink" href="#derive-a-risk-map-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h2>
 <p>To derive the risk map at the beginning of the validation period, we consider (i) the forest cover at this date, (ii) the map of local deforestation rates, (ii) the threshold distance, and (iii) the bins used to categorize the deforestation rates. All these data are obtained from previous steps and based on the deforestation for the historical period. The approach is the following: first, we identify the forest pixels at the beginning of the validation period. Second, we assign category zero to pixels at a distance from the forest edge which is greater than the distance threshold. Third, we categorize the deforestation rates using the previous bins identified for the historical period. In addition to the risk map, two additional raster files are produced: the raster file of the distance to forest edge at the beginning of the validation period, and the raster file of local deforestation rates including the zero deforestation risk.</p>
 <section id="distance-to-forest-edge-at-the-beginning-of-the-validation-period">
-<h3>7.1 Distance to forest edge at the beginning of the validation period<a class="headerlink" href="#distance-to-forest-edge-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">7.1 Distance to forest edge at the beginning of the validation period</a><a class="headerlink" href="#distance-to-forest-edge-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">dist_values</span><span class="p">(</span><span class="n">input_file</span><span class="o">=</span><span class="n">fcc_file</span><span class="p">,</span>
                 <span class="n">dist_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;dist_edge_v.tif&quot;</span><span class="p">),</span>
                 <span class="n">values</span><span class="o">=</span><span class="s2">&quot;0,1&quot;</span><span class="p">,</span>
@@ -545,7 +570,7 @@
 </div>
 </section>
 <section id="raster-of-local-deforestation-rate-at-the-beginning-of-the-validation-period">
-<h3>7.2 Raster of local deforestation rate at the beginning of the validation period<a class="headerlink" href="#raster-of-local-deforestation-rate-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">7.2 Raster of local deforestation rate at the beginning of the validation period</a><a class="headerlink" href="#raster-of-local-deforestation-rate-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">get_ldefz_v</span><span class="p">(</span>
     <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate.tif&quot;</span><span class="p">),</span>
     <span class="n">dist_v_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;dist_edge_v.tif&quot;</span><span class="p">),</span>
@@ -557,7 +582,7 @@
 </div>
 </section>
 <section id="risk-map-at-the-beginning-of-the-validation-period">
-<h3>7.3 Risk map at the beginning of the validation period<a class="headerlink" href="#risk-map-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h3>
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">7.3 Risk map at the beginning of the validation period</a><a class="headerlink" href="#risk-map-at-the-beginning-of-the-validation-period" title="Permalink to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">get_riskmap_v</span><span class="p">(</span>
     <span class="n">ldefrate_with_zero_v_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate_with_zero_v.tif&quot;</span><span class="p">),</span>
     <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span>
@@ -569,7 +594,7 @@
 </section>
 </section>
 <section id="validation">
-<h2>8 Validation<a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">8 Validation</a><a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h2>
 <p>The fifth step focuses on comparing the map of deforestation risk with a deforestation map corresponding to the validation period. The validation period follows the calibration period and provides independent observations of deforestation.</p>
 <p>To do so, we consider a square grid of at least 1000 spatial cells containing at least one forest pixel at the beginning of the validation period. Following JNR specification, the cell size should be <span class="math notranslate nohighlight">\(\leq\)</span> 10 km. Note that with the map of deforestation risk, each forest pixel at the beginning of the validation period falls into a category of deforestation risk. For each cell of the grid, we compute the predicted area of deforestation (in ha) given the map of deforestation risk and the historical deforestation rates for each category of deforestation risk computed on the calibration period (see previous step).</p>
 <p>We can then compare the predicted deforestation with the observed deforestation in that spatial cell for the validation period. Because all cells don’t have the same forest cover at the beginning of the validation period, a weight <span class="math notranslate nohighlight">\(w_j\)</span> is computed for each grid cell <span class="math notranslate nohighlight">\(j\)</span> such that <span class="math notranslate nohighlight">\(w_j=\beta_j / B\)</span>, with <span class="math notranslate nohighlight">\(\beta_j\)</span> the forest cover (in ha) in the cell <span class="math notranslate nohighlight">\(j\)</span> at the beginning of the validation period and <span class="math notranslate nohighlight">\(B\)</span> the total forest cover in the jurisdiction (in ha) at the same date. We then calculate the weighted root mean squared error (wRMSE) from the observed and predicted deforestation for each cell and the cell weights.</p>
@@ -597,7 +622,7 @@
 </figure>
 </section>
 <section id="final-risk-map">
-<h2>9 Final risk map<a class="headerlink" href="#final-risk-map" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id19" role="doc-backlink">9 Final risk map</a><a class="headerlink" href="#final-risk-map" title="Permalink to this heading">¶</a></h2>
 <p>The user must repeat the procedure and obtain risk maps for various window size and slicing algorithms. Following the JNR methodology, at least 25 different sizes for the moving window must be tested together with two slicing algorithms (“Equal Interval” and “Equal Area”), thus leading to a minimum of 50 different maps of deforestation risk. The map with the smallest wRMSE value is considered the best risk map. Once the best risk map is identified, with the corresponding window size and slicing algorithm, a final risk map is derived considering both the calibration and validation period (see the <a class="reference external" href="https://ecology.ghislainv.fr/riskmapjnr/notebooks/get_started.html">Get Started</a> tutorial).</p>
 </section>
 </section>

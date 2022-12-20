@@ -112,8 +112,16 @@
             
   <section id="parallel-computing">
 <h1>Parallel computing<a class="headerlink" href="#parallel-computing" title="Permalink to this heading">¶</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#preamble" id="id2">1 Preamble</a></p></li>
+<li><p><a class="reference internal" href="#sequential-computing" id="id3">2 Sequential computing</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id4">3 Parallel computing</a></p></li>
+<li><p><a class="reference internal" href="#results" id="id5">4 Results</a></p></li>
+</ul>
+</nav>
 <section id="preamble">
-<h2>1 Preamble<a class="headerlink" href="#preamble" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">1 Preamble</a><a class="headerlink" href="#preamble" title="Permalink to this heading">¶</a></h2>
 <p>Import the Python modules needed to run the analysis.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -155,7 +163,7 @@
 </div>
 </section>
 <section id="sequential-computing">
-<h2>2 Sequential computing<a class="headerlink" href="#sequential-computing" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">2 Sequential computing</a><a class="headerlink" href="#sequential-computing" title="Permalink to this heading">¶</a></h2>
 <p>We set <code class="docutils literal notranslate"><span class="pre">parallel</span></code> argument to <code class="docutils literal notranslate"><span class="pre">False</span></code> in the call to <code class="docutils literal notranslate"><span class="pre">makemap()</span></code> function.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="n">results_makemap</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">makemap</span><span class="p">(</span>
@@ -202,7 +210,7 @@
 </div>
 </section>
 <section id="id1">
-<h2>3 Parallel computing<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">3 Parallel computing</a><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
 <p>We use parallel computing using several CPUs. We set <code class="docutils literal notranslate"><span class="pre">parallel</span></code> argument to <code class="docutils literal notranslate"><span class="pre">True</span></code> in the call to <code class="docutils literal notranslate"><span class="pre">makemap()</span></code> function and set <code class="docutils literal notranslate"><span class="pre">ncpu</span></code> to <code class="docutils literal notranslate"><span class="pre">mp.cpu_count()</span></code> to use the maximum number of available CPUs (here 8). When using parallel computing, one CPU is used for each window size.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ncpu</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total number of CPUs: </span><span class="si">{</span><span class="n">ncpu</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
@@ -256,7 +264,7 @@
 </div>
 </section>
 <section id="results">
-<h2>4 Results<a class="headerlink" href="#results" title="Permalink to this heading">¶</a></h2>
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">4 Results</a><a class="headerlink" href="#results" title="Permalink to this heading">¶</a></h2>
 <p>Sequential computing took 1m 27s against 36s for parallel computing considering 8 window sizes on 8 CPUs.</p>
 </section>
 </section>

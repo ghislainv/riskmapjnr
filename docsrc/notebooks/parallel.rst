@@ -5,6 +5,10 @@ Parallel computing
 
 
 
+.. contents::
+  :local:
+  :depth: 2
+
 1 Preamble
 ----------
 

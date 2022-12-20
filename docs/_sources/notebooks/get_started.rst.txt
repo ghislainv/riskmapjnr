@@ -5,6 +5,10 @@ Get Started
 
 
 
+.. contents::
+  :local:
+  :depth: 2
+
 1 Preamble
 ----------
 
@@ -200,8 +204,7 @@ We also have access to a plot showing how the cumulative percentage of deforesta
 
 .. code:: python
 
-    ofile = os.path.join(out_dir, "perc_dist.png")
-    ofile
+    os.path.join(out_dir, "perc_dist.png")
 
 .. _fig:perc_dist:
 
@@ -213,6 +216,18 @@ We also have access to a plot showing how the cumulative percentage of deforesta
 
 3.2 Best model
 ~~~~~~~~~~~~~~
+
+We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the “Equal Interval” (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for the lowest window size. 
+
+.. code:: python
+
+    os.path.join(out_dir, f"map_comp.png")
+
+.. _fig:map_comp:
+
+.. figure:: outputs_get_started/map_comp.png
+
+    **Change in wRMSE values as a function of both window size and slicing algorithm**. “ei” is the “Equal Interval” algorithm and “ea” is the “Equal Area” algorithm.
 
 We identify the moving window size and the slicing algorithm of the best model.
 
@@ -233,8 +248,7 @@ We identify the moving window size and the slicing algorithm of the best model.
 
 .. code:: python
 
-    ofile = os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
-    ofile
+    os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
 
 .. _fig:pred_obs:
 

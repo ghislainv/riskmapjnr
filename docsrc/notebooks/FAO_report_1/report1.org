@@ -670,7 +670,7 @@ ofile
 
 ** Identifying the best map
 
-We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the "Equal Interval" algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for a window size $\geq$ 85 pixels. 
+We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the "Equal Interval" (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for the lowest window size. 
 
 #+begin_src python :results file :session :exports both
 ofile = os.path.join(out_dir, f"map_comp.png")
@@ -751,7 +751,7 @@ return(sys.executable)
 : /home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/bin/python
 
 Local Variables:
-org-babel-python-command: "/home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/bin/python"
-org-babel-sh-command: "/bin/bash"
+eval: (pyvenv-activate (expand-file-name "~/.pyenv/versions/miniconda3-latest/envs/conda-rmj"))
 End:
 
+# End

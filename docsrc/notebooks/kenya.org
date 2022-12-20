@@ -45,6 +45,14 @@
 :  of 2021-11-27, modified by Debian
 : org version: 9.5.3
 
+* TOC                                                                :ignore:
+
+#+begin_export rst
+.. contents::
+  :local:
+  :depth: 2
+#+end_export
+
 * Preamble
 
 ** Importing Python modules
@@ -128,7 +136,7 @@ ofile
 #+RESULTS:
 [[file:outputs_kenya/fcc123.png]]
 
-* Derive the deforestation risk map
+* Deriving the deforestation risk map
  
 We derive the deforestation risk map using the =makemap()= function. This function calls a sequence of functions from the =riskmapjnr= package which perform all the steps detailed in the JNR methodology. We can use parallel computing using several CPUs.
 
@@ -230,8 +238,7 @@ tabulate(perc_df.head(30), headers=col_names, tablefmt="orgtbl", showindex=False
 We also have access to a plot showing how the cumulative percentage of deforestation increases with the distance to forest edge.
 
 #+begin_src python :results file :session :exports both
-ofile = os.path.join(out_dir, "perc_dist.png")
-ofile
+os.path.join(out_dir, "perc_dist.png")
 #+end_src
 
 #+NAME: fig:kenya-perc_dist
@@ -241,6 +248,18 @@ ofile
 [[file:outputs_kenya/perc_dist.png]]
 
 ** Best model
+
+We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the "Equal Interval" (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for a window size between 25 and 50 pixels.
+
+#+begin_src python :results file :session :exports both
+os.path.join(out_dir, "map_comp.png")
+#+end_src
+
+#+NAME: fig:kenya-map_comp
+#+ATTR_LATEX: :width 0.8\linewidth :placement [H]
+#+CAPTION: *Change in wRMSE values as a function of both window size and slicing algorithm*. "ei" is the "Equal Interval" algorithm and "ea" is the "Equal Area" algorithm.
+#+RESULTS:
+[[file:outputs_kenya/map_comp.png]]
 
 We identify the moving window size and the slicing algorithm of the best model.
 
@@ -258,8 +277,7 @@ print(f"The best slicing algorithm is '{m_hat}'.")
 ** Validation
 
 #+begin_src python :results file :session :exports both
-ofile = os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
-ofile
+os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
 #+end_src
 
 #+NAME: fig:kenya-pred_obs
@@ -302,7 +320,6 @@ return(sys.executable)
 : /home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/bin/python
 
 Local Variables:
-org-babel-python-command: "/home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/bin/python"
-org-babel-sh-command: "/bin/bash"
+eval: (pyvenv-activate (expand-file-name "~/.pyenv/versions/miniconda3-latest/envs/conda-rmj"))
 End:
 

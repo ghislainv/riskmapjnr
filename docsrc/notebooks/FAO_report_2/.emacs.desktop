@@ -1,0 +1,139 @@
+;; -*- mode: emacs-lisp; lexical-binding:t; coding: utf-8-emacs; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Mon Dec 19 18:32:15 2022
+;; Desktop file format version 208
+;; Emacs version 28.2
+
+;; Global section:
+(setq desktop-saved-frameset [frameset 1 (25504 40991 80111 272000) (desktop . "208") "ghislain@arbouse" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font . "-Bits-Bitstream Vera Sans Mono-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1") (font-parameter . "Monospace 11") (border-width . 0) (internal-border-width . 0) (child-frame-border-width) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars . right) (horizontal-scroll-bars) (foreground-color . "#333333") (background-color . "#FFFFFF") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground . "black") (scroll-bar-background) (menu-bar-lines . 1) (tab-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 16) (scroll-bar-height . 16) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen . maximized) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . light) (cursor-color . "#21BDFF") (sticky) (environment) (last-focus-update . t) (frameset--id . "ADA5-35DC-8481-1545") (frameset--mini t . t) (height . 75) (width . 280) (modeline . t) (unsplittable) (left . 0) (top . 0) (icon-name) (display . ":0.0") (explicit-name)) ((min-height . 8) (min-width . 20) (min-height-ignore . 6) (min-width-ignore . 18) (min-height-safe . 2) (min-width-safe . 4) (min-pixel-height . 144) (min-pixel-width . 180) (min-pixel-height-ignore . 108) (min-pixel-width-ignore . 162) (min-pixel-height-safe . 36) (min-pixel-width-safe . 36)) hc (pixel-width . 2560) (pixel-height . 1335) (total-width . 284) (total-height . 74) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 1282) (pixel-height . 1335) (total-width . 142) (total-height . 74) (normal-height . 1.0) (normal-width . 0.5) (buffer "report2.org" (selected . t) (hscroll . 0) (fringes 8 8 nil nil) (margins 3) (scroll-bars nil 2 t nil 0 t nil) (vscroll . 0) (dedicated) (point . 19811) (start . 16620)) (prev-buffers ("*shell*" 20270 25041) ("report2.org" 19425 21589) ("steps.org" 1 1436) (".gitignore" 1 220) ("magit-diff: riskmapjnr" 1 1) ("*Warnings*" 137 293) ("config.el<FAO_report_2>" 873 2874) ("FAO_report_1" 1 1136) ("config.el<FAO_report_1>" 945 2830) ("build.sh" 1 1) ("*Python*" 1 7878) ("*Messages*" 1 33080) ("*scratch*" 1 145))) (vc (last . t) (pixel-width . 1278) (pixel-height . 1335) (total-width . 142) (total-height . 74) (normal-height . 1.0) (normal-width . 0.5) (combination-limit) (leaf (pixel-width . 1278) (pixel-height . 669) (total-width . 142) (total-height . 37) (normal-height . 0.5) (normal-width . 1.0) (buffer "*Shell Command Output*" (selected) (hscroll . 0) (fringes 8 8 nil nil) (margins 2) (scroll-bars nil 2 t nil 0 t nil) (vscroll . 0) (dedicated) (point . 1) (start . 1)) (prev-buffers ("report1.org" 21203 21979) ("steps.org" 2082 2119) ("*Shell Command Output*" 1 1) ("report2.org" 19425 21589))) (leaf (last . t) (pixel-width . 1278) (pixel-height . 666) (total-width . 142) (total-height . 37) (normal-height . 0.5) (normal-width . 1.0) (buffer "*shell*" (selected) (hscroll . 0) (fringes 8 8 nil nil) (margins 3) (scroll-bars nil 2 t nil 0 t nil) (vscroll . 0) (dedicated) (point . 25041) (start . 22979)) (prev-buffers ("report2.org" 16620 19811))))))])
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring '(#("map_comp" 0 8 (isearch-regexp-function nil isearch-case-fold-search t))))
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+(setq file-name-history '("~/Code/riskmapjnr/docsrc/notebooks/FAO_report_1/report1.org" "~/Code/riskmapjnr/docsrc/notebooks/steps.org" "~/Code/riskmapjnr/docsrc/notebooks/kenya.org" "~/Code/riskmapjnr/docsrc/notebooks/FAO_report_2/report2.org" "~/Code/riskmapjnr/.gitignore" "~/Code/riskmapjnr/docsrc/notebooks/FAO_report_2/config.el" "~/Code/riskmapjnr/docsrc/notebooks/FAO_report_1/config.el" "~/Code/riskmapjnr/docsrc/notebooks/FAO_report_1/build.sh" "~/Code/riskmapjnr/docsrc/notebooks/FAO_report_1/report.pdf" "~/Code/riskmapjnr/docsrc/notebooks/get_started.org" "~/Code/riskmapjnr/docsrc/notebooks/FAO_report_1/report.org" "~/Code/montaigoual.org-org-mode/org/cv.org" "~/Code/montaigoual.org-org-mode/org/resources/preamble.html" "~/Code/montaigoual.org-org-mode/org/resources/postamble.html" "~/Code/montaigoual.org-org-mode/docs/index.html" "~/.zshrc" "~/.emacs" "~/.config/starship.toml" #("/ssh:fdb:/home/ghislain/Code/forestatrisk-tropics/Manuscript/Org-mode/paper.org" 1 4 (helm-ff-file t) 5 8 (helm-ff-file t)) #("/ssh:fdb:/home/ghislain/.emacs" 1 4 (helm-ff-file t helm-ff-sym t) 5 8 (helm-ff-file t helm-ff-sym t)) "~/.zshenv" "~/Code/montaigoual.org-org-mode/org/resources/style/new.css" "~/Code/montaigoual.org-org-mode/org/resources_bootswatch/preamble.html" "~/Code/montaigoual.org-org-mode/org/softwares.org" "~/Code/montaigoual.org-org-mode/org/research.org" "~/Code/montaigoual.org-org-mode/org/publications.org" "~/Code/montaigoual.org-org-mode/org/projects.org" "~/Nextcloud/Notes/notes.org" "~/Code/riskmapjnr/docsrc/notebooks/far-kenya.org" "~/Documents/Research_current/Encadrement_Etudiants/Theses/These_Camille_Girard-Tercieux/Rapporteurs/discours.tex" "~/Documents/Research_current/Encadrement_Etudiants/Theses/These_Camille_Girard-Tercieux/Rapporteurs/discours.org"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 208
+  "/home/ghislain/Code/riskmapjnr/docsrc/notebooks/FAO_report_2/report2.org"
+  "report2.org"
+  'org-mode
+  '(visual-line-mode eldoc-mode override-global-mode linum-mode flyspell-mode flycheck-mode helm-mode org-indent-mode TeX-PDF-mode auto-revert-mode)
+  19811
+  '(1 nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-display-time 25504 40991 78095 246000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (20729 19762 21589 21355 17163 14248 12888 8426 3466 533 538 1391 11380 12198 12096 12807))))
+
+(desktop-create-buffer 208
+  "/home/ghislain/Code/riskmapjnr/docsrc/notebooks/FAO_report_1/report1.org"
+  "report1.org"
+  'org-mode
+  '(visual-line-mode eldoc-mode override-global-mode linum-mode flyspell-mode flycheck-mode helm-mode org-indent-mode TeX-PDF-mode auto-revert-mode)
+  21979
+  '(22028 nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-display-time 25504 40597 435281 780000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (22028))))
+
+(desktop-create-buffer 208
+  "/home/ghislain/Code/riskmapjnr/docsrc/notebooks/steps.org"
+  "steps.org"
+  'org-mode
+  '(visual-line-mode eldoc-mode override-global-mode linum-mode flyspell-mode flycheck-mode helm-mode org-indent-mode TeX-PDF-mode auto-revert-mode)
+  2119
+  '(1436 nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-display-time 25504 40494 180880 871000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (1436 1008 1435 1436 1436))))
+
+(desktop-create-buffer 208
+  "/home/ghislain/Code/riskmapjnr/docsrc/notebooks/kenya.org"
+  "kenya.org"
+  'org-mode
+  '(visual-line-mode eldoc-mode override-global-mode linum-mode flyspell-mode flycheck-mode helm-mode org-indent-mode TeX-PDF-mode auto-revert-mode)
+  3806
+  '(10575 nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-display-time 25504 39626 379933 186000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (3804 3813 936 3820 10592 10575))))
+
+(desktop-create-buffer 208
+  "/home/ghislain/Code/riskmapjnr/.gitignore"
+  ".gitignore"
+  'fundamental-mode
+  '(visual-line-mode override-global-mode linum-mode helm-mode TeX-PDF-mode auto-revert-mode)
+  220
+  '(11 nil)
+  nil
+  nil
+  '((buffer-display-time 25504 36883 233174 32000) (buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring (220))))
+
+(desktop-create-buffer 208
+  "/home/ghislain/Code/riskmapjnr/docsrc/notebooks/FAO_report_2/config.el"
+  "config.el"
+  'emacs-lisp-mode
+  '(visual-line-mode eldoc-mode override-global-mode linum-mode flycheck-mode helm-mode TeX-PDF-mode auto-revert-mode)
+  2874
+  '(1 nil)
+  nil
+  nil
+  '((buffer-display-time 25504 36392 665979 568000) (buffer-file-coding-system . prefer-utf-8-unix) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "FAO_report_1"
+  'dired-mode
+  '(visual-line-mode override-global-mode linum-mode helm-mode TeX-PDF-mode)
+  1136
+  '(nil nil)
+  t
+  '("/home/ghislain/Code/riskmapjnr/docsrc/notebooks/FAO_report_1/")
+  '((buffer-display-time 25504 36366 471743 398000) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/ghislain/Code/riskmapjnr/docsrc/notebooks/FAO_report_1/config.el"
+  "config.el"
+  'emacs-lisp-mode
+  '(visual-line-mode eldoc-mode override-global-mode linum-mode flycheck-mode helm-mode TeX-PDF-mode auto-revert-mode)
+  2830
+  '(2873 nil)
+  nil
+  nil
+  '((buffer-display-time 25504 36226 41590 693000) (buffer-file-coding-system . prefer-utf-8-unix) (truncate-lines))
+  '((mark-ring (2851 2787))))
+
+(desktop-create-buffer 208
+  "/home/ghislain/Code/riskmapjnr/docsrc/notebooks/FAO_report_1/build.sh"
+  "build.sh"
+  'sh-mode
+  '(visual-line-mode override-global-mode linum-mode flycheck-mode helm-mode TeX-PDF-mode auto-revert-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-display-time 25504 35693 82494 698000) (buffer-file-coding-system . undecided-unix) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/ghislain/Code/riskmapjnr/docsrc/notebooks/get_started.org"
+  "get_started.org"
+  'org-mode
+  '(visual-line-mode eldoc-mode override-global-mode linum-mode flyspell-mode flycheck-mode helm-mode org-indent-mode TeX-PDF-mode auto-revert-mode)
+  4112
+  '(4972 nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-display-time 25504 17388 782460 284000) (buffer-file-coding-system . utf-8-unix) (truncate-lines))
+  '((mark-ring (4554 4573 4513 10844 4112 4112))))
+
