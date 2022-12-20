@@ -122,8 +122,8 @@
 <li><p><a class="reference internal" href="#results" id="id10">3 Results</a></p>
 <ul>
 <li><p><a class="reference internal" href="#deforestation-risk-and-distance-to-forest-edge" id="id11">3.1 Deforestation risk and distance to forest edge</a></p></li>
-<li><p><a class="reference internal" href="#best-model" id="id12">3.2 Best model</a></p></li>
-<li><p><a class="reference internal" href="#validation" id="id13">3.3 Validation</a></p></li>
+<li><p><a class="reference internal" href="#model-comparison" id="id12">3.2 Model comparison</a></p></li>
+<li><p><a class="reference internal" href="#model-performance" id="id13">3.3 Model performance</a></p></li>
 <li><p><a class="reference internal" href="#risk-map-of-deforestation" id="id14">3.4 Risk map of deforestation</a></p></li>
 </ul>
 </li>
@@ -201,7 +201,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of CPUs to use: </span><span class="si">{</span><span class="n">ncpu</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Number</span> <span class="n">of</span> <span class="n">CPUs</span><span class="p">:</span> <span class="mf">6.</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Number</span> <span class="n">of</span> <span class="n">CPUs</span> <span class="n">to</span> <span class="n">use</span><span class="p">:</span> <span class="mf">6.</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results_makemap</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">makemap</span><span class="p">(</span>
@@ -224,31 +224,31 @@
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Model</span> <span class="n">calibration</span> <span class="ow">and</span> <span class="n">validation</span>
-<span class="o">..</span> <span class="n">Model</span> <span class="mi">4</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
-<span class="o">..</span> <span class="n">Model</span> <span class="mi">10</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
-<span class="o">..</span> <span class="n">Model</span> <span class="mi">2</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">13</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">0</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
+<span class="o">..</span> <span class="n">Model</span> <span class="mi">2</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">13</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
+<span class="o">..</span> <span class="n">Model</span> <span class="mi">4</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">6</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">29</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">8</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">37</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
-<span class="o">..</span> <span class="n">Model</span> <span class="mi">11</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
-<span class="o">..</span> <span class="n">Model</span> <span class="mi">5</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
-<span class="o">..</span> <span class="n">Model</span> <span class="mi">7</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">29</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
-<span class="o">..</span> <span class="n">Model</span> <span class="mi">9</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">37</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
-<span class="o">..</span> <span class="n">Model</span> <span class="mi">3</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">13</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
+<span class="o">..</span> <span class="n">Model</span> <span class="mi">10</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">1</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
+<span class="o">..</span> <span class="n">Model</span> <span class="mi">3</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">13</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
+<span class="o">..</span> <span class="n">Model</span> <span class="mi">5</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
+<span class="o">..</span> <span class="n">Model</span> <span class="mi">9</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">37</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
+<span class="o">..</span> <span class="n">Model</span> <span class="mi">11</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
+<span class="o">..</span> <span class="n">Model</span> <span class="mi">7</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">29</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">12</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">53</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">14</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">61</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">16</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">69</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
-<span class="o">..</span> <span class="n">Model</span> <span class="mi">18</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">77</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">20</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">85</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
+<span class="o">..</span> <span class="n">Model</span> <span class="mi">18</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">77</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">22</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">93</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ei</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">13</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">53</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">15</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">61</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
+<span class="o">..</span> <span class="n">Model</span> <span class="mi">19</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">77</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">17</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">69</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">21</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">85</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
-<span class="o">..</span> <span class="n">Model</span> <span class="mi">19</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">77</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
 <span class="o">..</span> <span class="n">Model</span> <span class="mi">23</span><span class="p">:</span> <span class="n">window</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">93</span><span class="p">,</span> <span class="n">slicing</span> <span class="n">method</span> <span class="o">=</span> <span class="n">ea</span><span class="o">.</span>
-<span class="n">Deriving</span> <span class="n">risk</span> <span class="nb">map</span> <span class="k">for</span> <span class="n">entire</span> <span class="n">historical</span> <span class="n">period</span>
+<span class="n">Deriving</span> <span class="n">risk</span> <span class="nb">map</span> <span class="k">for</span> <span class="n">full</span> <span class="n">historical</span> <span class="n">period</span>
 </pre></div>
 </div>
 </section>
@@ -338,7 +338,7 @@
 </tbody>
 </table>
 <p>We also have access to a plot showing how the cumulative percentage of deforestation increases with the distance to forest edge.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;perc_dist.png&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;fullhist/perc_dist.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <figure class="align-default" id="id2">
@@ -348,14 +348,14 @@
 </figcaption>
 </figure>
 </section>
-<section id="best-model">
-<h3><a class="toc-backref" href="#id12" role="doc-backlink">3.2 Best model</a><a class="headerlink" href="#best-model" title="Permalink to this heading">¶</a></h3>
+<section id="model-comparison">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">3.2 Model comparison</a><a class="headerlink" href="#model-comparison" title="Permalink to this heading">¶</a></h3>
 <p>We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the “Equal Interval” (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for the lowest window size.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;map_comp.png&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;modcomp/mod_comp.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <figure class="align-default" id="id3">
-<span id="fig-map-comp"></span><img alt="../_images/map_comp.png" src="../_images/map_comp.png" />
+<span id="fig-map-comp"></span><a class="reference internal image-reference" href="../_images/mod_comp.png"><img alt="../_images/mod_comp.png" src="../_images/mod_comp.png" style="width: 600px;" /></a>
 <figcaption>
 <p><span class="caption-text"><strong>Change in wRMSE values as a function of both window size and slicing algorithm</strong>. “ei” is the “Equal Interval” algorithm and “ea” is the “Equal Area” algorithm.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </figcaption>
@@ -372,9 +372,10 @@
 </pre></div>
 </div>
 </section>
-<section id="validation">
-<h3><a class="toc-backref" href="#id13" role="doc-backlink">3.3 Validation</a><a class="headerlink" href="#validation" title="Permalink to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;pred_obs_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
+<section id="model-performance">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">3.3 Model performance</a><a class="headerlink" href="#model-performance" title="Permalink to this heading">¶</a></h3>
+<p>We can look at the relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;modcomp/pred_obs_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <figure class="align-default" id="id4">
@@ -387,8 +388,8 @@
 <section id="risk-map-of-deforestation">
 <h3><a class="toc-backref" href="#id14" role="doc-backlink">3.4 Risk map of deforestation</a><a class="headerlink" href="#risk-map-of-deforestation" title="Permalink to this heading">¶</a></h3>
 <p>We plot the risk map using the <code class="docutils literal notranslate"><span class="pre">plot.riskmap()</span></code> function.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ifile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;riskmap_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.tif&quot;</span><span class="p">)</span>
-<span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;riskmap_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ifile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;endval/riskmap_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">_ev.tif&quot;</span><span class="p">)</span>
+<span class="n">ofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;endval/riskmap_ws</span><span class="si">{</span><span class="n">ws_hat</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">m_hat</span><span class="si">}</span><span class="s2">_ev.png&quot;</span><span class="p">)</span>
 <span class="n">riskmap_fig</span> <span class="o">=</span> <span class="n">rmj</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">riskmap</span><span class="p">(</span>
     <span class="n">input_risk_map</span><span class="o">=</span><span class="n">ifile</span><span class="p">,</span>
     <span class="n">maxpixels</span><span class="o">=</span><span class="mf">1e8</span><span class="p">,</span>
@@ -400,7 +401,7 @@
 </pre></div>
 </div>
 <figure class="align-default" id="id5">
-<span id="fig-riskmap"></span><a class="reference internal image-reference" href="../_images/riskmap_ws5_ei.png"><img alt="../_images/riskmap_ws5_ei.png" src="../_images/riskmap_ws5_ei.png" style="width: 600px;" /></a>
+<span id="fig-riskmap"></span><a class="reference internal image-reference" href="../_images/riskmap_ws5_ei_ev.png"><img alt="../_images/riskmap_ws5_ei_ev.png" src="../_images/riskmap_ws5_ei_ev.png" style="width: 600px;" /></a>
 <figcaption>
 <p><span class="caption-text"><strong>Map of the deforestation risk following the JNR methodology</strong>. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 180 m from the forest edge and have a negligible risk of being deforested.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
 </figcaption>

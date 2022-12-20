@@ -319,76 +319,113 @@ of time.</p></li>
 <li><p><strong>output_dir</strong> – <p>Output directory for files (rasters, tables, and
 figures) produced by calling the <code class="docutils literal notranslate"><span class="pre">makemap()</span></code> function:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">dist_edge.tif</span></code>: Raster file of distance to forest edge at
-the beginning of the total period.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">map_comp.csv</span></code>: Table for relationship between
-wRMSE and window size by slicing method.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">map_comp.png</span></code>: Figure for relationship between
-wRMSE and window size by slicing method.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">perc_dist.csv</span></code>: Table of cumulative deforestation with
-distance to forest edge for the entire historical period.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">perc_dist.png</span></code>: Figure of cumulative deforestation with
-distance to forest edge for the entire historical period.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pred_obs_ws{s}_{m}.csv</span></code>: Table of predictions
-vs. observations for the validation period for the best model
-with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pred_obs_ws{s}_{m}.png</span></code>: Figure of predictions
-vs. observations for the validation period for the best model
-with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_ws{s}.tif</span></code>: Raster of local deforestation rates
-for the best model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_ws{s}.tif</span></code>: Raster of local
-deforestation rates with zero category for the best model
-with window size <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">riskmap_ws{s}_{m}.tif</span></code>: Riskmap with categories of
-deforestation risk using the best model with window size
-<code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">defrate_per_cat_ws{s}_{m}.csv</span></code>: Table of deforestation
-rate per category of deforestation risk for the best model
-with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">calval</span></code>: A directory for files produced during the
 calibration and validation steps:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">dist_edge_cal.tif</span></code>: Raster of distance to forest edge
-for the calibration period.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dist_edge_val.tif</span></code>: Raster of distance to forest edge
-for the <strong>validation</strong> period.</p></li>
+at the start of the calibration period (same as
+<code class="docutils literal notranslate"><span class="pre">dist_edge.tif</span></code>).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">perc_dist_cal.csv</span></code>: Table of cumulative deforestation
 with distance to forest edge for the calibration period.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">perc_dist_cal.png</span></code>: Figure of cumulative deforestation
 with distance to forest edge for the calibration period.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_ws{s}.tif</span></code>: Rasters of local deforestation
-rates for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p></li>
+rates for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> for the calibration
+period.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_ws{s}.tif</span></code>: Rasters of local
 deforestation rates with zero category for each window
-size <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_v_ws{s}.tif</span></code>: Rasters of local
-deforestation rates with zero category <strong>at the
-beginning of the validation period</strong> for each window
-size <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p></li>
+size <code class="docutils literal notranslate"><span class="pre">s</span></code> for the calibration period.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">riskmap_ws{s}_{m}.tif</span></code>: Riskmaps with categories of
 deforestation risk for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and
-slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">riskmap_ws_v_{s}_{m}.tif</span></code>: Riskmaps with categories
-of deforestation risk <strong>at the beginning of the
-validation period</strong> for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and
-slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
+slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code> for the calibration period.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">defrate_per_cat_ws{s}_{m}.csv</span></code>: Tables of
 deforestation rate per category of deforestation risk
-for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
+for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code> for
+the calibration period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dist_edge_v.tif</span></code>: Raster of distance to forest edge
+at the start of the validation period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_ws{s}_v.tif</span></code>: Rasters of local
+deforestation rates with zero category for each window
+size <code class="docutils literal notranslate"><span class="pre">s</span></code> at the start of the validation period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">riskmap_ws{s}_{m}_v.tif</span></code>: Riskmaps with categories of
+deforestation risk for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and
+slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code> at the start of the validation
+period.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pred_obs_ws{s}_{m}.csv</span></code>: Tables of predictions
 vs. observations for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing
-method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
+method <code class="docutils literal notranslate"><span class="pre">m</span></code> for the validation period.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pred_obs_ws{s}_{m}.png</span></code>: Figures of predictions
 vs. observations for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing
-method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
+method <code class="docutils literal notranslate"><span class="pre">m</span></code> for the validation period.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">modcomp</span></code>: A directory containing files for model comparison:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pred_obs_ws{s}_{m}.csv</span></code>: Table of predictions
+vs. observations for the validation period for the best
+model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pred_obs_ws{s}_{m}.png</span></code>: Figure of predictions
+vs. observations for the validation period for the best
+model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mod_comp.csv</span></code>: Table for relationship between
+wRMSE and window size by slicing method.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mod_comp.png</span></code>: Figure for relationship between
+wRMSE and window size by slicing method.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fullhist</span></code>: A directory containing files for the full
+historical period (historical period = calibration period +
+validation period):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dist_edge.tif</span></code>: Raster file of distance to forest
+edge at the start of the historical period
+(corresponding to start of calibration period).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">perc_dist.csv</span></code>: Table of cumulative deforestation with
+distance to forest edge for the historical period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">perc_dist.png</span></code>: Figure of cumulative deforestation with
+distance to forest edge for the historical period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_ws{s}.tif</span></code>: Raster of local deforestation
+rates for the best model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> for the
+historical period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_ws{s}.tif</span></code>: Raster of local
+deforestation rates with zero category for the best model
+with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> for the historical period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">riskmap_ws{s}_{m}.tif</span></code>: Riskmap with categories of
+deforestation risk using the best model with window size
+<code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code> at the start of the
+historical period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">defrate_per_cat_ws{s}_{m}.csv</span></code>: Table of
+deforestation rate per category of deforestation risk
+for the best model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing
+method <code class="docutils literal notranslate"><span class="pre">m</span></code> for the historical period.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">endval</span></code>: A directory containing files at the end of the
+validation period that can be used for future projections:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dist_edge_ev.tif</span></code>: Raster of distance to forest edge
+at the end of the validation period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_ws{s}_ev.tif</span></code>: Raster of local
+deforestation probability with zero category for the
+best model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> at the end of the
+validation period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">riskmap_ws{s}_{m}_ev.tif</span></code>: Riskmap with categories of
+deforestation risk for the best model with window size
+<code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code> at the end of the
+validation period.</p></li>
 </ul>
 </div></blockquote>
 </li>
 </ul>
 </p></li>
-<li><p><strong>clean</strong> – Logical. Delete the <code class="docutils literal notranslate"><span class="pre">calval_dir</span></code> directory at the
+<li><p><strong>clean</strong> – Logical. Delete the <code class="docutils literal notranslate"><span class="pre">calval</span></code> directory at the
 end of the computation. Default to False.</p></li>
 <li><p><strong>dist_bins</strong> – Array of bins for distances. It has to be
 1-dimensional and monotonic. The array must also include zero

@@ -222,7 +222,7 @@ rmj.make_dir(out_dir)
 
 ** Forest cover change data
 
-We consider recent forest cover change data for Kenya. The raster file (=fcc123_KEN_101418.tif=) includes the following values: *1* for deforestation on the period 2010--2014, *2* for deforestation on the period 2014--2018, and *3* for the remaining forest in 2018. NoData value is set to *0*. The first period (2010--2014) will be used for calibration and the second period (2014--2018) will be used for validation.
+We consider a recent map of forest cover change for Kenya. The raster file (=fcc123_KEN_101418.tif=) includes the following values: *1* for deforestation on the period 2010--2014, *2* for deforestation on the period 2014--2018, and *3* for the remaining forest in 2018. NoData value is set to *0*. The first period (2010--2014) will be used for calibration and the second period (2014--2018) will be used for validation. We also have access to a vector file of Kenya borders (=ctry_border_KEN.gpkg=) that will be used for mapping. 
 
 #+begin_src python :results output :session :exports both
 fcc_file = "data/fcc123_KEN_101418.tif"
@@ -257,7 +257,7 @@ ofile
 
 * Deriving the deforestation risk map
  
-We derive the deforestation risk map using the =makemap()= function. This function calls a sequence of functions from the =riskmapjnr= package which perform all the steps detailed in the JNR methodology. We can use parallel computing using several CPUs.
+We derive the deforestation risk map using the =makemap()= function. This function calls a sequence of functions from the =riskmapjnr= package which perform all the steps detailed in the JNR methodology. These steps are described in the first report for FAO and in the [[https://ecology.ghislainv.fr/riskmapjnr/notebooks/steps.html][/All steps/ tutorial]] on the =riskmapjnr= website. We use parallel computing with several CPUs.
 
 #+begin_src python :results output :session :exports both
 ncpu = mp.cpu_count() - 2
@@ -362,11 +362,11 @@ os.path.join(out_dir, "perc_dist.png")
 
 #+NAME: fig:kenya-perc_dist
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
-#+CAPTION: *Identifying areas for which the risk of deforestation is negligible.* Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge ≤ 180 m. Forest areas located at a distance > 180 m from the forest edge can be considered as having no risk of being deforested.
+#+CAPTION: *Identifying areas for which the risk of deforestation is negligible.* Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge $\leq$ 180 m. Forest areas located at a distance > 180 m from the forest edge can be considered as having no risk of being deforested.
 #+RESULTS:
 [[file:outputs_kenya/perc_dist.png]]
 
-** Best model
+** Model comparison
 
 We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the "Equal Interval" (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for a window size between 25 and 50 pixels.
 
@@ -380,7 +380,7 @@ os.path.join(out_dir, "map_comp.png")
 #+RESULTS:
 [[file:outputs_kenya/map_comp.png]]
 
-We identify the moving window size and the slicing algorithm of the best model.
+We identify the moving window size and the slicing algorithm of the best model. The best moving window is 37 pixel size, corresponding to 1.110 km.
 
 #+begin_src python :results output :session :exports both
 ws_hat = results_makemap["ws_hat"]
@@ -393,7 +393,9 @@ print(f"The best slicing algorithm is '{m_hat}'.")
 : The best moving window size is 37 pixels.
 : The best slicing algorithm is 'ei'.
 
-** Validation
+** Model performance
+
+We can look at the relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model.
 
 #+begin_src python :results file :session :exports both
 os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
@@ -418,7 +420,7 @@ riskmap_fig = rmj.plot.riskmap(
     output_file=ofile,
     borders=border_file,
     legend=True,
-    figsize=(5, 4), dpi=800, linewidth=0.2,)
+    figsize=(5, 4), dpi=800, linewidth=0.2)
 ofile
 #+end_src
 
@@ -430,17 +432,64 @@ ofile
 
 * Suggestions to improve the JNR methodology
 
+With the current JNR methodology, we need to use historical deforestation rates for categories of risk to predict future deforestation. As a consequence, the JNR methodology is currently confounding "allocation" vs. "quantity" error (/sensu/ [cite/t:@Pontius2011]). Also, the need for slicing the continuous deforestation risk into 30 categories reduces the quality of the information provided by the deforestation risk map. Moreover, the categorization step, with the test of several algorithms (e.g. "Equal Area" and "Equal Interval" algorithms) adds complexity to the approach. Finally, using the JNR methodology, we don't know which pixels will be deforested exactly within the spatial cells. We only estimate a proportion of pixels to be deforested within each spatial cell based on historical deforestation rates. Consequently, it could be difficult to compute carbon emissions associated with projected deforestation, using a spatial map of forest carbon stocks as is usually done (e.g. [cite:@Santoro2021; @Vieilledent2013]).
 
+As an alternative, we suggest to use the risk map with 10001 values (from 0 to 10000) obtained with the best moving window size, and including the zero category above a certain distance threshold, for predicting future deforestation. Also, because we are only interested in evaluating the performance of our model in predicting the *location* of the future deforestation, we suggest to fix the amount of deforestation for predictions on the validation period to the observed amount of deforestation for that period.
+
+To do so, we first compute the deforestation on the validation period 2014--2018. The observed deforestation for 2014--2018 is 1,374,307 ha in Kenya.
+
+#+begin_src python :results value :session :exports code
+val = rmj.countpix(input_raster=fcc_file, value=2)
+defor = round(val["area"])
+f"The observed deforestation for 2014--2018 is: {defor} ha"
+#+end_src
+
+#+RESULTS:
+: The observed deforestation for 2014--2018 is: 1374307 ha
+
+Second, we project the deforestation on the validation period using the observed amount of deforestation for that period. Forest pixels with higher probabilities of deforestation are deforested first until reaching the correct amount of deforestation. We use the function =deforest()= that was added to the =riskmapjnr= Python package to perform this step.
+
+#+begin_src python :results none :session :exports both
+ifile = os.path.join(out_dir, "calval/ldefrate_with_zero_v_ws37.tif")
+stats_rmj = rmj.deforest(
+    input_raster=ifile,
+    hectares=defor,
+    output_file=os.path.join(out_dir, "fcc_proj_1418_rmj.tif"),
+    blk_rows=128)
+#+end_src
+
+Finally, we can compare the predicted vs. observed map of forest cover change for the validation period using the same approach as the one suggested by the JNR methodology (using the wRMSE and spatial cells of given dimensions). To do so, we use the function =validation_fcc= that was added to the package.
+
+#+begin_src python :results file :session :exports both
+ofile = os.path.join(out_dir, "pred_obs_rmj.png")
+rmj.validation_fcc(
+    fcc_file=fcc_file,
+    fcc_proj_file=os.path.join(out_dir, "fcc_proj_1418_rmj.tif"),
+    csize=400,
+    tab_file_pred=os.path.join(out_dir, "pred_obs_rmj.csv"),
+    fig_file_pred=ofile,
+    figsize=(6.4, 4.8),
+    dpi=100, verbose=False)
+ofile
+#+end_src
+
+#+NAME: fig:kenya-pred_obs_rmj
+#+ATTR_LATEX: :width 0.8\linewidth :placement [H]
+#+CAPTION: *Relationship between observed and predicted deforestation in 1 x 1 km grid cells using the alternative approach*. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations ($n$, the number of spatial cells) are reported on the graph.
+#+RESULTS:
+[[file:outputs_kenya/pred_obs_rmj.png]]
+
+While the wRMSE is slightly higher with this approach (1133.4 ha against 1015.7 ha), we argue that this approach should be preferred to the one currently presented in the JNR methodology which do not allow identifying pixels which should be deforested in the future.
 
 * Conclusion
 
-We have presented the use of the =riskmapjnr= Python package to obtain a map of the deforestation risk following the JNR methodology. As said previously, the JNR methodology is currently being discussed and will likely be subject to changes. The first results we have obtained applying the JNR methodology to a small-scale study area allow us to make some recommendations regarding how the JNR methodology could be improved to obtain an accurate map of the deforestation risk.
+We have presented the use of the =riskmapjnr= Python package to obtain a map of the deforestation risk following the JNR methodology. We have applied the JNR methodology to a small-scale study area (see first report to FAO) and to Kenya. As said previously, the JNR methodology is currently being discussed and will likely be subject to changes. The first results we obtained allow us to make some recommendations regarding how the JNR methodology could be improved. First, for the validation step, we suggest to fix the deforestation to the observed deforestation for the validation period to avoid "quantity" disagreement and focus on "allocation" error. Second, we suggest to use continuous values (or float values rescaled on the interval 1-10000), and not categories, to provide more accurate estimates of the deforestation risk. Other alternatives could also be considered and compared with the JNR approach such as using the Total Operating Characteristic to validate the risk map [cite:@Pontius2014], or following the methodology described in [cite/t:@Vieilledent2022-biorxiv], which uses the =forestatrisk= package [cite:@Vieilledent2021a] to estimate the spatial probability of deforestation based on a statistical model and various explanatory variables (including the distance to forest edge and the distance to previous deforestation). A comparison between the JNR approach and the =forestatrisk= approach is currently in progress.
 
 * References
 
 #+PRINT_BIBLIOGRAPHY:
 
-* Environment setup and test :noexport:
+* Environment setup and test                                       :noexport:
 
 #+BEGIN_SRC python :results value
 import sys

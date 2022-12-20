@@ -290,3 +290,19 @@ ofile
 
 ** Using the Total Operating Characteristics (TOC)
 
+
+* Environment setup and test                                       :noexport:
+
+#+BEGIN_SRC python :results value
+import sys
+return(sys.executable)
+#+END_SRC
+
+#+RESULTS:
+: /home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/bin/python
+
+Local Variables:
+eval: (pyvenv-activate (expand-file-name "~/.pyenv/versions/miniconda3-latest/envs/conda-rmj"))
+End:
+
+# End

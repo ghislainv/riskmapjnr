@@ -1,4 +1,4 @@
-% Created 2022-12-20 mar. 10:47
+% Created 2022-12-20 mar. 15:28
 % Intended LaTeX compiler: pdflatex
 \documentclass[paper=a4, 12pt, DIV=12]{scrartcl}
 \usepackage[utf8]{inputenc}
@@ -62,17 +62,17 @@ The JNR (Jurisdictional Nested REDD+) provides a standardized approach to estima
 \newpage
 
 \section{Introduction}
-\label{sec:orge729f14}
+\label{sec:org73e95ed}
 
 \subsection{Context}
-\label{sec:org4cd718c}
+\label{sec:orgf767af9}
 
 In the forest sector, programs to mitigate GHG emissions across entire national or subnational jurisdictions (called \href{https://redd.unfccc.int/}{REDD+} programs, i.e. programs aiming at Reducing Emissions from Deforestation and Forest Degradation) can be accounted for and credited using a jurisdictional-scale framework called \href{https://verra.org/project/jurisdictional-and-nested-redd-framework/}{JNR} (Jurisdictional and Nested REDD+). JNR integrates government-led and project-level REDD+ activities and establishes a clear pathway for subnational- and project-level activities to be incorporated within broader REDD+ programs. The JNR framework ensures all projects and other reducing emissions from deforestation and degradation activities in a given jurisdiction are developed using consistent baselines and crediting approaches. They mitigate the risk of ``leakage'', i.e. the displacement of emission-causing activities to areas outside the project boundary, by monitoring emissions across an entire jurisdictional area. JNR is part of the \href{https://verra.org/project/vcs-program/}{VCS} (Verified Carbon Standard) program which allows certified projects to turn their greenhouse gas (GHG) emission reductions and removals into tradable carbon credits. Since its launch in 2006, the VCS program has grown into the world's largest voluntary GHG program.
 
 The \href{https://verra.org/wp-content/uploads/2021/04/DRAFT\_JNR\_Risk\_Mapping\_Tool\_15APR2021.pdf}{JNR Risk Mapping Tool} is a ``benchmark'' methodology that provides a standardized approach for developing deforestation and forest degradation risk maps for users of the \href{https://verra.org/wp-content/uploads/2021/04/JNR\_Allocation\_Tool\_Guidance\_v4.0.pdf}{JNR Allocation Tool} in the context of JNR requirements. The methodology allows deriving a map of the deforestation (or degradation) risk based on a minimal spatial information provided by the past deforestation (or degradation) map at the jurisdictional scale. The \href{https://verra.org/wp-content/uploads/2021/04/DRAFT\_JNR\_Risk\_Mapping\_Tool\_15APR2021.pdf}{JNR Risk Mapping Tool} allows the creation of categorical and spatially static maps whose categories represent different levels of risk of deforestation or forest degradation in the validity period of the Forest Reference Emissions Level (FREL) and throughout the jurisdictional geographical boundaries. In the \href{https://verra.org/wp-content/uploads/2021/04/JNR\_Allocation\_Tool\_Guidance\_v4.0.pdf}{JNR Allocation Tool}, the level of risk determines how the jurisdictional FREL is spatially distributed to nested lower-level jurisdictional programs and projects.
 
 \subsection{Objectives}
-\label{sec:org1bc932a}
+\label{sec:orgccf91ba}
 
 While the \href{https://verra.org/wp-content/uploads/2021/04/DRAFT\_JNR\_Risk\_Mapping\_Tool\_15APR2021.pdf}{JNR Risk Mapping Tool} methodology favors simplicity, obtaining the risk map is not straightforward. The approach requires several geoprocessing steps on raster data that can be large, i.e. covering large spatial extent (eg. national scale) at high spatial resolution (eg. 30 m). The \texttt{riskmapjnr} Python package we developed includes functions to perform these geoprocessing steps and derive a risk map on any jurisdiction and at any spatial resolution following the \href{https://verra.org/wp-content/uploads/2021/04/DRAFT\_JNR\_Risk\_Mapping\_Tool\_15APR2021.pdf}{JNR Risk Mapping Tool} methodology. The \texttt{riskmapjnr} package includes functions to:
 
@@ -86,21 +86,21 @@ While the \href{https://verra.org/wp-content/uploads/2021/04/DRAFT\_JNR\_Risk\_M
 The \texttt{riskmapjnr} package uses several known Python scientific packages such as \texttt{NumPy}, \texttt{SciPy}, and \texttt{Pandas} for fast matrix and vector operations and \texttt{gdal} for processing georeferenced raster data. Raster data are divided into blocks of data for in-memory processing. Such an approach allow processing large raster files with large geographical extents (e.g. country scale) and high spatial resolutions (eg. 30 m). Here we present an example of the use of the \texttt{riskmapjnr} Python package for Kenya following all the steps of the JNR methodology.
 
 \subsection{Warnings}
-\label{sec:orgecb5f77}
+\label{sec:org4cb54a4}
 
 The \texttt{riskmapjnr}  package is still under development. The code might include some errors and still need to be thoroughly tested. A first stable version (v1.0) of the package will be released at the end of the year 2022. As a consequence, the preliminary results presented here should be interpreted with caution. Moreover, the JNR methodology is currently discussed and will be subject to changes in the coming months. Future versions of the \texttt{riskmapjnr} package should integrate these changes.
 
 \section{Initial setup and data}
-\label{sec:org9484763}
+\label{sec:orgc0a7e65}
 
 \subsection{Installation}
-\label{sec:org05e8204}
+\label{sec:org01652e8}
 
 You need several dependencies to run the \texttt{riskmapjnr} Python package. The best way to install the package is to create a Python virtual environment, either through \texttt{conda} (recommended) or \texttt{virtualenv}.
 
 \begin{enumerate}
 \item Using \texttt{conda} (recommended)
-\label{sec:orgdd59cfb}
+\label{sec:orgc1e576f}
 
 You first need to have \texttt{miniconda3} installed (see \href{https://docs.conda.io/en/latest/miniconda.html}{miniconda instructions}). Then, create a conda environment (see \href{https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html}{conda environment instructions}) and install the \texttt{riskmapjnr} package with the following commands:
 
@@ -120,7 +120,7 @@ conda env remove --name conda-rmj
 \end{minted}
 
 \item Using \texttt{virtualenv}
-\label{sec:orge8ca6ba}
+\label{sec:org4530d70}
 
 You first need to have the \texttt{virtualenv} package installed (see \href{https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/}{virtualenv instructions}). Then, create a virtual environment and install the \texttt{riskmapjnr} package with the following commands:
 
@@ -147,7 +147,7 @@ rm -R ~/venvs/venv-rmj # Just remove the repository
 \end{minted}
 
 \item Installation testing
-\label{sec:org23fd74a}
+\label{sec:orgee0cdb7}
 
 You can test that the package has been correctly installed using the command \texttt{riskmapjnr} in a terminal:
 
@@ -167,7 +167,7 @@ You can also test the package executing the commands in the \href{https://ecolog
 \end{enumerate}
 
 \subsection{Importing Python modules}
-\label{sec:org29c2009}
+\label{sec:org732125a}
 
 We import the Python modules needed for running the analysis.
 
@@ -208,9 +208,9 @@ rmj.make_dir(out_dir)
 \end{minted}
 
 \subsection{Forest cover change data}
-\label{sec:org2e5338d}
+\label{sec:org8490684}
 
-We consider recent forest cover change data for Kenya. The raster file (\texttt{fcc123\_KEN\_101418.tif}) includes the following values: \textbf{1} for deforestation on the period 2010--2014, \textbf{2} for deforestation on the period 2014--2018, and \textbf{3} for the remaining forest in 2018. NoData value is set to \textbf{0}. The first period (2010--2014) will be used for calibration and the second period (2014--2018) will be used for validation.
+We consider a recent forest cover change data for Kenya. The raster file (\texttt{fcc123\_KEN\_101418.tif}) includes the following values: \textbf{1} for deforestation on the period 2010--2014, \textbf{2} for deforestation on the period 2014--2018, and \textbf{3} for the remaining forest in 2018. NoData value is set to \textbf{0}. The first period (2010--2014) will be used for calibration and the second period (2014--2018) will be used for validation.
 
 \begin{minted}[breaklines=true,bgcolor=bg]{python}
 fcc_file = "data/fcc123_KEN_101418.tif"
@@ -242,13 +242,13 @@ ofile
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{outputs_kenya/fcc123.png}
-\caption{\label{fig:org9213527}\textbf{Forest cover change map.} Deforestation on the first period (2010--2014) is in orange, deforestation on the second period (2014--2018) is in red and remaining forest (in 2018) is in green.}
+\caption{\label{fig:org590bebb}\textbf{Forest cover change map.} Deforestation on the first period (2010--2014) is in orange, deforestation on the second period (2014--2018) is in red and remaining forest (in 2018) is in green.}
 \end{figure}
 
 \section{Deriving the deforestation risk map}
-\label{sec:org07ad532}
+\label{sec:org8c749d2}
 
-We derive the deforestation risk map using the \texttt{makemap()} function. This function calls a sequence of functions from the \texttt{riskmapjnr} package which perform all the steps detailed in the JNR methodology. We can use parallel computing using several CPUs.
+We derive the deforestation risk map using the \texttt{makemap()} function. This function calls a sequence of functions from the \texttt{riskmapjnr} package which perform all the steps detailed in the JNR methodology. These steps are described in the first report for FAO and in the \href{https://ecology.ghislainv.fr/riskmapjnr/notebooks/steps.html}{\emph{All steps} tutorial} on the \texttt{riskmapjnr} website. We use parallel computing with several CPUs.
 
 \begin{minted}[breaklines=true,bgcolor=bg]{python}
 ncpu = mp.cpu_count() - 2
@@ -291,10 +291,10 @@ Computation time: 00:38:44
 \end{verbatim}
 
 \section{Results}
-\label{sec:orgcaa4918}
+\label{sec:orge2b702b}
 
 \subsection{Deforestation risk and distance to forest edge}
-\label{sec:orgfd3040e}
+\label{sec:orga463fb6}
 
 We obtain the threshold for the distance to forest edge beyond which the deforestation risk is negligible.
 
@@ -356,11 +356,11 @@ os.path.join(out_dir, "perc_dist.png")
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{outputs_kenya/perc_dist.png}
-\caption{\label{fig:org77c5a1c}\textbf{Identifying areas for which the risk of deforestation is negligible.} Figure shows that more than 99\% of the deforestation occurs within a distance from the forest edge ≤ 180 m. Forest areas located at a distance > 180 m from the forest edge can be considered as having no risk of being deforested.}
+\caption{\label{fig:org6af04b5}\textbf{Identifying areas for which the risk of deforestation is negligible.} Figure shows that more than 99\% of the deforestation occurs within a distance from the forest edge \(\leq\) 180 m. Forest areas located at a distance > 180 m from the forest edge can be considered as having no risk of being deforested.}
 \end{figure}
 
 \subsection{Best model}
-\label{sec:orga10423d}
+\label{sec:orge48079e}
 
 We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the ``Equal Interval'' (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for a window size between 25 and 50 pixels.
 
@@ -371,10 +371,10 @@ os.path.join(out_dir, "map_comp.png")
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{outputs_kenya/map_comp.png}
-\caption{\label{fig:org834d205}\textbf{Change in wRMSE values as a function of both window size and slicing algorithm}. ``ei'' is the ``Equal Interval'' algorithm and ``ea'' is the ``Equal Area'' algorithm.}
+\caption{\label{fig:orgff9928b}\textbf{Change in wRMSE values as a function of both window size and slicing algorithm}. ``ei'' is the ``Equal Interval'' algorithm and ``ea'' is the ``Equal Area'' algorithm.}
 \end{figure}
 
-We identify the moving window size and the slicing algorithm of the best model.
+We identify the moving window size and the slicing algorithm of the best model. The best moving window is 37 pixel size, corresponding to 1.110 km.
 
 \begin{minted}[breaklines=true,bgcolor=bg]{python}
 ws_hat = results_makemap["ws_hat"]
@@ -389,7 +389,7 @@ The best slicing algorithm is 'ei'.
 \end{verbatim}
 
 \subsection{Validation}
-\label{sec:org4d1246f}
+\label{sec:org4c61348}
 
 \begin{minted}[breaklines=true,bgcolor=bg]{python}
 os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
@@ -398,11 +398,11 @@ os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{outputs_kenya/pred_obs_ws37_ei.png}
-\caption{\label{fig:org8f8f1c2}\textbf{Relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model}. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (\(n\), the number of spatial cells) are reported on the graph.}
+\caption{\label{fig:orgc41b51e}\textbf{Relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model}. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (\(n\), the number of spatial cells) are reported on the graph.}
 \end{figure}
 
 \subsection{Risk map of deforestation}
-\label{sec:org4f408e2}
+\label{sec:org75edb44}
 
 We plot the risk map using the \texttt{plot.riskmap()} function.
 
@@ -415,25 +415,84 @@ riskmap_fig = rmj.plot.riskmap(
     output_file=ofile,
     borders=border_file,
     legend=True,
-    figsize=(5, 4), dpi=800, linewidth=0.2,)
+    figsize=(5, 4), dpi=800, linewidth=0.2)
 ofile
 \end{minted}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{outputs_kenya/riskmap_ws37_ei.png}
-\caption{\label{fig:org1f66a0c}\textbf{Map of the deforestation risk following the JNR methodology}. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 780 m from the forest edge and have a negligible risk of being deforested.}
+\caption{\label{fig:org40e755f}\textbf{Map of the deforestation risk following the JNR methodology}. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 780 m from the forest edge and have a negligible risk of being deforested.}
 \end{figure}
 
-\section{Conclusion}
-\label{sec:orga9059fc}
+\section{Suggestions to improve the JNR methodology}
+\label{sec:org6515ee3}
 
-We have presented the use of the \texttt{riskmapjnr} Python package to obtain a map of the deforestation risk following the JNR methodology. As said previously, the JNR methodology is currently being discussed and will likely be subject to changes. The first results we have obtained applying the JNR methodology to a small-scale study area allow us to make some recommendations regarding how the JNR methodology could be improved to obtain an accurate map of the deforestation risk.
+With the current JNR methodology, we need to use historical deforestation rates for categories of risk to predict future deforestation. As a consequence, the JNR methodology is currently confounding ``allocation'' vs. ``quantity'' error (\emph{sensu} Pontius and Millones (\citeprocitem{2}{2011})). Also, the need for slicing the continuous deforestation risk into 30 categories reduces the quality of the information provided by the deforestation risk map. Moreover, the categorization step, with the test of several algorithms (e.g. ``Equal Area'' and ``Equal Intervals'' algorithms) adds complexity to the approach. Finally, using the JNR methodology, we don't know which pixels will be deforested exactly within the spatial cells. We only estimate a proportion of pixels to be deforested within each spatial cell based on historical deforestation rates. Consequently, it could be difficult to compute carbon emissions associated with projected deforestation, using a spatial map of forest carbon stocks as is usually done (e.g. (\citeprocitem{5}{Vieilledent et al. 2013}, \citeprocitem{3}{Santoro et al. 2021})).
+
+As an alternative, we suggest to use the risk map with 10001 values (from 0 to 10000) obtained with the best moving window size, and including the zero category above a certain distance threshold, for predicting future deforestation. Also, because we are only interested in evaluating the performance of our model in predicting the \textbf{location} of the future deforestation, we suggest to fix the amount of deforestation for predictions on the validation period to the observed amount of deforestation for that period.
+
+To do so, we first compute the deforestation on the validation period 2014--2018. The observed deforestation for 2014--2018 is 1,374,307 ha in Kenya.
+
+\begin{minted}[breaklines=true,bgcolor=bg]{python}
+val = rmj.countpix(input_raster=fcc_file, value=2)
+defor = round(val["area"])
+f"The observed deforestation for 2014--2018 is: {defor} ha"
+\end{minted}
+
+Second, we project the deforestation on the validation period using the observed amount of deforestation for that period. Forest pixels with higher probabilities of deforestation are deforested first until reaching the correct amount of deforestation. We use the function \texttt{deforest()} that was added to the \texttt{riskmapjnr} Python package to perform this step.
+
+\begin{minted}[breaklines=true,bgcolor=bg]{python}
+ifile = os.path.join(out_dir, "calval/ldefrate_with_zero_v_ws37.tif")
+stats_rmj = rmj.deforest(
+    input_raster=ifile,
+    hectares=defor,
+    output_file=os.path.join(out_dir, "fcc_proj_1418_rmj.tif"),
+    blk_rows=128)
+\end{minted}
+
+Finally, we can compare the predicted vs. observed map of forest cover change for the validation period using the same approach as the one suggested by the JNR methodology (using the wRMSE and spatial cells of given dimensions). To do so, we use the function \texttt{validation\_fcc} that was added to the package.
+
+\begin{minted}[breaklines=true,bgcolor=bg]{python}
+ofile = os.path.join(out_dir, "pred_obs_rmj.png")
+rmj.validation_fcc(
+    fcc_file=fcc_file,
+    fcc_proj_file=os.path.join(out_dir, "fcc_proj_1418_rmj.tif"),
+    csize=400,
+    tab_file_pred=os.path.join(out_dir, "pred_obs_rmj.csv"),
+    fig_file_pred=ofile,
+    figsize=(6.4, 4.8),
+    dpi=100, verbose=False)
+ofile
+\end{minted}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{outputs_kenya/pred_obs_rmj.png}
+\caption{\label{fig:org14688bd}\textbf{Relationship between observed and predicted deforestation in 1 x 1 km grid cells using the alternative approach}. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations (\(n\), the number of spatial cells) are reported on the graph.}
+\end{figure}
+
+While the wRMSE is slightly higher with this approach (1133.4 ha against 1015.7 ha), we argue that this approach should be preferred to the one currently presented in the JNR methodology which do not allow identifying pixels which should be deforested in the future.
+
+\section{Conclusion}
+\label{sec:org74c3f54}
+
+We have presented the use of the \texttt{riskmapjnr} Python package to obtain a map of the deforestation risk following the JNR methodology. We have applied the JNR methodology to a small-scale study area (see first report to FAO) and to Kenya. As said previously, the JNR methodology is currently being discussed and will likely be subject to changes. The first results we obtained allow us to make some recommendations regarding how the JNR methodology could be improved. First, for the validation step, we suggest to fix the deforestation to the observed deforestation for the validation period to avoid ``quantity'' disagreement and focus on ``allocation'' error. Second, we suggest to use continuous values (or float values rescaled on the interval 1-10000), and not categories, to provide more accurate estimates of the deforestation risk. Other alternatives could also be considered and compared with the JNR approach such as using the Total Operating Characteristic to validate the risk map (\citeprocitem{1}{Pontius and Si 2014}), or following the methodology described in Vieilledent et al. (\citeprocitem{6}{2022}), which uses the \texttt{forestatrisk} package (\citeprocitem{4}{Vieilledent 2021}) to estimate the spatial probability of deforestation based on a statistical model and various explanatory variables (including the distance to forest edge and the distance to previous deforestation). A comparison between the JNR approach and the \texttt{forestatrisk} approach is currently in progress.
 
 \section{References}
-\label{sec:org23ddb58}
+\label{sec:org0bc67b9}
 
 \begin{hangparas}{1.5em}{1}
+\hypertarget{citeproc_bib_item_1}{Pontius, R. G., and K. Si. 2014. \href{https://doi.org/10.1080/13658816.2013.862623}{The total operating characteristic to measure diagnostic ability for multiple thresholds}. International Journal of Geographical Information Science 28:570–583.}
 
+\hypertarget{citeproc_bib_item_2}{Pontius, R. G. J., and M. Millones. 2011. \href{https://doi.org/10.1080/01431161.2011.552923}{Death to Kappa: birth of quantity disagreement and allocation disagreement for accuracy assessment}. International Journal of Remote Sensing 32:4407–4429.}
+
+\hypertarget{citeproc_bib_item_3}{Santoro, M., O. Cartus, N. Carvalhais, D. M. A. Rozendaal, V. Avitabile, A. Araza, S. de Bruin, M. Herold, S. Quegan, P. Rodríguez-Veiga, H. Balzter, J. Carreiras, D. Schepaschenko, M. Korets, M. Shimada, T. Itoh, Á. M. Martínez, J. Cavlovic, R. C. Gatti, P. da Conceição Bispo, N. Dewnath, N. Labrière, J. Liang, J. Lindsell, E. T. A. Mitchard, A. Morel, A. M. P. Pascagaza, C. M. Ryan, F. Slik, G. V. Laurin, H. Verbeeck, A. Wijaya, and S. Willcock. 2021. \href{https://doi.org/10.5194/essd-13-3927-2021}{The global forest above-ground biomass pool for 2010 estimated from high-resolution satellite observations}. Earth System Science Data 13:3927–3950.}
+
+\hypertarget{citeproc_bib_item_4}{Vieilledent, G. 2021. \href{https://doi.org/10.21105/joss.02975}{forestatrisk: a Python package for modelling and forecasting deforestation in the tropics}. Journal of Open Source Software 6:2975.}
+
+\hypertarget{citeproc_bib_item_5}{Vieilledent, G., C. Grinand, and R. Vaudry. 2013. \href{https://doi.org/10.1002/ece3.550}{Forecasting deforestation and carbon emissions in tropical developing countries facing demographic expansion: a case study in Madagascar}. Ecology and Evolution 3:1702–1716.}
+
+\hypertarget{citeproc_bib_item_6}{Vieilledent, G., C. Vancutsem, C. Bourgoin, P. Ploton, P. Verley, and F. Achard. 2022. \href{https://doi.org/10.1101/2022.03.22.485306}{Spatial scenario of tropical deforestation and carbon emissions for the 21st century}. bioRxiv.}
 \end{hangparas}
 \end{document}

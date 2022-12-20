@@ -668,7 +668,7 @@ ofile
 #+RESULTS:
 [[file:outputs_steps/perc_dist.png]]
 
-** Identifying the best map
+** Model comparison
 
 We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the "Equal Interval" (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for the lowest window size. 
 
@@ -696,6 +696,8 @@ print(f"The best slicing algorithm is '{m_hat}'.")
 : The best moving window size is 5 pixels.
 : The best slicing algorithm is 'ei'.
 
+** Model performance
+
 We can look at the relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model.
 
 #+begin_src python :results file :session :exports both
@@ -709,7 +711,7 @@ ofile
 #+RESULTS:
 [[file:outputs_steps/pred_obs_ws5_ei.png]]
 
-** Final map of the deforestation risk
+** Risk map of deforestation
 
 We plot the final risk map using the =plot.riskmap()= function.
 
@@ -740,7 +742,7 @@ We have presented the use of the =riskmapjnr= Python package to obtain a map of 
 
 #+PRINT_BIBLIOGRAPHY:
 
-* Environment setup and test :noexport:
+* Environment setup and test                                       :noexport:
 
 #+BEGIN_SRC python :results value
 import sys

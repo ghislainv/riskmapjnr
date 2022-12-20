@@ -38,7 +38,7 @@ def makemap_ws(i, win_size, fcc_file, time_interval, dist_file, dist_v_file,
     ldefrate_file = os.path.join(calval_dir, f"ldefrate_ws{s}.tif")
     ldefrate_with_zero_file = os.path.join(calval_dir,
                                            f"ldefrate_with_zero_ws{s}.tif")
-    ldefzv_file = os.path.join(calval_dir, f"ldefrate_with_zero_v_ws{s}.tif")
+    ldefzv_file = os.path.join(calval_dir, f"ldefrate_with_zero_ws{s}_v.tif")
 
     # Local deforestation rates
     local_defor_rate(
@@ -84,7 +84,7 @@ def makemap_ws(i, win_size, fcc_file, time_interval, dist_file, dist_v_file,
         # Output files
         riskmap_file = os.path.join(calval_dir,
                                     f"riskmap_ws{s}_{m}.tif")
-        riskmap_v_file = os.path.join(calval_dir, f"riskmap_v_ws{s}_{m}.tif")
+        riskmap_v_file = os.path.join(calval_dir, f"riskmap_ws{s}_{m}_v.tif")
         tab_file_defrate = os.path.join(calval_dir,
                                         f"defrate_per_cat_ws{s}_{m}.csv")
         tab_file_pred = os.path.join(calval_dir, f"pred_obs_ws{s}_{m}.csv")
@@ -165,52 +165,12 @@ def makemap(fcc_file, time_interval,
     :param output_dir: Output directory for files (rasters, tables, and
         figures) produced by calling the ``makemap()`` function:
 
-        * ``dist_edge.tif``: Raster file of distance to forest edge at
-          the beginning of the total period.
-
-        * ``map_comp.csv``: Table for relationship between
-          wRMSE and window size by slicing method.
-
-        * ``map_comp.png``: Figure for relationship between
-          wRMSE and window size by slicing method.
-
-        * ``perc_dist.csv``: Table of cumulative deforestation with
-          distance to forest edge for the entire historical period.
-
-        * ``perc_dist.png``: Figure of cumulative deforestation with
-          distance to forest edge for the entire historical period.
-
-        * ``pred_obs_ws{s}_{m}.csv``: Table of predictions
-          vs. observations for the validation period for the best model
-          with window size ``s`` and slicing method ``m``.
-
-        * ``pred_obs_ws{s}_{m}.png``: Figure of predictions
-          vs. observations for the validation period for the best model
-          with window size ``s`` and slicing method ``m``.
-
-        * ``ldefrate_ws{s}.tif``: Raster of local deforestation rates
-          for the best model with window size ``s``.
-
-        * ``ldefrate_with_zero_ws{s}.tif``: Raster of local
-          deforestation rates with zero category for the best model
-          with window size ``s``.
-
-        * ``riskmap_ws{s}_{m}.tif``: Riskmap with categories of
-          deforestation risk using the best model with window size
-          ``s`` and slicing method ``m``.
-
-        * ``defrate_per_cat_ws{s}_{m}.csv``: Table of deforestation
-          rate per category of deforestation risk for the best model
-          with window size ``s`` and slicing method ``m``.
-
         * ``calval``: A directory for files produced during the
           calibration and validation steps:
 
             + ``dist_edge_cal.tif``: Raster of distance to forest edge
-              for the calibration period.
-
-            + ``dist_edge_val.tif``: Raster of distance to forest edge
-              for the **validation** period.
+              at the start of the calibration period (same as
+              ``dist_edge.tif``).
 
             + ``perc_dist_cal.csv``: Table of cumulative deforestation
               with distance to forest edge for the calibration period.
@@ -219,39 +179,107 @@ def makemap(fcc_file, time_interval,
               with distance to forest edge for the calibration period.
 
             + ``ldefrate_ws{s}.tif``: Rasters of local deforestation
-              rates for each window size ``s``.
+              rates for each window size ``s`` for the calibration
+              period.
 
             + ``ldefrate_with_zero_ws{s}.tif``: Rasters of local
               deforestation rates with zero category for each window
-              size ``s``.
-
-            + ``ldefrate_with_zero_v_ws{s}.tif``: Rasters of local
-              deforestation rates with zero category **at the
-              beginning of the validation period** for each window
-              size ``s``.
+              size ``s`` for the calibration period.
 
             + ``riskmap_ws{s}_{m}.tif``: Riskmaps with categories of
               deforestation risk for each window size ``s`` and
-              slicing method ``m``.
-
-            + ``riskmap_ws_v_{s}_{m}.tif``: Riskmaps with categories
-              of deforestation risk **at the beginning of the
-              validation period** for each window size ``s`` and
-              slicing method ``m``.
+              slicing method ``m`` for the calibration period.
 
             + ``defrate_per_cat_ws{s}_{m}.csv``: Tables of
               deforestation rate per category of deforestation risk
-              for each window size ``s`` and slicing method ``m``.
+              for each window size ``s`` and slicing method ``m`` for
+              the calibration period.
+
+            + ``dist_edge_v.tif``: Raster of distance to forest edge
+              at the start of the validation period.
+
+            + ``ldefrate_with_zero_ws{s}_v.tif``: Rasters of local
+              deforestation rates with zero category for each window
+              size ``s`` at the start of the validation period.
+
+            + ``riskmap_ws{s}_{m}_v.tif``: Riskmaps with categories of
+              deforestation risk for each window size ``s`` and
+              slicing method ``m`` at the start of the validation
+              period.
 
             + ``pred_obs_ws{s}_{m}.csv``: Tables of predictions
               vs. observations for each window size ``s`` and slicing
-              method ``m``.
+              method ``m`` for the validation period.
 
             + ``pred_obs_ws{s}_{m}.png``: Figures of predictions
               vs. observations for each window size ``s`` and slicing
-              method ``m``.
+              method ``m`` for the validation period.
 
-    :param clean: Logical. Delete the ``calval_dir`` directory at the
+        * ``modcomp``: A directory containing files for model comparison:
+
+            + ``pred_obs_ws{s}_{m}.csv``: Table of predictions
+              vs. observations for the validation period for the best
+              model with window size ``s`` and slicing method ``m``.
+
+            + ``pred_obs_ws{s}_{m}.png``: Figure of predictions
+              vs. observations for the validation period for the best
+              model with window size ``s`` and slicing method ``m``.
+
+            + ``mod_comp.csv``: Table for relationship between
+              wRMSE and window size by slicing method.
+
+            + ``mod_comp.png``: Figure for relationship between
+              wRMSE and window size by slicing method.
+
+        * ``fullhist``: A directory containing files for the full
+          historical period (historical period = calibration period +
+          validation period):
+
+            + ``dist_edge.tif``: Raster file of distance to forest
+              edge at the start of the historical period
+              (corresponding to start of calibration period).
+
+            + ``perc_dist.csv``: Table of cumulative deforestation with
+              distance to forest edge for the historical period.
+
+            + ``perc_dist.png``: Figure of cumulative deforestation with
+              distance to forest edge for the historical period.
+
+            + ``ldefrate_ws{s}.tif``: Raster of local deforestation
+              rates for the best model with window size ``s`` for the
+              historical period.
+
+            + ``ldefrate_with_zero_ws{s}.tif``: Raster of local
+              deforestation rates with zero category for the best model
+              with window size ``s`` for the historical period.
+
+            + ``riskmap_ws{s}_{m}.tif``: Riskmap with categories of
+              deforestation risk using the best model with window size
+              ``s`` and slicing method ``m`` at the start of the
+              historical period.
+
+            + ``defrate_per_cat_ws{s}_{m}.csv``: Table of
+              deforestation rate per category of deforestation risk
+              for the best model with window size ``s`` and slicing
+              method ``m`` for the historical period.
+
+        * ``endval``: A directory containing files at the end of the
+          validation period that can be used for future projections:
+
+            + ``dist_edge_ev.tif``: Raster of distance to forest edge
+              at the end of the validation period.
+
+            + ``ldefrate_with_zero_ws{s}_ev.tif``: Raster of local
+              deforestation probability with zero category for the
+              best model with window size ``s`` at the end of the
+              validation period.
+
+            + ``riskmap_ws{s}_{m}_ev.tif``: Riskmap with categories of
+              deforestation risk for the best model with window size
+              ``s`` and slicing method ``m`` at the end of the
+              validation period.
+
+    :param clean: Logical. Delete the ``calval`` directory at the
         end of the computation. Default to False.
 
     :param dist_bins: Array of bins for distances. It has to be
@@ -320,8 +348,11 @@ def makemap(fcc_file, time_interval,
     if verbose:
         print("Model calibration and validation")
 
-    # Create output directory
+    # Create output directories
     make_dir(os.path.join(output_dir, "calval"))
+    make_dir(os.path.join(output_dir, "modcomp"))
+    make_dir(os.path.join(output_dir, "fullhist"))
+    make_dir(os.path.join(output_dir, "endval"))
 
     # Output files for calibration and validation
     calval_dir = os.path.join(output_dir, "calval")
@@ -330,9 +361,10 @@ def makemap(fcc_file, time_interval,
     tab_file_dist = os.path.join(calval_dir, "perc_dist_cal.csv")
     fig_file_dist = os.path.join(calval_dir, "perc_dist_cal.png")
 
-    # Output files for final map
-    tab_file_map_comp = os.path.join(output_dir, "map_comp.csv")
-    fig_file_map_comp = os.path.join(output_dir, "map_comp.png")
+    # Output files for model comparison
+    modcomp_dir = os.path.join(output_dir, "modcomp")
+    tab_file_map_comp = os.path.join(modcomp_dir, "mod_comp.csv")
+    fig_file_map_comp = os.path.join(modcomp_dir, "mod_comp.png")
 
     # Abbreviations for methods
     meth = pd.Series(methods)
@@ -418,13 +450,13 @@ def makemap(fcc_file, time_interval,
     ws_hat = df_hat.index[0]
     m_hat = df_hat["m"].iloc[0]
 
-    # ==============================================
-    # Deriving risk map for entire historical period
-    # ==============================================
+    # ============================================
+    # Deriving risk map for full historical period
+    # ============================================
 
     # Message
     if verbose:
-        print("Deriving risk map for entire historical period")
+        print("Deriving risk map for full historical period")
 
     # Set s and m optimal values
     s = ws_hat
@@ -439,21 +471,22 @@ def makemap(fcc_file, time_interval,
     # Copy pred_obs
     tab_file_pred_cal = os.path.join(calval_dir, f"pred_obs_ws{s}_{m}.csv")
     fig_file_pred_cal = os.path.join(calval_dir, f"pred_obs_ws{s}_{m}.png")
-    tab_file_pred = os.path.join(output_dir, f"pred_obs_ws{s}_{m}.csv")
-    fig_file_pred = os.path.join(output_dir, f"pred_obs_ws{s}_{m}.png")
+    tab_file_pred = os.path.join(modcomp_dir, f"pred_obs_ws{s}_{m}.csv")
+    fig_file_pred = os.path.join(modcomp_dir, f"pred_obs_ws{s}_{m}.png")
     shutil.copy2(tab_file_pred_cal, tab_file_pred)
     shutil.copy2(fig_file_pred_cal, fig_file_pred)
 
-    # Output files for final map
-    dist_file = os.path.join(output_dir, "dist_edge.tif")
-    tab_file_dist = os.path.join(output_dir, "perc_dist.csv")
-    fig_file_dist = os.path.join(output_dir, "perc_dist.png")
-    ldefrate_file = os.path.join(output_dir, f"ldefrate_ws{s}.tif")
-    ldefrate_with_zero_file = os.path.join(output_dir,
+    # Output files for full historical period
+    fullhist_dir = os.path.join(output_dir, "fullhist")
+    dist_file = os.path.join(fullhist_dir, "dist_edge.tif")
+    tab_file_dist = os.path.join(fullhist_dir, "perc_dist.csv")
+    fig_file_dist = os.path.join(fullhist_dir, "perc_dist.png")
+    ldefrate_file = os.path.join(fullhist_dir, f"ldefrate_ws{s}.tif")
+    ldefrate_with_zero_file = os.path.join(fullhist_dir,
                                            f"ldefrate_with_zero_ws{s}.tif")
-    riskmap_file = os.path.join(output_dir,
+    riskmap_file = os.path.join(fullhist_dir,
                                 f"riskmap_ws{s}_{m}.tif")
-    tab_file_defrate = os.path.join(output_dir,
+    tab_file_defrate = os.path.join(fullhist_dir,
                                     f"defrate_per_cat_ws{s}_{m}.csv")
 
     # Deforestation risk and distance to forest edge
@@ -489,7 +522,7 @@ def makemap(fcc_file, time_interval,
         verbose=False)
 
     # Categories of deforestation risk
-    defor_cat(
+    bins = defor_cat(
         ldefrate_with_zero_file=ldefrate_with_zero_file,
         riskmap_file=riskmap_file,
         ncat=ncat,
@@ -504,6 +537,42 @@ def makemap(fcc_file, time_interval,
         riskmap_file=riskmap_file,
         time_interval=np.array(time_interval).sum(),
         tab_file_defrate=tab_file_defrate,
+        blk_rows=blk_rows,
+        verbose=False)
+
+    # ==============================
+    # End of validation period (_ev)
+    # ==============================
+
+    # Output files for end of validation period
+    endval_dir = os.path.join(output_dir, "endval")
+    dist_ev_file = os.path.join(endval_dir, "dist_edge_ev.tif")
+    ldefz_ev_file = os.path.join(endval_dir,
+                                 f"ldefrate_with_zero_ws{s}_ev.tif")
+    riskmap_ev_file = os.path.join(endval_dir,
+                                   f"riskmap_ws{s}_{m}_ev.tif")
+
+    # Distance to forest edge for validation
+    dist_values(
+        input_file=fcc_file,
+        dist_file=dist_ev_file,
+        values="0,1,2",  # Two periods
+        verbose=False)
+
+    # ldefz_v
+    get_ldefz_v(
+        ldefrate_file=ldefrate_file,
+        dist_v_file=dist_v_file,
+        dist_thresh=dist_edge_thresh["dist_thresh"],
+        ldefrate_with_zero_v_file=ldefz_ev_file,
+        blk_rows=blk_rows,
+        verbose=False)
+
+    # Risk map for validation period
+    get_riskmap_v(
+        ldefrate_with_zero_v_file=ldefz_ev_file,
+        bins=bins,
+        riskmap_v_file=riskmap_ev_file,
         blk_rows=blk_rows,
         verbose=False)
 

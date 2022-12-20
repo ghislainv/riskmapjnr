@@ -102,7 +102,7 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
 
 ::
 
-    Number of CPUs: 6.
+    Number of CPUs to use: 6.
 
 
 .. code:: python
@@ -128,31 +128,31 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
 ::
 
     Model calibration and validation
-    .. Model 4: window size = 21, slicing method = ei.
-    .. Model 10: window size = 45, slicing method = ei.
-    .. Model 2: window size = 13, slicing method = ei.
     .. Model 0: window size = 5, slicing method = ei.
+    .. Model 2: window size = 13, slicing method = ei.
+    .. Model 4: window size = 21, slicing method = ei.
     .. Model 6: window size = 29, slicing method = ei.
     .. Model 8: window size = 37, slicing method = ei.
-    .. Model 11: window size = 45, slicing method = ea.
-    .. Model 5: window size = 21, slicing method = ea.
-    .. Model 7: window size = 29, slicing method = ea.
-    .. Model 9: window size = 37, slicing method = ea.
-    .. Model 3: window size = 13, slicing method = ea.
+    .. Model 10: window size = 45, slicing method = ei.
     .. Model 1: window size = 5, slicing method = ea.
+    .. Model 3: window size = 13, slicing method = ea.
+    .. Model 5: window size = 21, slicing method = ea.
+    .. Model 9: window size = 37, slicing method = ea.
+    .. Model 11: window size = 45, slicing method = ea.
+    .. Model 7: window size = 29, slicing method = ea.
     .. Model 12: window size = 53, slicing method = ei.
     .. Model 14: window size = 61, slicing method = ei.
     .. Model 16: window size = 69, slicing method = ei.
-    .. Model 18: window size = 77, slicing method = ei.
     .. Model 20: window size = 85, slicing method = ei.
+    .. Model 18: window size = 77, slicing method = ei.
     .. Model 22: window size = 93, slicing method = ei.
     .. Model 13: window size = 53, slicing method = ea.
     .. Model 15: window size = 61, slicing method = ea.
+    .. Model 19: window size = 77, slicing method = ea.
     .. Model 17: window size = 69, slicing method = ea.
     .. Model 21: window size = 85, slicing method = ea.
-    .. Model 19: window size = 77, slicing method = ea.
     .. Model 23: window size = 93, slicing method = ea.
-    Deriving risk map for entire historical period
+    Deriving risk map for full historical period
 
 3 Results
 ---------
@@ -204,28 +204,30 @@ We also have access to a plot showing how the cumulative percentage of deforesta
 
 .. code:: python
 
-    os.path.join(out_dir, "perc_dist.png")
+    os.path.join(out_dir, "fullhist/perc_dist.png")
 
 .. _fig:perc_dist:
 
-.. figure:: outputs_get_started/perc_dist.png
+.. figure:: outputs_get_started/fullhist/perc_dist.png
     :width: 600
 
 
     **Identifying areas for which the risk of deforestation is negligible.** Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge ≤ 180 m. Forest areas located at a distance > 180 m from the forest edge can be considered as having no risk of being deforested.
 
-3.2 Best model
-~~~~~~~~~~~~~~
+3.2 Model comparison
+~~~~~~~~~~~~~~~~~~~~
 
 We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the “Equal Interval” (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for the lowest window size. 
 
 .. code:: python
 
-    os.path.join(out_dir, f"map_comp.png")
+    os.path.join(out_dir, "modcomp/mod_comp.png")
 
 .. _fig:map_comp:
 
-.. figure:: outputs_get_started/map_comp.png
+.. figure:: outputs_get_started/modcomp/mod_comp.png
+    :width: 600
+
 
     **Change in wRMSE values as a function of both window size and slicing algorithm**. “ei” is the “Equal Interval” algorithm and “ea” is the “Equal Area” algorithm.
 
@@ -243,16 +245,18 @@ We identify the moving window size and the slicing algorithm of the best model.
     The best moving window size is 5 pixels.
     The best slicing algorithm is 'ei'.
 
-3.3 Validation
-~~~~~~~~~~~~~~
+3.3 Model performance
+~~~~~~~~~~~~~~~~~~~~~
+
+We can look at the relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model.
 
 .. code:: python
 
-    os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
+    os.path.join(out_dir, f"modcomp/pred_obs_ws{ws_hat}_{m_hat}.png")
 
 .. _fig:pred_obs:
 
-.. figure:: outputs_get_started/pred_obs_ws5_ei.png
+.. figure:: outputs_get_started/modcomp/pred_obs_ws5_ei.png
     :width: 600
 
 
@@ -265,8 +269,8 @@ We plot the risk map using the ``plot.riskmap()`` function.
 
 .. code:: python
 
-    ifile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.tif")
-    ofile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.png")
+    ifile = os.path.join(out_dir, f"endval/riskmap_ws{ws_hat}_{m_hat}_ev.tif")
+    ofile = os.path.join(out_dir, f"endval/riskmap_ws{ws_hat}_{m_hat}_ev.png")
     riskmap_fig = rmj.plot.riskmap(
         input_risk_map=ifile,
         maxpixels=1e8,
@@ -278,7 +282,7 @@ We plot the risk map using the ``plot.riskmap()`` function.
 
 .. _fig:riskmap:
 
-.. figure:: outputs_get_started/riskmap_ws5_ei.png
+.. figure:: outputs_get_started/endval/riskmap_ws5_ei_ev.png
     :width: 600
 
 

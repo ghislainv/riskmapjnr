@@ -413,7 +413,7 @@ ofile
 
 The user must repeat the procedure and obtain risk maps for various window size and slicing algorithms. Following the JNR methodology, at least 25 different sizes for the moving window must be tested together with two slicing algorithms ("Equal Interval" and "Equal Area"), thus leading to a minimum of 50 different maps of deforestation risk. The map with the smallest wRMSE value is considered the best risk map. Once the best risk map is identified, with the corresponding window size and slicing algorithm, a final risk map is derived considering both the calibration and validation period (see the [[https://ecology.ghislainv.fr/riskmapjnr/notebooks/get_started.html][Get Started]] tutorial).
 
-* Environment setup and test :noexport:
+* Environment setup and test                                       :noexport:
 
 #+BEGIN_SRC python :results value
 import sys
@@ -426,4 +426,6 @@ return(sys.executable)
 Local Variables:
 eval: (pyvenv-activate (expand-file-name "~/.pyenv/versions/miniconda3-latest/envs/conda-rmj"))
 End:
+
+# End
 
