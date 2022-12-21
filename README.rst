@@ -125,7 +125,7 @@ and install the ``riskmapjnr`` package with the following commands:
    conda activate conda-rmj
    pip install riskmapjnr # For PyPI version
    # pip install https://github.com/ghislainv/riskmapjnr/archive/master.zip # For GitHub dev version
-   # conda install -c conda-forge jupyter geopandas descartes folium --yes  # Optional additional packages
+   # conda install -c conda-forge sphinx flake8 jedi jupyter geopandas descartes folium --yes  # Optional additional packages
 
 To deactivate and delete the conda environment:
 
@@ -155,7 +155,7 @@ package with the following commands:
    pip install --global-option=build_ext --global-option="-I/usr/include/gdal" gdal==$(gdal-config --version)
    pip install riskmapjnr # For PyPI version, this will install all other dependencies
    # pip install https://github.com/ghislainv/riskmapjnr/archive/master.zip # For GitHub dev version
-   pip install jupyter geopandas descartes folium # Optional additional packages
+   pip install sphinx flake8 jedi jupyter geopandas descartes folium # Optional additional packages
 
 To deactivate and delete the virtual environment:
 

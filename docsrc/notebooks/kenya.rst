@@ -134,7 +134,7 @@ We derive the deforestation risk map using the ``makemap()`` function. This func
 
 ::
 
-    Computation time: 00:38:44
+    Computation time: 00:49:43
 
 3 Results
 ---------
@@ -226,28 +226,28 @@ We also have access to a plot showing how the cumulative percentage of deforesta
 
 .. code:: python
 
-    os.path.join(out_dir, "perc_dist.png")
+    os.path.join(out_dir, "fullhist/perc_dist.png")
 
 .. _fig:kenya-perc_dist:
 
-.. figure:: outputs_kenya/perc_dist.png
+.. figure:: outputs_kenya/fullhist/perc_dist.png
     :width: 600
 
 
     **Identifying areas for which the risk of deforestation is negligible.** Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge ≤ 180 m. Forest areas located at a distance > 180 m from the forest edge can be considered as having no risk of being deforested.
 
-3.2 Best model
-~~~~~~~~~~~~~~
+3.2 Model comparison
+~~~~~~~~~~~~~~~~~~~~
 
 We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the “Equal Interval” (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for a window size between 25 and 50 pixels.
 
 .. code:: python
 
-    os.path.join(out_dir, "map_comp.png")
+    os.path.join(out_dir, "modcomp/mod_comp.png")
 
 .. _fig:kenya-map_comp:
 
-.. figure:: outputs_kenya/map_comp.png
+.. figure:: outputs_kenya/modcomp/mod_comp.png
 
     **Change in wRMSE values as a function of both window size and slicing algorithm**. “ei” is the “Equal Interval” algorithm and “ea” is the “Equal Area” algorithm.
 
@@ -265,16 +265,18 @@ We identify the moving window size and the slicing algorithm of the best model.
     The best moving window size is 37 pixels.
     The best slicing algorithm is 'ei'.
 
-3.3 Validation
-~~~~~~~~~~~~~~
+3.3 Model performance
+~~~~~~~~~~~~~~~~~~~~~
+
+We can look at the relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model.
 
 .. code:: python
 
-    os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
+    os.path.join(out_dir, f"modcomp/pred_obs_ws{ws_hat}_{m_hat}.png")
 
 .. _fig:kenya-pred_obs:
 
-.. figure:: outputs_kenya/pred_obs_ws37_ei.png
+.. figure:: outputs_kenya/modcomp/pred_obs_ws37_ei.png
     :width: 600
 
 
@@ -287,8 +289,8 @@ We plot the risk map using the ``plot.riskmap()`` function.
 
 .. code:: python
 
-    ifile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.tif")
-    ofile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.png")
+    ifile = os.path.join(out_dir, f"endval/riskmap_ws{ws_hat}_{m_hat}_ev.tif")
+    ofile = os.path.join(out_dir, f"endval/riskmap_ws{ws_hat}_{m_hat}_ev.png")
     riskmap_fig = rmj.plot.riskmap(
         input_risk_map=ifile,
         maxpixels=1e8,
@@ -300,7 +302,7 @@ We plot the risk map using the ``plot.riskmap()`` function.
 
 .. _fig:kenya-riskmap:
 
-.. figure:: outputs_kenya/riskmap_ws37_ei.png
+.. figure:: outputs_kenya/endval/riskmap_ws37_ei_ev.png
     :width: 600
 
 

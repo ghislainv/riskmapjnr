@@ -144,7 +144,7 @@ pip install numpy
 pip install --global-option=build_ext --global-option="-I/usr/include/gdal" gdal==$(gdal-config --version)
 pip install riskmapjnr # For PyPI version, this will install all other dependencies
 # pip install https://github.com/ghislainv/riskmapjnr/archive/master.zip # For GitHub dev version
-pip install jupyter geopandas descartes folium # Optional additional packages
+# pip install jupyter geopandas descartes folium # Optional additional packages
 #+end_src
 
 To deactivate and delete the virtual environment:
@@ -214,7 +214,7 @@ os.environ["PROJ_LIB"] = os.path.join(
 Create a directory to save the results.
 
 #+begin_src python :results output :session :exports both
-out_dir = "outputs_steps"
+out_dir = "outputs"
 rmj.make_dir(out_dir)
 #+end_src
 
@@ -257,7 +257,7 @@ ofile
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Forest cover change map.* Deforestation on the first period (2000--2010) is in orange, deforestation on the second period (2000--2020) is in red and remaining forest (in 2020) is in green.
 #+RESULTS:
-[[file:outputs_steps/fcc123.png]]
+[[file:outputs/fcc123.png]]
 
 * Steps to derive a categorical map of deforestation risk
 
@@ -282,7 +282,7 @@ ofile
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Identifying areas for which the risk of deforestation is negligible.* Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge $\leq 120$ m. Forest areas located at a distance $> 120$ m from the forest edge can be considered as having no risk of being deforested.
 #+RESULTS:
-[[file:outputs_steps/perc_dist_steps.png]]
+[[file:outputs/perc_dist_steps.png]]
 
 The function returns a dictionary including the distance threshold:
 
@@ -389,7 +389,7 @@ ofile
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Map of the deforestation risk following the JNR methodology*. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 120 m from the forest edge and have a negligible risk of being deforested.
 #+RESULTS:
-[[file:outputs_steps/riskmap_steps.png]]
+[[file:outputs/riskmap_steps.png]]
 
 ** Deforestation rates per category of risk
 
@@ -515,7 +515,7 @@ ofile
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Relationship between observed and predicted deforestation in 1 x 1 km grid cells*. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations ($n$, the number of spatial cells) are reported on the graph.
 #+RESULTS:
-[[file:outputs_steps/pred_obs_steps.png]]
+[[file:outputs/pred_obs_steps.png]]
 
 ** Correcting for quantity disagreement
 
@@ -541,7 +541,7 @@ ofile
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Relationship between observed and predicted deforestation in 1 x 1 km grid cells /after correction for quantity disagreement/*. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations ($n$, the number of spatial cells) are reported on the graph.
 #+RESULTS:
-[[file:outputs_steps/pred_obs_corrected_steps.png]]
+[[file:outputs/pred_obs_corrected_steps.png]]
 
 * Final risk map
 
@@ -580,18 +580,18 @@ results_makemap = rmj.makemap(
 #+RESULTS:
 #+begin_example
 Model calibration and validation
-.. Model 6: window size = 53, slicing method = ei.
-.. Model 2: window size = 21, slicing method = ei.
-.. Model 8: window size = 69, slicing method = ei.
 .. Model 0: window size = 5, slicing method = ei.
+.. Model 2: window size = 21, slicing method = ei.
 .. Model 4: window size = 37, slicing method = ei.
+.. Model 6: window size = 53, slicing method = ei.
+.. Model 8: window size = 69, slicing method = ei.
 .. Model 10: window size = 85, slicing method = ei.
-.. Model 7: window size = 53, slicing method = ea.
-.. Model 9: window size = 69, slicing method = ea.
-.. Model 11: window size = 85, slicing method = ea.
 .. Model 1: window size = 5, slicing method = ea.
 .. Model 3: window size = 21, slicing method = ea.
 .. Model 5: window size = 37, slicing method = ea.
+.. Model 9: window size = 69, slicing method = ea.
+.. Model 11: window size = 85, slicing method = ea.
+.. Model 7: window size = 53, slicing method = ea.
 .. Model 12: window size = 101, slicing method = ei.
 .. Model 14: window size = 117, slicing method = ei.
 .. Model 16: window size = 133, slicing method = ei.
@@ -602,23 +602,23 @@ Model calibration and validation
 .. Model 15: window size = 117, slicing method = ea.
 .. Model 19: window size = 149, slicing method = ea.
 .. Model 17: window size = 133, slicing method = ea.
-.. Model 21: window size = 165, slicing method = ea.
 .. Model 23: window size = 181, slicing method = ea.
+.. Model 21: window size = 165, slicing method = ea.
 .. Model 24: window size = 197, slicing method = ei.
 .. Model 26: window size = 213, slicing method = ei.
-.. Model 28: window size = 229, slicing method = ei.
 .. Model 30: window size = 245, slicing method = ei.
+.. Model 28: window size = 229, slicing method = ei.
 .. Model 32: window size = 261, slicing method = ei.
-.. Model 25: window size = 197, slicing method = ea.
 .. Model 34: window size = 277, slicing method = ei.
+.. Model 25: window size = 197, slicing method = ea.
 .. Model 27: window size = 213, slicing method = ea.
-.. Model 29: window size = 229, slicing method = ea.
-.. Model 33: window size = 261, slicing method = ea.
-.. Model 35: window size = 277, slicing method = ea.
-.. Model 36: window size = 293, slicing method = ei.
 .. Model 31: window size = 245, slicing method = ea.
+.. Model 29: window size = 229, slicing method = ea.
+.. Model 35: window size = 277, slicing method = ea.
+.. Model 33: window size = 261, slicing method = ea.
+.. Model 36: window size = 293, slicing method = ei.
 .. Model 37: window size = 293, slicing method = ea.
-Deriving risk map for entire historical period
+Deriving risk map for full historical period
 #+end_example
 
 ** Updated deforestation risk with distance to forest edge
@@ -642,46 +642,32 @@ tabulate(perc_df.head(10), headers=col_names, tablefmt="orgtbl", showindex=False
 #+end_src
 
 #+RESULTS:
-| Distance | Npixels |   Area | Cumulation | Percentage |
-|----------+---------+--------+------------+------------|
-|       30 |   52150 | 4693.5 |     4693.5 |    73.6676 |
-|       60 |   10755 | 967.95 |    5661.45 |    88.8602 |
-|       90 |    4192 | 377.28 |    6038.73 |    94.7818 |
-|      120 |    1654 | 148.86 |    6187.59 |    97.1183 |
-|      150 |     968 |  87.12 |    6274.71 |    98.4857 |
-|      180 |     402 |  36.18 |    6310.89 |    99.0536 |
-|      210 |     233 |  20.97 |    6331.86 |    99.3827 |
-|      240 |     149 |  13.41 |    6345.27 |    99.5932 |
-|      270 |     100 |      9 |    6354.27 |    99.7344 |
-|      300 |      46 |   4.14 |    6358.41 |    99.7994 |
 
 We also have access to a plot showing how the cumulative percentage of deforestation increases with the distance to forest edge.
 
 #+begin_src python :results file :session :exports both
-ofile = os.path.join(out_dir, "perc_dist.png")
-ofile
+os.path.join(out_dir, "fullhist/perc_dist.png")
 #+end_src
 
 #+NAME: fig:perc_dist
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Identifying areas for which the risk of deforestation is negligible.* Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge $\leq$ 180 m. Forest areas located at a distance > 180 m from the forest edge can be considered as having no risk of being deforested.
 #+RESULTS:
-[[file:outputs_steps/perc_dist.png]]
+[[file:outputs/fullhist/perc_dist.png]]
 
 ** Model comparison
 
 We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the "Equal Interval" (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for the lowest window size. 
 
 #+begin_src python :results file :session :exports both
-ofile = os.path.join(out_dir, f"map_comp.png")
-ofile
+os.path.join(out_dir, f"modcomp/mod_comp.png")
 #+end_src
 
 #+NAME: fig:map_comp
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Change in wRMSE values as a function of both window size and slicing algorithm*. "ei" is the "Equal Interval" algorithm and "ea" is the "Equal Area" algorithm.
 #+RESULTS:
-[[file:outputs_steps/map_comp.png]]
+[[file:outputs/modcomp/mod_comp.png]]
 
 We identify the moving window size and the slicing algorithm of the best model.
 
@@ -701,23 +687,22 @@ print(f"The best slicing algorithm is '{m_hat}'.")
 We can look at the relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model.
 
 #+begin_src python :results file :session :exports both
-ofile = os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
-ofile
+os.path.join(out_dir, f"modcomp/pred_obs_ws{ws_hat}_{m_hat}.png")
 #+end_src
 
 #+NAME: fig:pred_obs
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model*. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations ($n$, the number of spatial cells) are reported on the graph.
 #+RESULTS:
-[[file:outputs_steps/pred_obs_ws5_ei.png]]
+[[file:outputs/modcomp/pred_obs_ws5_ei.png]]
 
 ** Risk map of deforestation
 
 We plot the final risk map using the =plot.riskmap()= function.
 
 #+begin_src python :results file :session :exports both
-ifile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.tif")
-ofile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.png")
+ifile = os.path.join(out_dir, f"endval/riskmap_ws{ws_hat}_{m_hat}_ev.tif")
+ofile = os.path.join(out_dir, f"endval/riskmap_ws{ws_hat}_{m_hat}_ev.png")
 riskmap_fig = rmj.plot.riskmap(
     input_risk_map=ifile,
     maxpixels=1e8,
@@ -732,7 +717,7 @@ ofile
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Map of the deforestation risk following the JNR methodology*. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 180 m from the forest edge and have a negligible risk of being deforested.
 #+RESULTS:
-[[file:outputs_steps/riskmap_ws5_ei.png]]
+[[file:outputs/endval/riskmap_ws5_ei_ev.png]]
 
 * Conclusion
 

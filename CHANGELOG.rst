@@ -1,18 +1,20 @@
 Changelog
 =========
 
-riskmapjnr 0.2 (dev)
---------------------
+riskmapjnr 1.0
+--------------
 
+* First stable release.
 * Parallel computation for `makemap()`.
 * Benchmark to estimate advantage of parallel computing.
 * New tutorials on large jurisdictions (countries).
 * Bug corrections:
-  - Correcting an error regarding the computation of the annual deforestation rates.
-  - Correcting the validation step removing risk categories for the first period.
+  - Correction of the annual deforestation rate formula.
+  - Correction of the validation step using maps at the start of the validation period.
+  - Correction of the final risk map at the end of the validation period.
   
 riskmapjnr 0.1
 --------------
 
-* First release of the package.
+* First alpha release of the package. Must be thoroughly tested.
   

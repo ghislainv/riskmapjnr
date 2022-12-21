@@ -408,7 +408,7 @@ def makemap(fcc_file, time_interval,
         # Loop on window sizes
         for i in range(n_ws):
             s = win_sizes[i]
-            i, wRMSE_list, ncell, csize_km = makemap_ws(
+            ii, wRMSE_list, ncell, csize_km = makemap_ws(
                 i, s, fcc_file, time_interval,
                 dist_file, dist_v_file,
                 dist_edge_thresh, calval_dir, ncat, methods,

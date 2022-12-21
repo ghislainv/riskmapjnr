@@ -171,13 +171,43 @@ sec_seq = time.time() - start_time
 #+end_src
 
 #+RESULTS:
+#+begin_example
+Model calibration and validation
+.. Model 2: window size = 21, slicing method = ei.
+.. Model 0: window size = 5, slicing method = ei.
+.. Model 4: window size = 37, slicing method = ei.
+.. Model 8: window size = 69, slicing method = ei.
+.. Model 6: window size = 53, slicing method = ei.
+.. Model 10: window size = 85, slicing method = ei.
+.. Model 7: window size = 53, slicing method = ea.
+.. Model 5: window size = 37, slicing method = ea.
+.. Model 11: window size = 85, slicing method = ea.
+.. Model 9: window size = 69, slicing method = ea.
+.. Model 3: window size = 21, slicing method = ea.
+.. Model 1: window size = 5, slicing method = ea.
+.. Model 12: window size = 101, slicing method = ei.
+.. Model 14: window size = 117, slicing method = ei.
+.. Model 16: window size = 133, slicing method = ei.
+.. Model 20: window size = 165, slicing method = ei.
+.. Model 18: window size = 149, slicing method = ei.
+.. Model 22: window size = 181, slicing method = ei.
+.. Model 15: window size = 117, slicing method = ea.
+.. Model 13: window size = 101, slicing method = ea.
+.. Model 21: window size = 165, slicing method = ea.
+.. Model 17: window size = 133, slicing method = ea.
+.. Model 23: window size = 181, slicing method = ea.
+.. Model 19: window size = 149, slicing method = ea.
+.. Model 24: window size = 197, slicing method = ei.
+.. Model 25: window size = 197, slicing method = ea.
+Deriving risk map for full historical period
+#+end_example
 
 #+begin_src python :results output :session :exports both
 print('Computation time:', time.strftime("%H:%M:%S",time.gmtime(sec_seq)))
 #+end_src
 
 #+RESULTS:
-: Computation time: 00:38:44
+: Computation time: 00:49:43
 
 * Results
 
@@ -196,7 +226,7 @@ print(f"The distance theshold is {dist_thresh} m.")
 We have access to a table indicating the cumulative percentage of deforestation as a function of the distance to forest edge.
 
 #+begin_src python :results value raw :session :exports results
-perc_df = pd.read_csv(os.path.join(out_dir, "perc_dist.csv"), na_filter=False)
+perc_df = pd.read_csv(os.path.join(out_dir, "fullhist/perc_dist.csv"), na_filter=False)
 col_names = ["Distance", "Npixels", "Area", "Cumulation", "Percentage"]
 tabulate(perc_df.head(30), headers=col_names, tablefmt="orgtbl", showindex=False)
 #+end_src
@@ -238,28 +268,28 @@ tabulate(perc_df.head(30), headers=col_names, tablefmt="orgtbl", showindex=False
 We also have access to a plot showing how the cumulative percentage of deforestation increases with the distance to forest edge.
 
 #+begin_src python :results file :session :exports both
-os.path.join(out_dir, "perc_dist.png")
+os.path.join(out_dir, "fullhist/perc_dist.png")
 #+end_src
 
 #+NAME: fig:kenya-perc_dist
 #+ATTR_RST: :width 600
 #+CAPTION: *Identifying areas for which the risk of deforestation is negligible.* Figure shows that more than 99% of the deforestation occurs within a distance from the forest edge ≤ 180 m. Forest areas located at a distance > 180 m from the forest edge can be considered as having no risk of being deforested.
 #+RESULTS:
-[[file:outputs_kenya/perc_dist.png]]
+[[file:outputs_kenya/fullhist/perc_dist.png]]
 
-** Best model
+** Model comparison
 
 We can plot the change in wRMSE value with both the window size and slicing algorithm. It seems that the "Equal Interval" (ei) algorithm provides lower wRMSE values. The lowest wRMSE value is obtained for a window size between 25 and 50 pixels.
 
 #+begin_src python :results file :session :exports both
-os.path.join(out_dir, "map_comp.png")
+os.path.join(out_dir, "modcomp/mod_comp.png")
 #+end_src
 
 #+NAME: fig:kenya-map_comp
 #+ATTR_LATEX: :width 0.8\linewidth :placement [H]
 #+CAPTION: *Change in wRMSE values as a function of both window size and slicing algorithm*. "ei" is the "Equal Interval" algorithm and "ea" is the "Equal Area" algorithm.
 #+RESULTS:
-[[file:outputs_kenya/map_comp.png]]
+[[file:outputs_kenya/modcomp/mod_comp.png]]
 
 We identify the moving window size and the slicing algorithm of the best model.
 
@@ -274,25 +304,27 @@ print(f"The best slicing algorithm is '{m_hat}'.")
 : The best moving window size is 37 pixels.
 : The best slicing algorithm is 'ei'.
 
-** Validation
+** Model performance
+
+We can look at the relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model.
 
 #+begin_src python :results file :session :exports both
-os.path.join(out_dir, f"pred_obs_ws{ws_hat}_{m_hat}.png")
+os.path.join(out_dir, f"modcomp/pred_obs_ws{ws_hat}_{m_hat}.png")
 #+end_src
 
 #+NAME: fig:kenya-pred_obs
 #+ATTR_RST: :width 600
 #+CAPTION: *Relationship between observed and predicted deforestation in 1 x 1 km grid cells for the best model*. The red line is the identity line. Values of the weighted root mean squared error (wRMSE, in ha) and of the number of observations ($n$, the number of spatial cells) are reported on the graph.
 #+RESULTS:
-[[file:outputs_kenya/pred_obs_ws37_ei.png]]
+[[file:outputs_kenya/modcomp/pred_obs_ws37_ei.png]]
 
 ** Risk map of deforestation
 
 We plot the risk map using the =plot.riskmap()= function.
 
 #+begin_src python :results file :session :exports both
-ifile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.tif")
-ofile = os.path.join(out_dir, f"riskmap_ws{ws_hat}_{m_hat}.png")
+ifile = os.path.join(out_dir, f"endval/riskmap_ws{ws_hat}_{m_hat}_ev.tif")
+ofile = os.path.join(out_dir, f"endval/riskmap_ws{ws_hat}_{m_hat}_ev.png")
 riskmap_fig = rmj.plot.riskmap(
     input_risk_map=ifile,
     maxpixels=1e8,
@@ -307,7 +339,7 @@ ofile
 #+ATTR_RST: :width 600
 #+CAPTION: *Map of the deforestation risk following the JNR methodology*. Forest pixels are categorized in up to 30 classes of deforestation risk. Forest pixels which belong to the class 0 (in green) are located farther than a distance of 780 m from the forest edge and have a negligible risk of being deforested.
 #+RESULTS:
-[[file:outputs_kenya/riskmap_ws37_ei.png]]
+[[file:outputs_kenya/endval/riskmap_ws37_ei_ev.png]]
 
 * Environment setup and test :noexport:
 
@@ -317,9 +349,10 @@ return(sys.executable)
 #+END_SRC
 
 #+RESULTS:
-: /home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/bin/python
+: /home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-far/bin/python
 
 Local Variables:
 eval: (pyvenv-activate (expand-file-name "~/.pyenv/versions/miniconda3-latest/envs/conda-rmj"))
 End:
 
+# End

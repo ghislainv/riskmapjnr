@@ -27,7 +27,7 @@
 
 #+PROPERTY: header-args :eval never-export
 
-* Version information    :noexport:
+* Version information                                              :noexport:
 
 #+begin_src emacs-lisp -n :exports both
 (princ (concat
