@@ -65,7 +65,7 @@
 * Abstract                                                           :ignore:
 
 #+begin_abstract
-The JNR (Jurisdictional Nested REDD+) provides a standardized approach to estimate and credit greenhouse gas (GHG) emission reductions in the framework of REDD+ (Reducing Emissions from Deforestation and Forest Degradation) programs. The JNR approach relies on a map of the deforestation risk to be able to allocate the deforestation spatially within the jurisdiction when projecting future deforestation under the reference scenario. The JNR Risk Mapping Tool presents a standardized approach to obtain this map of the deforestation risk. The methodology is based on minimal spatial information provided by the past deforestation map at the jurisdictional scale. While the methodology favors simplicity, the approach requires several computationally intensive geoprocessing steps on potentially large raster files. The =riskmapjnr= Python package we developed provides easy-to-use functions to obtain the risk map following the JNR methodology. Functions use optimized Python code that can efficiently process large raster files without memory issues. Here we provide an example of the use of the =riskmapjnr= Python package for small-case test areas. *The package is still under development. The code might include some errors and still need to be thoroughly tested*. A first stable version (v1.0) of the package will be released at the end of the year 2022. As a consequence, *these preliminary results should be interpreted with caution*.
+The JNR (Jurisdictional Nested REDD+) provides a standardized approach to estimate and credit greenhouse gas (GHG) emission reductions in the framework of REDD+ (Reducing Emissions from Deforestation and Forest Degradation) programs. The JNR approach relies on a map of the deforestation risk to be able to allocate the deforestation spatially within the jurisdiction when projecting future deforestation under the reference scenario. The JNR Risk Mapping Tool presents a standardized approach to obtain this map of the deforestation risk. The methodology is based on minimal spatial information provided by the past deforestation map at the jurisdictional scale. While the methodology favors simplicity, the approach requires several computationally intensive geoprocessing steps on potentially large raster files. The =riskmapjnr= Python package we developed provides easy-to-use functions to obtain the risk map following the JNR methodology. Functions use optimized Python code that can efficiently process large raster files without memory issues. Here we provide an example of the use of the =riskmapjnr= Python package for small-case test areas. A first stable version (v1.0) of the package has been released at the end of the year 2022. Nonetheless, the package is fairly recent and *the code might contains some errors*. As a consequence, *these preliminary results should be interpreted with caution*.
 #+end_abstract
 
 #+begin_export latex
@@ -580,18 +580,18 @@ results_makemap = rmj.makemap(
 #+RESULTS:
 #+begin_example
 Model calibration and validation
-.. Model 0: window size = 5, slicing method = ei.
 .. Model 2: window size = 21, slicing method = ei.
-.. Model 4: window size = 37, slicing method = ei.
 .. Model 6: window size = 53, slicing method = ei.
+.. Model 0: window size = 5, slicing method = ei.
+.. Model 4: window size = 37, slicing method = ei.
 .. Model 8: window size = 69, slicing method = ei.
 .. Model 10: window size = 85, slicing method = ei.
-.. Model 1: window size = 5, slicing method = ea.
 .. Model 3: window size = 21, slicing method = ea.
-.. Model 5: window size = 37, slicing method = ea.
-.. Model 9: window size = 69, slicing method = ea.
-.. Model 11: window size = 85, slicing method = ea.
 .. Model 7: window size = 53, slicing method = ea.
+.. Model 1: window size = 5, slicing method = ea.
+.. Model 9: window size = 69, slicing method = ea.
+.. Model 5: window size = 37, slicing method = ea.
+.. Model 11: window size = 85, slicing method = ea.
 .. Model 12: window size = 101, slicing method = ei.
 .. Model 14: window size = 117, slicing method = ei.
 .. Model 16: window size = 133, slicing method = ei.
@@ -600,10 +600,10 @@ Model calibration and validation
 .. Model 22: window size = 181, slicing method = ei.
 .. Model 13: window size = 101, slicing method = ea.
 .. Model 15: window size = 117, slicing method = ea.
-.. Model 19: window size = 149, slicing method = ea.
-.. Model 17: window size = 133, slicing method = ea.
-.. Model 23: window size = 181, slicing method = ea.
 .. Model 21: window size = 165, slicing method = ea.
+.. Model 23: window size = 181, slicing method = ea.
+.. Model 17: window size = 133, slicing method = ea.
+.. Model 19: window size = 149, slicing method = ea.
 .. Model 24: window size = 197, slicing method = ei.
 .. Model 26: window size = 213, slicing method = ei.
 .. Model 30: window size = 245, slicing method = ei.
@@ -614,8 +614,8 @@ Model calibration and validation
 .. Model 27: window size = 213, slicing method = ea.
 .. Model 31: window size = 245, slicing method = ea.
 .. Model 29: window size = 229, slicing method = ea.
-.. Model 35: window size = 277, slicing method = ea.
 .. Model 33: window size = 261, slicing method = ea.
+.. Model 35: window size = 277, slicing method = ea.
 .. Model 36: window size = 293, slicing method = ei.
 .. Model 37: window size = 293, slicing method = ea.
 Deriving risk map for full historical period
@@ -735,7 +735,7 @@ return(sys.executable)
 #+END_SRC
 
 #+RESULTS:
-: /home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-rmj/bin/python
+: /home/ghislain/.pyenv/versions/miniconda3-latest/envs/conda-far/bin/python
 
 Local Variables:
 eval: (pyvenv-activate (expand-file-name "~/.pyenv/versions/miniconda3-latest/envs/conda-rmj"))
