@@ -3,7 +3,7 @@ _minted-*
 
 # Notebook data and outputs
 docsrc/notebooks/data
-docsrc/notebooks/outputs*
+outputs*
 docsrc/notebooks/grassdata
 
 # Byte-compiled / optimized / DLL files
