@@ -155,7 +155,7 @@ package with the following commands:
    pip install --global-option=build_ext --global-option="-I/usr/include/gdal" gdal==$(gdal-config --version)
    pip install riskmapjnr # For PyPI version, this will install all other dependencies
    # pip install https://github.com/ghislainv/riskmapjnr/archive/master.zip # For GitHub dev version
-   pip install sphinx flake8 jedi jupyter geopandas descartes folium # Optional additional packages
+   # pip install sphinx flake8 jedi jupyter geopandas descartes folium # Optional additional packages
 
 To deactivate and delete the virtual environment:
 

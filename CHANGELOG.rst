@@ -1,6 +1,11 @@
 Changelog
 =========
 
+riskmapjnr 1.1
+--------------
+
+* Removing unnecessary output files.
+
 riskmapjnr 1.0
 --------------
 
