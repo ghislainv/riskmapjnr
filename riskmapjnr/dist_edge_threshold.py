@@ -28,12 +28,12 @@ def dist_values(input_file,
                 dist_file,
                 values=0,
                 verbose=True):
-    """Computing the shortest distance to a pixel with a specific value in
+    """Computing the shortest distance to pixels with given values in
     a raster file.
 
-    This function computes the shortest distance to a pixel with a
-    specific value in a raster file. Distances generated are in
-    georeferenced coordinates.
+    This function computes the shortest distance to pixels with given
+    values in a raster file. Distances generated are in georeferenced
+    coordinates.
 
     :param input_file: Input raster file.
 
@@ -109,10 +109,12 @@ def dist_edge_threshold(fcc_file,
     raster of distance to forest edge will be created. The distance
     unit will be the one of the input file.
 
-    :param fcc_file: Input raster file of forest cover change at
-        three dates (123). 1: first period deforestation, 2: second
-        period deforestation, 3: remaining forest at the end of the
-        second period. No data value must be 0 (zero).
+    :param fcc_file: Input raster file of forest cover change at three
+        dates (123). 1: first period deforestation, 2: second period
+        deforestation, 3: remaining forest at the end of the second
+        period. No data value must be 0 (zero). The raster must be
+        projected to compute Euclidean distances with the
+        gdal_proximity() function.
 
     :param defor_values: Raster values to consider for
        deforestation. Must correspond to either scalar 1 if first
@@ -260,11 +262,26 @@ def dist_edge_threshold(fcc_file,
 
 
 # # Test
-# dist_edge_threshold(fcc_file="data/fcc123.tif",
-#                     dist_file="outputs/dist_edge.tif",
+# dist_edge_threshold(fcc_file="data/fcc_GLP.tif",
+#                     defor_values=1,
+#                     dist_file="outputs_steps/dist_edge_cal.tif",
 #                     dist_bins=np.arange(0, 1080, step=30),
-#                     tab_file_dist="outputs/tab_dist.csv",
-#                     fig_file_dist="outputs/plot_dist.png",
-#                     blk_rows=128)
+#                     tab_file_dist="outputs_steps/perc_dist.csv",
+#                     fig_file_dist="outputs_steps/perc_dist.png",
+#                     figsize=(6.4, 4.8),
+#                     dpi=100,
+#                     blk_rows=128,
+#                     verbose=True)
+
+# fcc_file = "data/fcc_GLP.tif"
+# defor_values = 1
+# dist_file = "outputs_steps/dist_edge_cal.tif"
+# dist_bins = np.arange(0, 1080, step = 30)
+# tab_file_dist = "outputs_steps/perc_dist_cal.csv"
+# fig_file_dist = "outputs_steps/perc_dist_cal.png"
+# figsize = (6.4, 4.8)
+# dpi = 100
+# blk_rows = 128
+# verbose = True
 
 # End
