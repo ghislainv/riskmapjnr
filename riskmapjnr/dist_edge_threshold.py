@@ -114,7 +114,7 @@ def dist_edge_threshold(fcc_file,
         deforestation, 3: remaining forest at the end of the second
         period. No data value must be 0 (zero). The raster must be
         projected to compute Euclidean distances with the
-        gdal_proximity() function.
+        ``gdal_proximity()`` function.
 
     :param defor_values: Raster values to consider for
        deforestation. Must correspond to either scalar 1 if first

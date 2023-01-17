@@ -158,7 +158,7 @@ def makemap(fcc_file, time_interval,
         deforestation, 3: remaining forest at the end of the second
         period. No data value must be 0 (zero). The raster must be
         projected to compute Euclidean distances with the
-        gdal_proximity() function.
+        ``gdal_proximity()`` function.
 
     :param time_interval: A list of two numbers. Time interval (in
         years) for forest cover change observations for the two periods
