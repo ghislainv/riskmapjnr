@@ -1,0 +1,329 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>riskmapjnr Python package &#8212; riskmapjnr — Map of deforestation risk following JNR methodology</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="icon" href="_static/favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Get Started" href="notebooks/get_started.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="#">
+    <img class="logo" src="_static/logo-riskmapjnr.svg" alt="Logo"/>
+    
+    <h1 class="logo logo-name">riskmapjnr</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Map of deforestation risk following JNR methodology</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=ghislainv&repo=riskmapjnr&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/get_started.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="articles.html">Articles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indices.html">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="notebooks/get_started.html" title="next chapter">Get Started</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <a class="reference external image-reference" href="https://ecology.ghislainv.fr/riskmapjnr"><img alt="Logo riskmapjnr" class="align-right" src="https://ecology.ghislainv.fr/riskmapjnr/_static/logo-riskmapjnr.svg" width="140px" /></a>
+<section id="riskmapjnr-python-package">
+<h1><code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package<a class="headerlink" href="#riskmapjnr-python-package" title="Permalink to this heading">¶</a></h1>
+<p><a class="reference external" href="https://pypi.org/project/riskmapjnr"><img alt="Python version" src="https://img.shields.io/pypi/pyversions/riskmapjnr?logo=python&amp;logoColor=ffd43b&amp;color=306998" /></a> <a class="reference external" href="https://pypi.org/project/riskmapjnr"><img alt="PyPI version" src="https://img.shields.io/pypi/v/riskmapjnr" /></a> <a class="reference external" href="https://github.com/ghislainv/riskmapjnr/actions/workflows/python-package.yml"><img alt="GitHub Actions" src="https://github.com/ghislainv/riskmapjnr/actions/workflows/python-package.yml/badge.svg" /></a> <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.html"><img alt="License GPLv3" src="https://img.shields.io/badge/licence-GPLv3-8f10cb.svg" /></a> <a class="reference external" href="https://doi.org/10.5281/zenodo.6670011"><img alt="Zenodo" src="https://zenodo.org/badge/DOI/10.5281/zenodo.6670011.svg" /></a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package can be used to obtain <strong>maps of the
+spatial risk of deforestation and forest degradation</strong> following the
+methodology developed in the context of the Jurisdictional and Nested
+REDD+ (<a class="reference external" href="https://verra.org/project/jurisdictional-and-nested-redd-framework/">JNR</a>) and using only a forest cover change map as input.</p>
+<a class="reference external image-reference" href="https://ecology.ghislainv.fr/riskmapjnr"><img alt="riskmapjnr-example" class="align-center" src="https://ecology.ghislainv.fr/riskmapjnr/_static/riskmapjnr-example.png" style="width: 1300px;" /></a>
+</section>
+<section id="statement-of-need">
+<h2>Statement of Need<a class="headerlink" href="#statement-of-need" title="Permalink to this heading">¶</a></h2>
+<p>The <a class="reference external" href="https://verra.org/project/vcs-program/">VCS</a> (Verified Carbon Standard) program allows certified
+projects to turn their greenhouse gas (GHG) emission reductions and
+removals into tradable carbon credits. Since its launch in 2006, the
+VCS program has grown into the world’s largest voluntary GHG program.</p>
+<p>In the forest sector, programs to mitigate GHG emissions across entire
+national or subnational jurisdictions (called <a class="reference external" href="https://redd.unfccc.int/">REDD+</a> programs,
+i.e. programs aiming at Reducing Emissions from Deforestation and
+Forest Degradation) can be accounted for and credited using a
+jurisdictional-scale framework, the Jurisdictional and Nested REDD+
+(<a class="reference external" href="https://verra.org/project/jurisdictional-and-nested-redd-framework/">JNR</a>) framework. JNR integrates government-led and project-level
+REDD+ activities and establishes a clear pathway for subnational- and
+project-level activities to be incorporated within broader REDD+
+programs. The JNR framework ensures all projects and other reducing
+emissions from deforestation and degradation activities in a given
+jurisdiction are developed using consistent baselines and crediting
+approaches. They mitigate the risk of “leakage”, i.e. the displacement
+of emission-causing activities to areas outside the project boundary,
+by monitoring emissions across an entire jurisdictional area.</p>
+<p>The <a class="reference external" href="https://verra.org/wp-content/uploads/2021/04/DRAFT_JNR_Risk_Mapping_Tool_15APR2021.pdf">JNR Risk Mapping Tool</a> is a “benchmark” methodology that
+provides a standardized approach for developing deforestation and
+forest degradation risk maps for users of the <a class="reference external" href="https://verra.org/wp-content/uploads/2021/04/JNR_Allocation_Tool_Guidance_v4.0.pdf">JNR Allocation Tool</a>
+in the context of Jurisdictional and Nested REDD+ (JNR)
+requirements. The methodology allows deriving a map of the
+deforestation (or degradation) risk based on a minimal spatial
+information provided by the past deforestation (or degradation) map at
+the jurisdictional scale.</p>
+<p>The <a class="reference external" href="https://verra.org/wp-content/uploads/2021/04/DRAFT_JNR_Risk_Mapping_Tool_15APR2021.pdf">JNR Risk Mapping Tool</a> allows the creation of categorical and
+spatially static maps whose categories represent different levels of
+risk of deforestation or forest degradation in the validity period of
+the Forest Reference Emissions Level (FREL) and throughout the
+jurisdictional geographical boundaries. In the <a class="reference external" href="https://verra.org/wp-content/uploads/2021/04/JNR_Allocation_Tool_Guidance_v4.0.pdf">JNR Allocation Tool</a>,
+the level of risk determines how the jurisdictional FREL is spatially
+distributed to nested lower-level jurisdictional programs and
+projects.</p>
+<p>While the <a class="reference external" href="https://verra.org/wp-content/uploads/2021/04/DRAFT_JNR_Risk_Mapping_Tool_15APR2021.pdf">JNR Risk Mapping Tool</a> methodology favors simplicity,
+obtaining the risk map is not straightforward. The approach requires
+several geoprocessing steps on raster data that can be large,
+i.e. covering large spatial extent (eg. national scale) at high
+spatial resolution (eg. 30 m). The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package
+includes functions to perform these geoprocessing steps and derive a
+risk map on any jurisdiction and at any spatial resolution following
+the <a class="reference external" href="https://verra.org/wp-content/uploads/2021/04/DRAFT_JNR_Risk_Mapping_Tool_15APR2021.pdf">JNR Risk Mapping Tool</a> methodology.</p>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
+<p>You will need several dependencies to run the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python
+package. The best way to install the package is to create a Python
+virtual environment, either through <code class="docutils literal notranslate"><span class="pre">conda</span></code> (recommended) or
+<code class="docutils literal notranslate"><span class="pre">virtualenv</span></code>.</p>
+<section id="using-conda-recommended">
+<h3>Using <code class="docutils literal notranslate"><span class="pre">conda</span></code> (recommended)<a class="headerlink" href="#using-conda-recommended" title="Permalink to this heading">¶</a></h3>
+<p>You first need to have <code class="docutils literal notranslate"><span class="pre">miniconda3</span></code> installed (see <a class="reference external" href="https://docs.conda.io/en/latest/miniconda.html">here</a>).</p>
+<p>Then, create a conda environment (details <a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html">here</a>)
+and install the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package with the following commands:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>conda-rmj<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span><span class="w"> </span>gdal<span class="w"> </span>numpy<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>pip<span class="w"> </span>scipy<span class="w"> </span>--yes
+conda<span class="w"> </span>activate<span class="w"> </span>conda-rmj
+pip<span class="w"> </span>install<span class="w"> </span>riskmapjnr<span class="w"> </span><span class="c1"># For PyPI version</span>
+<span class="c1"># pip install https://github.com/ghislainv/riskmapjnr/archive/master.zip # For GitHub dev version</span>
+<span class="c1"># conda install -c conda-forge sphinx flake8 jedi jupyter geopandas descartes folium --yes  # Optional additional packages</span>
+</pre></div>
+</div>
+<p>To deactivate and delete the conda environment:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>deactivate
+conda<span class="w"> </span>env<span class="w"> </span>remove<span class="w"> </span>--name<span class="w"> </span>conda-rmj
+</pre></div>
+</div>
+</section>
+<section id="using-virtualenv">
+<h3>Using <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code><a class="headerlink" href="#using-virtualenv" title="Permalink to this heading">¶</a></h3>
+<p>You first need to have the <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> package installed (see <a class="reference external" href="https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/">here</a>).</p>
+<p>Then, create a virtual environment and install the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code>
+package with the following commands:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>~
+mkdir<span class="w"> </span>venvs<span class="w"> </span><span class="c1"># Directory for virtual environments</span>
+<span class="nb">cd</span><span class="w"> </span>venvs
+virtualenv<span class="w"> </span>--python<span class="o">=</span>/usr/bin/python3<span class="w"> </span>venv-rmj
+<span class="nb">source</span><span class="w"> </span>~/venvs/venv-rmj/bin/activate
+<span class="c1"># Install numpy first</span>
+pip<span class="w"> </span>install<span class="w"> </span>numpy
+<span class="c1"># Install gdal (the correct version)</span>
+pip<span class="w"> </span>install<span class="w"> </span>--global-option<span class="o">=</span>build_ext<span class="w"> </span>--global-option<span class="o">=</span><span class="s2">&quot;-I/usr/include/gdal&quot;</span><span class="w"> </span><span class="nv">gdal</span><span class="o">==</span><span class="k">$(</span>gdal-config<span class="w"> </span>--version<span class="k">)</span>
+pip<span class="w"> </span>install<span class="w"> </span>riskmapjnr<span class="w"> </span><span class="c1"># For PyPI version, this will install all other dependencies</span>
+<span class="c1"># pip install https://github.com/ghislainv/riskmapjnr/archive/master.zip # For GitHub dev version</span>
+<span class="c1"># pip install sphinx flake8 jedi jupyter geopandas descartes folium # Optional additional packages</span>
+</pre></div>
+</div>
+<p>To deactivate and delete the virtual environment:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>deactivate
+rm<span class="w"> </span>-R<span class="w"> </span>~/venvs/venv-rmj<span class="w"> </span><span class="c1"># Just remove the repository</span>
+</pre></div>
+</div>
+</section>
+<section id="installation-testing">
+<h3>Installation testing<a class="headerlink" href="#installation-testing" title="Permalink to this heading">¶</a></h3>
+<p>You can test that the package has been correctly installed using the
+command <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> in a terminal:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>riskmapjnr
+</pre></div>
+</div>
+<p>This should return a short description of the <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package
+and the version number:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># riskmapjnr: Map of deforestation risk following JNR methodology.</span>
+<span class="c1"># https://ecology.ghislainv.fr/riskmapjnr/</span>
+<span class="c1"># riskmapjnr version x.x.</span>
+</pre></div>
+</div>
+<p>You can also test the package executing the commands in the <a class="reference external" href="https://ecology.ghislainv.fr/riskmapjnr/notebooks/get_started.html">Get
+started</a>
+tutorial.</p>
+</section>
+</section>
+<section id="main-functionalities">
+<h2>Main functionalities<a class="headerlink" href="#main-functionalities" title="Permalink to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package includes functions to:</p>
+<ol class="arabic simple">
+<li><p>Estimate the distance to forest edge beyond which the deforestation
+risk is negligible: <code class="docutils literal notranslate"><span class="pre">dist_edge_threshold()</span></code>.</p></li>
+<li><p>Compute local deforestation rates using a moving window whose size
+can vary: <code class="docutils literal notranslate"><span class="pre">local_defor_rate()</span></code>.</p></li>
+<li><p>Transform local deforestation rates into categories of
+deforestation risks using several slicing algorithms:
+<code class="docutils literal notranslate"><span class="pre">set_defor_cat_zero()</span></code> and <code class="docutils literal notranslate"><span class="pre">defor_cat()</span></code></p></li>
+<li><p>Validate maps of deforestation risk and select the map with the
+higher accuracy: <code class="docutils literal notranslate"><span class="pre">defrate_per_cat()</span></code> and <code class="docutils literal notranslate"><span class="pre">validation()</span></code>.</p></li>
+</ol>
+<p>The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> package uses several known Python scientific
+packages such as <code class="docutils literal notranslate"><span class="pre">NumPy</span></code>, <code class="docutils literal notranslate"><span class="pre">SciPy</span></code>, and <code class="docutils literal notranslate"><span class="pre">Pandas</span></code> for fast matrix
+and vector operations and <code class="docutils literal notranslate"><span class="pre">gdal</span></code> for processing georeferenced raster
+data. Raster data are divided into blocks of data for in-memory
+processing. Such an approach allow processing large raster files with
+large geographical extents (e.g. country scale) and high spatial
+resolutions (eg. 30 m).</p>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package is Open Source and released under
+the <a class="reference external" href="https://ecology.ghislainv.fr/riskmapjnr/license.html">GNU GPL version 3 license</a>. Anybody
+who is interested can contribute to the package development following
+our <a class="reference external" href="https://ecology.ghislainv.fr/riskmapjnr/contributing.html">Community guidelines</a>. Every
+contributor must agree to follow the project’s <a class="reference external" href="https://ecology.ghislainv.fr/riskmapjnr/code_of_conduct.html">Code of conduct</a>.</p>
+</section>
+<section id="table-of-contents">
+<h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Permalink to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/get_started.html">Get Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#preamble">1 Preamble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#derive-the-deforestation-risk-map">2 Derive the deforestation risk map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html#results">3 Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="articles.html">Articles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/get_started.html">Get Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/steps.html">All steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/parallel.html">Parallel computing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/kenya.html">Kenya</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Python API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#main-functions">Main functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#plot-functions">Plot functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#miscellaneous-functions">Miscellaneous functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="indices.html">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#riskmapjnr-1-1">riskmapjnr 1.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#riskmapjnr-1-0">riskmapjnr 1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#riskmapjnr-0-1">riskmapjnr 0.1</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#gnu-general-public-license">GNU General Public License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#preamble">Preamble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#terms-and-conditions">TERMS AND CONDITIONS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#how-to-apply-these-terms-to-your-new-programs">How to Apply These Terms to Your New Programs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2022, Ghislain Vieilledent.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
