@@ -14,14 +14,17 @@ jobs:
 
       - name: Install Python
         uses: actions/setup-python@v4
+        with:
+           python-version: '3.10'
 
       - name: Installing Sphinx
         run: pip install sphinx
 
       - name: Building documentation
-        run: |
-          sphinx-build docsrc docs/html -b html -d docs/doctree
-          touch docs/.nojekyll
+        run: sphinx-build docsrc docs/html -b html -d docs/doctree
+
+      - name: Adding nojekyll file
+        run: touch docs/html/.nojekyll
 
       - name: Publish generated content to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.1
