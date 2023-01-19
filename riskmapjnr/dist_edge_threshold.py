@@ -21,6 +21,103 @@ import pandas as pd
 
 # Local application imports
 from .misc import progress_bar, makeblock
+from riskmapjnr.misc import progress_bar, makeblock
+
+# check_fcc_file
+def check_fcc_file(fcc_file, blk_rows=128, verbose=True):
+    """Perform some checks on the fcc file.
+
+    Check that the fcc file:
+
+    * Is not in latlon coordinates and is projected in order to be
+      able to compute euclidean distances.
+
+    * Includes values 0, 1, 2, and 3.
+
+    * Has 0 as NoData value.
+
+    :param input_file: Input raster file.
+
+    :param blk_rows: Number of rows for block. This is used to break
+        lage raster files in several blocks of data that can be hold
+        in memory.
+
+    :param verbose: Logical. Whether to print messages or not. Default
+        to ``True``.
+
+    :return: None.
+
+    """
+
+    # Read fcc file
+    fcc_ds = gdal.Open(fcc_file)
+    fcc_band = fcc_ds.GetRasterBand(1)
+
+    # ================
+    # Check projection
+    # ================
+    proj = fcc_ds.GetProjectionRef()
+    if "AUTHORITY[\"EPSG\",\"4326\"]]" in proj:
+        msg = ("'fcc_file' cannot be in latlon coordinates "
+               "and must be projected to compute euclidean "
+               "distances.")
+        raise ValueError(msg)
+
+    # ==================
+    # Check nodata value
+    # ==================
+    nodata = fcc_band.GetNoDataValue()
+    if nodata != 0:
+        msg = ("'fcc_file' must have 0 (zero) as NoData value.")
+        raise ValueError(msg)
+
+    # ============
+    # Check values
+    # ============
+
+    # Necessary values
+    nece_val = np.array([0, 1, 2, 3])
+
+    # Unique values
+    uniq_val = []
+
+    # Make blocks
+    blockinfo = makeblock(fcc_file, blk_rows=blk_rows)
+    nblock = blockinfo[0]
+    nblock_x = blockinfo[1]
+    x = blockinfo[3]
+    y = blockinfo[4]
+    nx = blockinfo[5]
+    ny = blockinfo[6]
+
+    # Loop on blocks of data
+    for b in range(nblock):
+        # Progress bar
+        if verbose:
+            progress_bar(nblock, b + 1)
+        # Position in 1D-arrays
+        px = b % nblock_x
+        py = b // nblock_x
+        # Data for one block of the stack (shape = (nband,nrow,ncol))
+        fcc_data = fcc_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
+        # Unique values
+        uniq_val_b = np.unique(fcc_data)
+        # Check values are in [0, 1, 2, 3]
+        if not all(np.isin(uniq_val_b, nece_val)):
+            msg = ("'fcc_file' must only include values 0, 1, 2, and 3 "
+                   "with 0 (zero) as NoData.")
+            raise ValueError(msg)
+        # Actualize unique values
+        uniq_val.extend(list(uniq_val_b))
+        uniq_val = list(np.unique(uniq_val))
+
+    # Check whole values are equal to [0, 1, 2, 3]
+    if not np.array_equal(np.unique(uniq_val), nece_val):
+        msg = ("'fcc_file' must include values 0, 1, 2, and 3 "
+               "with 0 (zero) as NoData.")
+        raise ValueError(msg)
+
+    return None
 
 
 # dist_values
@@ -160,6 +257,9 @@ def dist_edge_threshold(fcc_file,
 
     """
 
+    # Check fcc_file
+    check_fcc_file(fcc_file, blk_rows=blk_rows, verbose=verbose)
+
     # Compute the distance to the forest edge
     dist_values(fcc_file, dist_file, values=0, verbose=verbose)
 
@@ -273,7 +373,7 @@ def dist_edge_threshold(fcc_file,
 #                     blk_rows=128,
 #                     verbose=True)
 
-# fcc_file = "data/fcc_GLP.tif"
+# fcc_file = "data/fcc123_GLP.tif"
 # defor_values = 1
 # dist_file = "outputs_steps/dist_edge_cal.tif"
 # dist_bins = np.arange(0, 1080, step = 30)
