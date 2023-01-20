@@ -20,7 +20,7 @@ jobs:
       - name: Install gdal
         run: |
           sudo apt-get update
-          sudo apt-get install gdal-bin
+          sudo apt-get install gdal-bin libgdal-dev
 
       - name: Installing Python packages
         run: |
