@@ -59,9 +59,9 @@
 <li class="toctree-l1"><a class="reference internal" href="notebooks/get_started.html">Get Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="articles.html">Articles</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Python API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#main-functions">Main functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#plot-functions">Plot functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#miscellaneous-functions">Miscellaneous functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-riskmapjnr">Main functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-riskmapjnr.plot">Plot functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-riskmapjnr.misc.miscellaneous">Miscellaneous functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="indices.html">Indices and tables</a></li>
@@ -106,14 +106,597 @@
             
   <section id="python-api">
 <h1>Python API<a class="headerlink" href="#python-api" title="Permalink to this heading">¶</a></h1>
-<section id="main-functions">
-<h2>Main functions<a class="headerlink" href="#main-functions" title="Permalink to this heading">¶</a></h2>
+<section id="module-riskmapjnr">
+<span id="main-functions"></span><h2>Main functions<a class="headerlink" href="#module-riskmapjnr" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.defor_cat">
+<span class="sig-name descname"><span class="pre">defor_cat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ldefrate_with_zero_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">riskmap_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'riskmap.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Equal</span> <span class="pre">Area'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/defor_cat.html#defor_cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.defor_cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Categorizing local deforestation rates.</p>
+<p>This function categorizes the deforestation risk from the map of
+local deforestation rates. This function assumes that pixels with
+zero deforestation risk have been previously identified (see
+function <code class="docutils literal notranslate"><span class="pre">set_defor_cat_zero()</span></code>). Three categorization methods
+can be used, either “Equal Area”, “Equal Interval”, or “Natural
+Breaks”. When “Equal Area” is used, the classes with a risk &gt; 0
+have approximately the same surface area. When “Equal Interval” is
+used, some risk classes will predominate in the risk map while
+other classes will be present only in small areas. When “Natural
+Breaks” is used, the data is normalized before running the slicing
+algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ldefrate_with_zero_file</strong> – Input raster file of local
+deforestation rates. Deforestation rates are defined by
+integer values between 1 and 10000 (ten thousand)). Pixels
+with zero deforestation risk (beyond a given distance from the
+forest edge) have value 0. This file is typically obtained
+with function <code class="docutils literal notranslate"><span class="pre">set_defor_cat_zero()</span></code>.</p></li>
+<li><p><strong>riskmap_file</strong> – Output raster file with categories of
+deforestation risk.</p></li>
+<li><p><strong>ncat</strong> – Number of deforestation risk categories (zero
+risk class excluded). Default to 30.</p></li>
+<li><p><strong>method</strong> – Method used for categorizing. Either “Equal
+Interval”, “Equal Area”, or “Natural Breaks”.</p></li>
+<li><p><strong>blk_rows</strong> – If &gt; 0, number of rows for computation by block.</p></li>
+<li><p><strong>verbose</strong> – Logical. Whether to print messages or not. Default
+to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bins used to categorize the deforestation risk. A raster
+file with deforestation categories is created (see
+<code class="docutils literal notranslate"><span class="pre">riskmap_file</span></code>). Data range from 0 to 30. Raster type is
+Byte ([0, 255]). NoData value is set to 255.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.defrate_per_cat">
+<span class="sig-name descname"><span class="pre">defrate_per_cat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defor_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">riskmap_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_file_defrate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'defrate_per_cat.csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/defrate_per_cat.html#defrate_per_cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.defrate_per_cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute deforestation rates per category of deforestation risk.</p>
+<p>This function computes the historical deforestation rates for each
+category of spatial deforestation risk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fcc_file</strong> – Input raster file of forest cover change at three
+dates (123). 1: first period deforestation, 2: second period
+deforestation, 3: remaining forest at the end of the second
+period. No data value must be 0 (zero).</p></li>
+<li><p><strong>defor_values</strong> – Raster values to consider for
+deforestation. Must correspond to either scalar 1 if first
+period, or list [1, 2] if both first and second period are
+considered.</p></li>
+<li><p><strong>riskmap_file</strong> – Input raster file with categories of
+spatial deforestation risk. This file is typically obtained
+with function <code class="docutils literal notranslate"><span class="pre">defor_cat()</span></code>.</p></li>
+<li><p><strong>time_interval</strong> – Time interval (in years) for forest cover
+change observations.</p></li>
+<li><p><strong>tab_file_defrate</strong> – Path to the <code class="docutils literal notranslate"><span class="pre">.csv</span></code> output file with
+estimates of deforestation rates per category of deforestation
+risk.</p></li>
+<li><p><strong>blk_rows</strong> – If &gt; 0, number of rows for computation by block.</p></li>
+<li><p><strong>verbose</strong> – Logical. Whether to print messages or not. Default
+to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. A <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file with deforestation rates per
+category of deforestation risk will be created (see
+<code class="docutils literal notranslate"><span class="pre">tab_file_defrate</span></code>).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.dist_edge_threshold">
+<span class="sig-name descname"><span class="pre">dist_edge_threshold</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defor_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dist_edge.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0,</span> <span class="pre">30,</span> <span class="pre">60,</span> <span class="pre">90,</span> <span class="pre">120,</span> <span class="pre">150,</span> <span class="pre">180,</span> <span class="pre">210,</span> <span class="pre">240,</span> <span class="pre">270,</span> <span class="pre">300,</span> <span class="pre">330,</span> <span class="pre">360,</span> <span class="pre">390,</span> <span class="pre">420,</span> <span class="pre">450,</span> <span class="pre">480,</span> <span class="pre">510,</span> <span class="pre">540,</span> <span class="pre">570,</span> <span class="pre">600,</span> <span class="pre">630,</span> <span class="pre">660,</span> <span class="pre">690,</span> <span class="pre">720,</span> <span class="pre">750,</span> <span class="pre">780,</span> <span class="pre">810,</span> <span class="pre">840,</span> <span class="pre">870,</span> <span class="pre">900,</span> <span class="pre">930,</span> <span class="pre">960,</span> <span class="pre">990,</span> <span class="pre">1020,</span> <span class="pre">1050])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_file_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'perc_dist.csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_file_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'perc_dist.png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6.4,</span> <span class="pre">4.8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/dist_edge_threshold.html#dist_edge_threshold"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.dist_edge_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computing the percentage of total deforestation as a function of
+the distance to forest edge.</p>
+<p>This function computes the percentage of total deforestation as a
+function of the distance to forest edge. It returns a table with
+the cumulative percentage of deforestation as distance to forest
+edge increases. It also identifies the distance threshold for the
+distance to forest edge so that the deforestation under that
+threshold is &gt;= 99 % of the total deforestation in the
+landscape. The function also plots the relationship between the
+percentage of deforestation and the distance to forest edge. A
+raster of distance to forest edge will be created. The distance
+unit will be the one of the input file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fcc_file</strong> – Input raster file of forest cover change at three
+dates (123). 1: first period deforestation, 2: second period
+deforestation, 3: remaining forest at the end of the second
+period. No data value must be 0 (zero). The raster must be
+projected to compute Euclidean distances with the
+<code class="docutils literal notranslate"><span class="pre">gdal_proximity()</span></code> function.</p></li>
+<li><p><strong>defor_values</strong> – Raster values to consider for
+deforestation. Must correspond to either scalar 1 if first
+period, or list [1, 2] if both first and second period are
+considered.</p></li>
+<li><p><strong>dist_file</strong> – Path to the output raster file of distance to
+forest edge. Default to <code class="docutils literal notranslate"><span class="pre">dist_edge.tif</span></code>.</p></li>
+<li><p><strong>dist_bins</strong> – Array of bins for distances. It has to be
+1-dimensional and monotonic. The array must also include zero
+as the first value. Default to <code class="docutils literal notranslate"><span class="pre">np.arange(0,</span> <span class="pre">1080,</span>
+<span class="pre">step=30)</span></code>.</p></li>
+<li><p><strong>tab_file_dist</strong> – <p>Path to the table <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file that will be
+created. This table includes the following variables:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">distance</span></code>: bins of distance to forest edge (in m).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">npix</span></code>: the number of deforested pixels in each bin.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">area</span></code>: the corresponding area (in ha).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cum</span></code>: the cumulative sum of the deforested area (in ha).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">perc</span></code>: the corresponding percentage of total deforestation.</p></li>
+</ul>
+</p></li>
+<li><p><strong>fig_file_dist</strong> – Path to the plot file that will be
+created. This plot represents the cumulative deforestation
+percentage as the distance to forest edge increases.</p></li>
+<li><p><strong>figsize</strong> – Figure size.</p></li>
+<li><p><strong>dpi</strong> – Resolution for output image.</p></li>
+<li><p><strong>blk_rows</strong> – Number of rows for block. This is used to break
+lage raster files in several blocks of data that can be hold
+in memory.</p></li>
+<li><p><strong>verbose</strong> – Logical. Whether to print messages or not. Default
+to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary. With <code class="docutils literal notranslate"><span class="pre">tot_def</span></code>: total deforestation (in
+ha), <code class="docutils literal notranslate"><span class="pre">dist_thresh</span></code>: the distance threshold, <code class="docutils literal notranslate"><span class="pre">perc</span></code>: the
+percentage of deforestation for pixels with distance &lt;=
+dist_thresh.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.local_defor_rate">
+<span class="sig-name descname"><span class="pre">local_defor_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defor_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ldefrate_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/local_defor_rate.html#local_defor_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.local_defor_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computing the local deforestation rate using a moving window.</p>
+<p>This function computes the local deforestation rate using a moving
+window. SciPy is used for the focal analysis. The
+<code class="docutils literal notranslate"><span class="pre">uniform_filter</span></code> is used over the <code class="docutils literal notranslate"><span class="pre">generic_filter</span></code>. The
+<code class="docutils literal notranslate"><span class="pre">generic_filter</span></code> is 40 times slower than the strides implemented
+in the <code class="docutils literal notranslate"><span class="pre">uniform_filter</span></code>. For cells on the edge of the raster,
+the local deforestation rate is computed from a lower number of
+existing cells in the moving window using <code class="docutils literal notranslate"><span class="pre">mode='constant'</span></code> and
+<code class="docutils literal notranslate"><span class="pre">cval=0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fcc_file</strong> – Input raster file of forest cover change at
+three dates (123). 1: first period deforestation, 2: second
+period deforestation, 3: remaining forest at the end of the
+second period. NoData value must be 0 (zero).</p></li>
+<li><p><strong>defor_values</strong> – Raster values to consider for
+deforestation. Must correspond to either scalar 1 if first
+period, or list [1, 2] if both first and second period are
+considered.</p></li>
+<li><p><strong>ldefrate_file</strong> – Output raster file.</p></li>
+<li><p><strong>win_size</strong> – Size of the moving window in number of
+cells. Must be an odd number lower or equal to <code class="docutils literal notranslate"><span class="pre">blk_rows</span></code>.</p></li>
+<li><p><strong>time_interval</strong> – Time interval (in years) for forest cover
+change observations.</p></li>
+<li><p><strong>blk_rows</strong> – Number of rows for block. Must be greater or
+equal to <code class="docutils literal notranslate"><span class="pre">win_size</span></code>. This is used to break lage raster files
+in several blocks of data that can be hold in memory.</p></li>
+<li><p><strong>verbose</strong> – Logical. Whether to print messages or not. Default
+to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. A raster with the local deforestation rate will be
+created (see <code class="docutils literal notranslate"><span class="pre">ldefrate_file</span></code>). Data range from 1 to
+10000. Raster type is UInt16 ([0, 65535]). NoData value is set
+to 65535.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.makemap">
+<span class="sig-name descname"><span class="pre">makemap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'outputs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0,</span> <span class="pre">30,</span> <span class="pre">60,</span> <span class="pre">90,</span> <span class="pre">120,</span> <span class="pre">150,</span> <span class="pre">180,</span> <span class="pre">210,</span> <span class="pre">240,</span> <span class="pre">270,</span> <span class="pre">300,</span> <span class="pre">330,</span> <span class="pre">360,</span> <span class="pre">390,</span> <span class="pre">420,</span> <span class="pre">450,</span> <span class="pre">480,</span> <span class="pre">510,</span> <span class="pre">540,</span> <span class="pre">570,</span> <span class="pre">600,</span> <span class="pre">630,</span> <span class="pre">660,</span> <span class="pre">690,</span> <span class="pre">720,</span> <span class="pre">750,</span> <span class="pre">780,</span> <span class="pre">810,</span> <span class="pre">840,</span> <span class="pre">870,</span> <span class="pre">900,</span> <span class="pre">930,</span> <span class="pre">960,</span> <span class="pre">990,</span> <span class="pre">1020,</span> <span class="pre">1050])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_sizes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[5,</span> <span class="pre">11]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['Equal</span> <span class="pre">Interval',</span> <span class="pre">'Equal</span> <span class="pre">Area']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_quantity_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6.4,</span> <span class="pre">4.8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/makemap.html#makemap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.makemap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make maps of deforestation risk and select the best.</p>
+<p>This function peforms all the necessary steps to obtain a map of
+the deforestation risk following the JNR methodology.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fcc_file</strong> – Input raster file of forest cover change at three
+dates (123). 1: first period deforestation, 2: second period
+deforestation, 3: remaining forest at the end of the second
+period. No data value must be 0 (zero). The raster must be
+projected to compute Euclidean distances with the
+<code class="docutils literal notranslate"><span class="pre">gdal_proximity()</span></code> function.</p></li>
+<li><p><strong>time_interval</strong> – A list of two numbers. Time interval (in
+years) for forest cover change observations for the two periods
+of time.</p></li>
+<li><p><strong>output_dir</strong> – <p>Output directory for files (rasters, tables, and
+figures) produced by calling the <code class="docutils literal notranslate"><span class="pre">makemap()</span></code> function:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">calval</span></code>: A directory for files produced during the
+calibration and validation steps:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dist_edge_cal.tif</span></code>: Raster of distance to forest edge
+at the start of the calibration period (same as
+<code class="docutils literal notranslate"><span class="pre">dist_edge.tif</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">perc_dist_cal.csv</span></code>: Table of cumulative deforestation
+with distance to forest edge for the calibration period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">perc_dist_cal.png</span></code>: Figure of cumulative deforestation
+with distance to forest edge for the calibration period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_ws{s}.tif</span></code>: Rasters of local deforestation
+rates for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> for the calibration
+period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_ws{s}.tif</span></code>: Rasters of local
+deforestation rates with zero category for each window
+size <code class="docutils literal notranslate"><span class="pre">s</span></code> for the calibration period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">riskmap_ws{s}_{m}.tif</span></code>: Riskmaps with categories of
+deforestation risk for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and
+slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code> for the calibration period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">defrate_per_cat_ws{s}_{m}.csv</span></code>: Tables of
+deforestation rate per category of deforestation risk
+for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code> for
+the calibration period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dist_edge_v.tif</span></code>: Raster of distance to forest edge
+at the start of the validation period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_ws{s}_v.tif</span></code>: Rasters of local
+deforestation rates with zero category for each window
+size <code class="docutils literal notranslate"><span class="pre">s</span></code> at the start of the validation period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">riskmap_ws{s}_{m}_v.tif</span></code>: Riskmaps with categories of
+deforestation risk for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and
+slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code> at the start of the validation
+period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pred_obs_ws{s}_{m}.csv</span></code>: Tables of predictions
+vs. observations for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing
+method <code class="docutils literal notranslate"><span class="pre">m</span></code> for the validation period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pred_obs_ws{s}_{m}.png</span></code>: Figures of predictions
+vs. observations for each window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing
+method <code class="docutils literal notranslate"><span class="pre">m</span></code> for the validation period.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">modcomp</span></code>: A directory containing files for model comparison:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pred_obs_ws{s}_{m}.csv</span></code>: Table of predictions
+vs. observations for the validation period for the best
+model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pred_obs_ws{s}_{m}.png</span></code>: Figure of predictions
+vs. observations for the validation period for the best
+model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mod_comp.csv</span></code>: Table for relationship between
+wRMSE and window size by slicing method.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mod_comp.png</span></code>: Figure for relationship between
+wRMSE and window size by slicing method.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fullhist</span></code>: A directory containing files for the full
+historical period (historical period = calibration period +
+validation period):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dist_edge.tif</span></code>: Raster file of distance to forest
+edge at the start of the historical period
+(corresponding to start of calibration period).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">perc_dist.csv</span></code>: Table of cumulative deforestation with
+distance to forest edge for the historical period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">perc_dist.png</span></code>: Figure of cumulative deforestation with
+distance to forest edge for the historical period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_ws{s}.tif</span></code>: Raster of local deforestation
+rates for the best model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> for the
+historical period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_ws{s}.tif</span></code>: Raster of local
+deforestation rates with zero category for the best model
+with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> for the historical period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">riskmap_ws{s}_{m}.tif</span></code>: Riskmap with categories of
+deforestation risk using the best model with window size
+<code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code> at the start of the
+historical period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">defrate_per_cat_ws{s}_{m}.csv</span></code>: Table of
+deforestation rate per category of deforestation risk
+for the best model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing
+method <code class="docutils literal notranslate"><span class="pre">m</span></code> for the historical period.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">endval</span></code>: A directory containing files at the end of the
+validation period that can be used for future projections:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dist_edge_ev.tif</span></code>: Raster of distance to forest edge
+at the end of the validation period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_ws{s}_ev.tif</span></code>: Raster of local
+deforestation probability with zero category for the
+best model with window size <code class="docutils literal notranslate"><span class="pre">s</span></code> at the end of the
+validation period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">riskmap_ws{s}_{m}_ev.tif</span></code>: Riskmap with categories of
+deforestation risk for the best model with window size
+<code class="docutils literal notranslate"><span class="pre">s</span></code> and slicing method <code class="docutils literal notranslate"><span class="pre">m</span></code> at the end of the
+validation period.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</p></li>
+<li><p><strong>clean</strong> – Logical. Delete the <code class="docutils literal notranslate"><span class="pre">calval</span></code> directory at the
+end of the computation. Default to False.</p></li>
+<li><p><strong>dist_bins</strong> – Array of bins for distances. It has to be
+1-dimensional and monotonic. The array must also include zero
+as the first value. Default to <code class="docutils literal notranslate"><span class="pre">np.arange(0,</span> <span class="pre">1080,</span>
+<span class="pre">step=30)</span></code>.</p></li>
+<li><p><strong>win_sizes</strong> – A list of numbers representing the different
+sizes of the moving window in number of cells. Must be odd
+numbers lower or equal to <code class="docutils literal notranslate"><span class="pre">blk_rows</span></code>. Default to [5, 11].</p></li>
+<li><p><strong>ncat</strong> – Number of deforestation risk categories (zero
+risk class excluded). Default to 30.</p></li>
+<li><p><strong>methods</strong> – Methods used for categorizing. Either “Equal
+Interval” (abbreviated “ei”), “Equal Area” (“ea”), or “Natural
+Breaks” (“nb”).</p></li>
+<li><p><strong>csize</strong> – Spatial cell size in number of pixels. Must
+correspond to a distance &lt; 10 km. Default to 300 corresponding
+to 9 km for a 30 m resolution raster.</p></li>
+<li><p><strong>no_quantity_error</strong> – Correct the deforestation rates to avoid
+a “quantity” error on deforestation due to differences in
+total deforestation between first and second periods. This
+point is being discussed to improve the JNR methodology.</p></li>
+<li><p><strong>parallel</strong> – Logical. Parallel (if <code class="docutils literal notranslate"><span class="pre">True</span></code>) or sequential (if
+<code class="docutils literal notranslate"><span class="pre">False</span></code>) computing. Default to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>ncpu</strong> – Number of CPUs for parallel computing.</p></li>
+<li><p><strong>figsize</strong> – Figure sizes.</p></li>
+<li><p><strong>dpi</strong> – Resolution for output images.</p></li>
+<li><p><strong>blk_rows</strong> – If &gt; 0, number of rows for computation by block.</p></li>
+<li><p><strong>verbose</strong> – Logical. Whether to print messages or not. Default
+to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A dictionary. With:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tot_def</span></code>: total deforestation (in ha) during the entire historical
+period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dist_thresh</span></code>: the distance threshold.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">perc</span></code>: the percentage of deforestation for pixels with
+distance &lt;= dist_thresh.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ncell</span></code>: the number of grid cells with forest cover &gt; 0 at
+the beginning of the validation period.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">csize</span></code>: the cell size in number of pixels.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">csize_km</span></code>: the cell size in kilometers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">no_quantity_error</span></code>: no_quantity_error argument.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ws_hat</span></code>: window size of the best risk map.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">m_hat</span></code>: slicing method of the best risk map.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wRMSE_hat</span></code>: weighted Root Mean Squared Error (in hectares)
+of the best risk map.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.set_defor_cat_zero">
+<span class="sig-name descname"><span class="pre">set_defor_cat_zero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ldefrate_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_thresh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ldefrate_with_zero_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ldefrate_with_zero.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/set_defor_cat_zero.html#set_defor_cat_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.set_defor_cat_zero" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a value of zero (0) to pixels with zero deforestation risk. A
+risk of deforestation of zero is assumed when distance to forest
+edge is greater than the distance threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ldefrate_file</strong> – Input raster file of local deforestation
+rates. Deforestation rates are defined by integer values
+between 1 and 10000 (ten thousand). This file is typically
+obtained with function <code class="docutils literal notranslate"><span class="pre">local_defor_rate()</span></code>.</p></li>
+<li><p><strong>dist_file</strong> – Path to the distance to forest edge raster file.</p></li>
+<li><p><strong>dist_thresh</strong> – The distance threshold. This distance
+threshold is used to identify pixels with zero deforestation
+risk.</p></li>
+<li><p><strong>ldefrate_with_zero_file</strong> – Output raster file. Default to
+“ldefrate_with_zero.tif” in the current working
+directory. Pixels with zero deforestation risk are assigned a
+value of 0.</p></li>
+<li><p><strong>blk_rows</strong> – If &gt; 0, number of rows for computation by block.</p></li>
+<li><p><strong>verbose</strong> – Logical. Whether to print messages or not. Default
+to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. A raster file identifying pixels with zero risk of
+deforestation (value 0) will be created (see
+<code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_file</span></code>).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.validation">
+<span class="sig-name descname"><span class="pre">validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">riskmap_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_file_defrate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_quantity_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_file_pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pred_obs.csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_file_pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pred_obs.png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6.4,</span> <span class="pre">4.8)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/validation.html#validation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.validation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validation of the deforestation risk map.</p>
+<p>This function computes the observed and predicted deforestion (in
+ha) for the validation time period. Deforestion is computed for
+spatial grid cells of a maximum size of 10km. Deforestation rate
+estimates obtained with the <code class="docutils literal notranslate"><span class="pre">defrate_per_cat</span></code> function are used
+to compute the predicted deforestation in each grid cell. The
+function creates both a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file with the validation data and a
+plot comparing predictions vs. observations. The function returns
+the weighted Root Mean Squared Error (wRMSE, in hectares)
+associated with the deforestation predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fcc_file</strong> – Input raster file of forest cover change at three
+dates (123). 1: first period deforestation, 2: second period
+deforestation, 3: remaining forest at the end of the second
+period. No data value must be 0 (zero).</p></li>
+<li><p><strong>time_interval</strong> – Time interval (in years) for forest cover
+change observations during the <strong>validation</strong> period.</p></li>
+<li><p><strong>riskmap_file</strong> – Input raster file with categories of
+spatial deforestation risk. This file is typically obtained
+with function <code class="docutils literal notranslate"><span class="pre">defor_cat()</span></code>.</p></li>
+<li><p><strong>tab_file_defrate</strong> – Path to the <code class="docutils literal notranslate"><span class="pre">.csv</span></code> input file with
+estimates of deforestation rates per category of deforestation
+risk. This file is typically obtained with function
+<code class="docutils literal notranslate"><span class="pre">defrate_per_cat()</span></code>.</p></li>
+<li><p><strong>csize</strong> – Spatial cell size in number of pixels. Must
+correspond to a distance &lt; 10 km. Default to 300 corresponding
+to 9 km for a 30 m resolution raster.</p></li>
+<li><p><strong>no_quantity_error</strong> – Correct the deforestation rates to avoid
+a “quantity” error on deforestation due to differences in
+total deforestation between first and second periods. This
+point is being discussed to improve the JNR methodology.</p></li>
+<li><p><strong>tab_file_pred</strong> – Path to the <code class="docutils literal notranslate"><span class="pre">.csv</span></code> output file with validation
+data.</p></li>
+<li><p><strong>fig_file_pred</strong> – Path to the <code class="docutils literal notranslate"><span class="pre">.png</span></code> output file for the
+predictions vs. observations plot.</p></li>
+<li><p><strong>figsize</strong> – Figure size.</p></li>
+<li><p><strong>dpi</strong> – Resolution for output image.</p></li>
+<li><p><strong>verbose</strong> – Logical. Whether to print messages or not. Default
+to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary. With <code class="docutils literal notranslate"><span class="pre">wRMSE</span></code>: weighted Root Mean Squared
+Error (in hectares) for the deforestation predictions,
+<code class="docutils literal notranslate"><span class="pre">ncell</span></code>: the number of grid cells with forest cover &gt; 0 at
+the beginning of the validation period, <code class="docutils literal notranslate"><span class="pre">csize</span></code>: the cell size
+in number of pixels, <code class="docutils literal notranslate"><span class="pre">csize_km</span></code>: the cell size in
+kilometers.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="plot-functions">
-<h2>Plot functions<a class="headerlink" href="#plot-functions" title="Permalink to this heading">¶</a></h2>
+<section id="module-riskmapjnr.plot">
+<span id="plot-functions"></span><h2>Plot functions<a class="headerlink" href="#module-riskmapjnr.plot" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.plot.fcc123">
+<span class="sig-name descname"><span class="pre">fcc123</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_fcc_raster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fcc123.png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxpixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[(255,</span> <span class="pre">165,</span> <span class="pre">0,</span> <span class="pre">255),</span> <span class="pre">(227,</span> <span class="pre">26,</span> <span class="pre">28,</span> <span class="pre">255),</span> <span class="pre">(34,</span> <span class="pre">139,</span> <span class="pre">34,</span> <span class="pre">255)]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(11.69,</span> <span class="pre">8.27)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/plot.html#fcc123"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.plot.fcc123" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot forest-cover change (fcc123) map.</p>
+<p>This function plots the forest-cover change map with 2
+deforestation time-periods (2000 -&gt; 2010 -&gt; 2020 for example) plus
+the remaining forest (3 classes).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_fcc_raster</strong> – Path to fcc123 raster.</p></li>
+<li><p><strong>output_file</strong> – Name of the plot file.</p></li>
+<li><p><strong>maxpixels</strong> – Maximum number of pixels to plot.</p></li>
+<li><p><strong>borders</strong> – Vector file to be plotted.</p></li>
+<li><p><strong>zoom</strong> – Zoom to region (xmin, xmax, ymin, ymax).</p></li>
+<li><p><strong>col</strong> – List of rgba colors for classes 123.</p></li>
+<li><p><strong>figsize</strong> – Figure size in inches.</p></li>
+<li><p><strong>dpi</strong> – Resolution for output image.</p></li>
+<li><p><strong>**kwargs</strong> – see below.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><p>Additional arguments to plot borders.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A Matplotlib figure of the forest cover change map.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.plot.riskmap">
+<span class="sig-name descname"><span class="pre">riskmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_risk_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prob.png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxpixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(11.69,</span> <span class="pre">8.27)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/plot.html#riskmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.plot.riskmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot deforestation risk map.</p>
+<p>This function plots the spatial probability of deforestation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_risk_map</strong> – Path to risk map.</p></li>
+<li><p><strong>output_file</strong> – Name of the plot file.</p></li>
+<li><p><strong>maxpixels</strong> – Maximum number of pixels to plot.</p></li>
+<li><p><strong>borders</strong> – Vector file to be plotted.</p></li>
+<li><p><strong>legend</strong> – Add colorbar if True.</p></li>
+<li><p><strong>figsize</strong> – Figure size in inches.</p></li>
+<li><p><strong>dpi</strong> – Resolution for output image.</p></li>
+<li><p><strong>**kwargs</strong> – see below.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><p>Additional arguments to plot borders.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A Matplotlib figure of the map of spatial probability of
+deforestation.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="miscellaneous-functions">
-<h2>Miscellaneous functions<a class="headerlink" href="#miscellaneous-functions" title="Permalink to this heading">¶</a></h2>
+<section id="module-riskmapjnr.misc.miscellaneous">
+<span id="miscellaneous-functions"></span><h2>Miscellaneous functions<a class="headerlink" href="#module-riskmapjnr.misc.miscellaneous" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.misc.miscellaneous.invlogit">
+<span class="sig-name descname"><span class="pre">invlogit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/misc/miscellaneous.html#invlogit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.misc.miscellaneous.invlogit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the inverse-logit of a numpy array.</p>
+<p>We differenciate the positive and negative values to avoid
+under/overflow with the use of exp().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> – Numpy array.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Return the inverse-logit of the array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.misc.miscellaneous.make_dir">
+<span class="sig-name descname"><span class="pre">make_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">newdir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/misc/miscellaneous.html#make_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.misc.miscellaneous.make_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make new directory</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Already exists, silently complete</p></li>
+<li><p>Regular file in the way, raise an exception</p></li>
+<li><p>Parent directory(ies) does not exist, make them as well</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>newdir</strong> – Directory path to create.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.misc.miscellaneous.tree">
+<span class="sig-name descname"><span class="pre">tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_to_directories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/misc/miscellaneous.html#tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.misc.miscellaneous.tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a directory Path object print a visual tree structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dir_path</strong> – Directory path.</p></li>
+<li><p><strong>level</strong> – Option to limit recursion to a given level.</p></li>
+<li><p><strong>limit_to_directories</strong> – Option to limit to just directories.</p></li>
+<li><p><strong>length_limit</strong> – Length limit of the output in number of lines.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Visual tree stucture.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-riskmapjnr.riskmapjnr"></span><dl class="py function">
+<dt class="sig sig-object py" id="riskmapjnr.riskmapjnr.main">
+<span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/riskmapjnr.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.riskmapjnr.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>riskmapjnr.riskmapjnr: provides entry point main().</p>
+<p>Running <code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> in the terminal prints riskmapjnr
+description and version. Can be used to check that the
+<code class="docutils literal notranslate"><span class="pre">riskmapjnr</span></code> Python package has been correctly imported.</p>
+</dd></dl>
+
 </section>
 </section>
 
