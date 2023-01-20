@@ -17,10 +17,17 @@ jobs:
         with:
            python-version: '3.11'
 
-      - name: Installing Sphinx
+      - name: Install gdal
         run: |
-          pip install sphinx
-          pip install https://github.com/ghislainv/riskmapjnr/archive/master.zip
+          sudo apt-get update
+          sudo apt-get install gdal-bin
+
+      - name: Installing Python packages
+        run: |
+          python3 -m pip install gdal==$(gdal-config --version)
+          python3 -m pip install requirements.txt
+          python3 -m pip install sphinx
+          python3 -m pip install .
 
       - name: Building documentation
         run: sphinx-build docsrc docs/html -b html -d docs/doctree
