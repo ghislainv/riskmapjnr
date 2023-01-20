@@ -18,7 +18,9 @@ jobs:
            python-version: '3.11'
 
       - name: Installing Sphinx
-        run: pip install sphinx
+        run: |
+          pip install sphinx
+          pip install https://github.com/ghislainv/riskmapjnr/archive/master.zip
 
       - name: Building documentation
         run: sphinx-build docsrc docs/html -b html -d docs/doctree
@@ -26,7 +28,7 @@ jobs:
       - name: Adding nojekyll file
         run: touch docs/html/.nojekyll
 
-      - name: Publish generated content to GitHub Pages
+      - name: Deploy generated content to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           branch: gh-pages
