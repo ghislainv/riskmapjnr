@@ -12,12 +12,12 @@
 # Standard library imports
 import os
 
-# Third party imports
-import matplotlib
-# Use Agg if no display found
-if os.name == "posix" and "DISPLAY" not in os.environ:
-    print("no display found. Using non-interactive Agg backend")
-    matplotlib.use("Agg")
+# # Third party imports
+# import matplotlib
+# # Use Agg if no display found
+# if os.name == "posix" and "DISPLAY" not in os.environ:
+#     print("no display found. Using non-interactive Agg backend")
+#     matplotlib.use("Agg")
 
 # Local imports
 from .defrate_per_cat import defrate_per_cat
