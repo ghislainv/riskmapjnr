@@ -1,14 +1,56 @@
 # Local documentation
 docs/
 
+# Biblio
+biblio.bib.bak
+
 # Reports
 _minted-*
 *~
 
 # Notebook data and outputs
 docsrc/notebooks/data
-outputs*
 docsrc/notebooks/grassdata
+docsrc/notebooks/FAO_report_1/outputs
+docsrc/notebooks/outputs_*
+
+# Steps
+!docsrc/notebooks/outputs_steps
+docsrc/notebooks/outputs_steps/*
+!docsrc/notebooks/outputs_steps/fcc123.png
+!docsrc/notebooks/outputs_steps/perc_dist.png
+!docsrc/notebooks/outputs_steps/riskmap.png
+!docsrc/notebooks/outputs_steps/pred_obs.png
+
+# Get started
+!docsrc/notebooks/outputs_get_started
+docsrc/notebooks/outputs_get_started/*
+!docsrc/notebooks/outputs_get_started/fcc123.png
+!docsrc/notebooks/outputs_get_started/fullhist
+docsrc/notebooks/outputs_get_started/fullhist/*
+!docsrc/notebooks/outputs_get_started/fullhist/perc_dist.png
+!docsrc/notebooks/outputs_get_started/modcomp
+docsrc/notebooks/outputs_get_started/modcomp/*
+!docsrc/notebooks/outputs_get_started/modcomp/mod_comp.png
+!docsrc/notebooks/outputs_get_started/modcomp/pred_obs_ws5_ei.png
+!docsrc/notebooks/outputs_get_started/endval
+docsrc/notebooks/outputs_get_started/endval/*
+!docsrc/notebooks/outputs_get_started/endval/riskmap_ws5_ei_ev.png
+
+# Kenya
+!docsrc/notebooks/outputs_kenya
+docsrc/notebooks/outputs_kenya/*
+!docsrc/notebooks/outputs_kenya/fcc123.png
+!docsrc/notebooks/outputs_kenya/fullhist
+docsrc/notebooks/outputs_kenya/fullhist/*
+!docsrc/notebooks/outputs_kenya/fullhist/perc_dist.png
+!docsrc/notebooks/outputs_kenya/modcomp
+docsrc/notebooks/outputs_kenya/modcomp/*
+!docsrc/notebooks/outputs_kenya/modcomp/mod_comp.png
+!docsrc/notebooks/outputs_kenya/modcomp/pred_obs_ws37_ei.png
+!docsrc/notebooks/outputs_kenya/endval
+docsrc/notebooks/outputs_kenya/endval/*
+!docsrc/notebooks/outputs_kenya/endval/riskmap_ws37_ei_ev.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
