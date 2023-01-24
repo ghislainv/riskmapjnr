@@ -28,8 +28,4 @@ from .plot import fcc123, riskmap
 # Import makemap in last as it uses from . import
 from .makemap import makemap
 
-# # Welcome message
-# print("# riskmapjnr: Map of deforestation risk following JNR methodology.")
-# print("# https://ecology.ghislainv.fr/riskmapjnr/")
-
 # EOF
