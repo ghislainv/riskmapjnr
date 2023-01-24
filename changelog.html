@@ -61,6 +61,7 @@
 <li class="toctree-l1"><a class="reference internal" href="reference.html">Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="indices.html">Indices and tables</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#riskmapjnr-1-2">riskmapjnr 1.2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#riskmapjnr-1-1">riskmapjnr 1.1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#riskmapjnr-1-0">riskmapjnr 1.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#riskmapjnr-0-1">riskmapjnr 0.1</a></li>
@@ -106,6 +107,20 @@
             
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this heading">¶</a></h1>
+<section id="riskmapjnr-1-2">
+<h2>riskmapjnr 1.2<a class="headerlink" href="#riskmapjnr-1-2" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Improving documentation.</p></li>
+<li><p>Bug corrections:</p>
+<ul>
+<li><p>Make sure that <code class="docutils literal notranslate"><span class="pre">fcc_file</span></code> is projected to compute distances.</p></li>
+<li><p>Let the user set Agg backend for matplotlib when DISPLAY is not found.</p></li>
+<li><p>Close and join the pool execution in <code class="docutils literal notranslate"><span class="pre">makemap()</span></code>.</p></li>
+</ul>
+</li>
+<li><p>This version is running without issues in <a class="reference external" href="https://sepal.io">SEPAL</a>.</p></li>
+</ul>
+</section>
 <section id="riskmapjnr-1-1">
 <h2>riskmapjnr 1.1<a class="headerlink" href="#riskmapjnr-1-1" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
@@ -116,13 +131,16 @@
 <h2>riskmapjnr 1.0<a class="headerlink" href="#riskmapjnr-1-0" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>First stable release.</p></li>
-<li><p>Parallel computation for <cite>makemap()</cite>.</p></li>
+<li><p>Parallel computation for <code class="docutils literal notranslate"><span class="pre">makemap()</span></code>.</p></li>
 <li><p>Benchmark to estimate advantage of parallel computing.</p></li>
 <li><p>New tutorials on large jurisdictions (countries).</p></li>
-<li><p>Bug corrections:
-- Correction of the annual deforestation rate formula.
-- Correction of the validation step using maps at the start of the validation period.
-- Correction of the final risk map at the end of the validation period.</p></li>
+<li><p>Bug corrections:</p>
+<ul>
+<li><p>Correction of the annual deforestation rate formula.</p></li>
+<li><p>Correction of the validation step using maps at the start of the validation period.</p></li>
+<li><p>Correction of the final risk map at the end of the validation period.</p></li>
+</ul>
+</li>
 </ul>
 </section>
 <section id="riskmapjnr-0-1">
