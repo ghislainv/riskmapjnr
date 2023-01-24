@@ -19,12 +19,16 @@ jobs:
 
       - name: Install gdal
         run: |
-          sudo apt-get update
-          sudo apt-get install gdal-bin libgdal-dev
+          udo add-apt-repository --yes ppa:ubuntugis/ppa
+          sudo apt-get --quiet update
+          sudo apt-get install --yes gdal-bin libgdal-dev
 
       - name: Installing Python packages
         run: |
-          python3 -m pip install gdal==$(gdal-config --version)
+          python3 -m pip install --upgrade pip
+          # Install NumPy before GDAL
+          python3 -m pip install numpy
+          python3 -m pip install --global-option=build_ext --global-option="-I/usr/include/gdal" gdal==$(gdal-config --version)
           python3 -m pip install -r requirements.txt
           python3 -m pip install sphinx
           python3 -m pip install .
