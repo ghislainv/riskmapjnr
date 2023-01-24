@@ -155,8 +155,8 @@
     <span class="c1"># ================</span>
     <span class="c1"># Check projection</span>
     <span class="c1"># ================</span>
-    <span class="n">proj</span> <span class="o">=</span> <span class="n">fcc_ds</span><span class="o">.</span><span class="n">GetProjectionRef</span><span class="p">()</span>
-    <span class="k">if</span> <span class="s2">&quot;AUTHORITY[</span><span class="se">\&quot;</span><span class="s2">EPSG</span><span class="se">\&quot;</span><span class="s2">,</span><span class="se">\&quot;</span><span class="s2">4326</span><span class="se">\&quot;</span><span class="s2">]]&quot;</span> <span class="ow">in</span> <span class="n">proj</span><span class="p">:</span>
+    <span class="n">crs</span><span class="o">=</span><span class="n">fcc_ds</span><span class="o">.</span><span class="n">GetSpatialRef</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">crs</span><span class="o">.</span><span class="n">IsProjected</span><span class="p">():</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;fcc_file&#39; cannot be in latlon coordinates &quot;</span>
                <span class="s2">&quot;and must be projected to compute euclidean &quot;</span>
                <span class="s2">&quot;distances.&quot;</span><span class="p">)</span>
