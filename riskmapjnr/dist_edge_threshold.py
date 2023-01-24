@@ -56,8 +56,8 @@ def check_fcc_file(fcc_file, blk_rows=128, verbose=True):
     # ================
     # Check projection
     # ================
-    proj = fcc_ds.GetProjectionRef()
-    if "AUTHORITY[\"EPSG\",\"4326\"]]" in proj:
+    crs=fcc_ds.GetSpatialRef()
+    if not crs.IsProjected():
         msg = ("'fcc_file' cannot be in latlon coordinates "
                "and must be projected to compute euclidean "
                "distances.")

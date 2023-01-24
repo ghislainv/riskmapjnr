@@ -432,7 +432,9 @@ def makemap(fcc_file, time_interval,
         csize_km = res[0][3]
         wRMSE_obj = [r[1] for r in res]
         df.loc[:, "wRMSE"] = np.array(wRMSE_obj).flatten()
-
+        pool.close()
+        pool.join()
+        
     # Export the table of results
     df.to_csv(tab_file_map_comp, sep=",", header=True,
               index=False, index_label=False)
