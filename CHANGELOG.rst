@@ -7,9 +7,9 @@ riskmapjnr 1.2
 * Improving documentation.
 * Bug corrections:
 
-  - Make sure that `fcc_file` is projected to compute distances.
+  - Make sure that ``fcc_file`` is projected to compute distances.
   - Let the user set Agg backend for matplotlib when DISPLAY is not found.
-  - Close and join the pool execution in `makemap()`.
+  - Close and join the pool execution in ``makemap()``.
 
 * This version is running without issues in `SEPAL <https://sepal.io>`_.
 
@@ -22,7 +22,7 @@ riskmapjnr 1.0
 --------------
 
 * First stable release.
-* Parallel computation for `makemap()`.
+* Parallel computation for ``makemap()``.
 * Benchmark to estimate advantage of parallel computing.
 * New tutorials on large jurisdictions (countries).
 * Bug corrections:
