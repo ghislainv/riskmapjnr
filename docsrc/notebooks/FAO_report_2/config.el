@@ -84,7 +84,8 @@
 
 ;; Bibliography
 (require 'oc-csl)
-(defvar bibdir (expand-file-name "biblio" default-directory) "Biblio directory.")
+(defvar bibdir (expand-file-name "biblio" default-directory)
+  "Biblio directory.")
 (setq org-cite-csl-styles-dir bibdir)
 
 ;; Function to export to pdf
