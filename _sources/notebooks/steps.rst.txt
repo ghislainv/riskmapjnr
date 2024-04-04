@@ -185,7 +185,7 @@ To save space on disk, deforestation rates are converted to integer values betwe
 4 Pixels with zero risk of deforestation
 ----------------------------------------
 
-This third step sets a value of 10001 to pixels with zero deforestation risk. As explained previously, a risk of deforestation of zero is assumed when distance to forest edge is greater than the distance below which more than 99% of the deforestation occurs.
+This third step sets a value of 0 to pixels with zero deforestation risk. Value 65535 will be used for NoData. As explained previously, a risk of deforestation of zero is assumed when distance to forest edge is greater than the distance below which more than 99% of the deforestation occurs.
 
 .. code:: python
 

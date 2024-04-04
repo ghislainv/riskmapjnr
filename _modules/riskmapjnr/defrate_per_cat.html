@@ -121,7 +121,8 @@
 <span class="c1"># defrate_per_cat</span>
 <div class="viewcode-block" id="defrate_per_cat">
 <a class="viewcode-back" href="../../reference.html#riskmapjnr.defrate_per_cat">[docs]</a>
-<span class="k">def</span> <span class="nf">defrate_per_cat</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">defor_values</span><span class="p">,</span> <span class="n">riskmap_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">defrate_per_cat</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">,</span> <span class="n">riskmap_file</span><span class="p">,</span> <span class="n">time_interval</span><span class="p">,</span>
+                    <span class="n">period</span><span class="o">=</span><span class="s2">&quot;calibration&quot;</span><span class="p">,</span>
                     <span class="n">tab_file_defrate</span><span class="o">=</span><span class="s2">&quot;defrate_per_cat.csv&quot;</span><span class="p">,</span>
                     <span class="n">blk_rows</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute deforestation rates per category of deforestation risk.</span>
@@ -134,17 +135,15 @@
 <span class="sd">        deforestation, 3: remaining forest at the end of the second</span>
 <span class="sd">        period. No data value must be 0 (zero).</span>
 
-<span class="sd">    :param defor_values: Raster values to consider for</span>
-<span class="sd">       deforestation. Must correspond to either scalar 1 if first</span>
-<span class="sd">       period, or list [1, 2] if both first and second period are</span>
-<span class="sd">       considered.</span>
-
 <span class="sd">    :param riskmap_file: Input raster file with categories of</span>
-<span class="sd">        spatial deforestation risk. This file is typically obtained</span>
-<span class="sd">        with function ``defor_cat()``.</span>
+<span class="sd">        spatial deforestation risk.</span>
 
 <span class="sd">    :param time_interval: Time interval (in years) for forest cover</span>
 <span class="sd">        change observations.</span>
+
+<span class="sd">    :param period: Either &quot;calibration&quot; (from t1 to t2), &quot;validation&quot;</span>
+<span class="sd">        (or &quot;confirmation&quot; from t2 to t3), or &quot;historical&quot; (full</span>
+<span class="sd">        historical period from t1 to t3). Default to &quot;calibration&quot;.</span>
 
 <span class="sd">    :param tab_file_defrate: Path to the ``.csv`` output file with</span>
 <span class="sd">        estimates of deforestation rates per category of deforestation</span>
@@ -169,6 +168,11 @@
     <span class="n">fcc_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">fcc_file</span><span class="p">)</span>
     <span class="n">fcc_band</span> <span class="o">=</span> <span class="n">fcc_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
+    <span class="c1"># Landscape variables</span>
+    <span class="n">gt</span> <span class="o">=</span> <span class="n">fcc_ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()</span>
+    <span class="n">xres</span> <span class="o">=</span> <span class="n">gt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">yres</span> <span class="o">=</span> <span class="o">-</span><span class="n">gt</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+
     <span class="c1"># Get defor_cat raster data</span>
     <span class="n">defor_cat_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">riskmap_file</span><span class="p">)</span>
     <span class="n">defor_cat_band</span> <span class="o">=</span> <span class="n">defor_cat_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -187,14 +191,12 @@
     <span class="c1"># ==============================================</span>
 
     <span class="c1"># Number of deforestation categories</span>
-    <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
-    <span class="n">stats</span> <span class="o">=</span> <span class="n">defor_cat_band</span><span class="o">.</span><span class="n">ComputeStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">cb</span><span class="p">)</span>
-    <span class="n">n_cat</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># Get the maximum</span>
+    <span class="n">n_cat</span> <span class="o">=</span> <span class="mi">65535</span>
     <span class="n">cat</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cat</span><span class="p">)]</span>
 
     <span class="c1"># Create a table to save the results</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;cat&quot;</span><span class="p">:</span> <span class="n">cat</span><span class="p">,</span> <span class="s2">&quot;nfor&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;ndefor&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">&quot;rate&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+            <span class="s2">&quot;rate_obs&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;rate_mod&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">}</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="c1"># Loop on blocks of data</span>
@@ -209,26 +211,56 @@
         <span class="n">fcc_data</span> <span class="o">=</span> <span class="n">fcc_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
         <span class="n">defor_cat_data</span> <span class="o">=</span> <span class="n">defor_cat_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span>
             <span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
+        <span class="c1"># Defor data on period</span>
+        <span class="k">if</span> <span class="n">period</span> <span class="o">==</span> <span class="s2">&quot;calibration&quot;</span><span class="p">:</span>
+            <span class="n">data_for</span> <span class="o">=</span> <span class="n">defor_cat_data</span><span class="p">[</span><span class="n">fcc_data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">data_defor</span> <span class="o">=</span> <span class="n">defor_cat_data</span><span class="p">[</span><span class="n">fcc_data</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">period</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">,</span> <span class="s2">&quot;confirmation&quot;</span><span class="p">]:</span>
+            <span class="n">data_for</span> <span class="o">=</span> <span class="n">defor_cat_data</span><span class="p">[</span><span class="n">fcc_data</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">data_defor</span> <span class="o">=</span> <span class="n">defor_cat_data</span><span class="p">[</span><span class="n">fcc_data</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">period</span> <span class="o">==</span> <span class="s2">&quot;historical&quot;</span><span class="p">:</span>
+            <span class="n">data_for</span> <span class="o">=</span> <span class="n">defor_cat_data</span><span class="p">[</span><span class="n">fcc_data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">data_defor</span> <span class="o">=</span> <span class="n">defor_cat_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">fcc_data</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])]</span>
         <span class="c1"># nfor_per_cat</span>
-        <span class="n">data_for</span> <span class="o">=</span> <span class="n">defor_cat_data</span><span class="p">[</span><span class="n">fcc_data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
         <span class="n">cat_for</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">data_for</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">categories</span><span class="o">=</span><span class="n">cat</span><span class="p">)</span>
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;nfor&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">cat_for</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
         <span class="c1"># ndefor_per_cat</span>
-        <span class="n">data_defor</span> <span class="o">=</span> <span class="n">defor_cat_data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">fcc_data</span><span class="p">,</span> <span class="n">defor_values</span><span class="p">)]</span>
         <span class="n">cat_defor</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">data_defor</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">categories</span><span class="o">=</span><span class="n">cat</span><span class="p">)</span>
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">cat_defor</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
 
     <span class="c1"># Annual deforestation rates per category</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;nfor&quot;</span><span class="p">])</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">time_interval</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;rate_obs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;nfor&quot;</span><span class="p">])</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">time_interval</span><span class="p">)</span>
+
+    <span class="c1"># Relative spatial deforestation probability from model</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;rate_mod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;cat&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">999999</span> <span class="o">/</span> <span class="mi">65534</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-6</span>
+    <span class="c1"># Set proba of deforestation to 0 for category 1</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;cat&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;rate_mod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Correction factor, either ndefor / sum_i p_i</span>
+    <span class="c1"># or theta * nfor / sum_i p_i</span>
+    <span class="n">sum_ndefor</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;ndefor&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">sum_pi</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;nfor&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;rate_mod&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">correction_factor</span> <span class="o">=</span> <span class="n">sum_ndefor</span> <span class="o">/</span> <span class="n">sum_pi</span>
+
+    <span class="c1"># Absolute deforestation probability</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;rate_abs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;rate_mod&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">correction_factor</span>
+
+    <span class="c1"># Time interval</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;time_interval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_interval</span>
+
+    <span class="c1"># Pixel area</span>
+    <span class="n">pixel_area</span> <span class="o">=</span> <span class="n">xres</span> <span class="o">*</span> <span class="n">yres</span> <span class="o">/</span> <span class="mi">10000</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;pixel_area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pixel_area</span>
+
+    <span class="c1"># Deforestation density (ha/pixel/yr)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;defor_dens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;rate_abs&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">pixel_area</span> <span class="o">/</span> <span class="n">time_interval</span>
 
     <span class="c1"># Export the table of results</span>
     <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">tab_file_defrate</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
               <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index_label</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Dereference drivers</span>
-    <span class="k">del</span> <span class="n">fcc_ds</span><span class="p">,</span> <span class="n">defor_cat_ds</span>
-
-    <span class="k">return</span> <span class="kc">None</span></div>
+    <span class="k">del</span> <span class="n">fcc_ds</span><span class="p">,</span> <span class="n">defor_cat_ds</span></div>
 
 
 

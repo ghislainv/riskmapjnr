@@ -327,7 +327,7 @@
 </section>
 <section id="pixels-with-zero-risk-of-deforestation">
 <h2><a class="toc-backref" href="#id11" role="doc-backlink">4 Pixels with zero risk of deforestation</a><a class="headerlink" href="#pixels-with-zero-risk-of-deforestation" title="Link to this heading">¶</a></h2>
-<p>This third step sets a value of 10001 to pixels with zero deforestation risk. As explained previously, a risk of deforestation of zero is assumed when distance to forest edge is greater than the distance below which more than 99% of the deforestation occurs.</p>
+<p>This third step sets a value of 0 to pixels with zero deforestation risk. Value 65535 will be used for NoData. As explained previously, a risk of deforestation of zero is assumed when distance to forest edge is greater than the distance below which more than 99% of the deforestation occurs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rmj</span><span class="o">.</span><span class="n">set_defor_cat_zero</span><span class="p">(</span>
     <span class="n">ldefrate_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;ldefrate.tif&quot;</span><span class="p">),</span>
     <span class="n">dist_file</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;dist_edge.tif&quot;</span><span class="p">),</span>

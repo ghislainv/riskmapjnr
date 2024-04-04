@@ -154,7 +154,7 @@ Byte ([0, 255]). NoData value is set to 255.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="riskmapjnr.defrate_per_cat">
-<span class="sig-name descname"><span class="pre">defrate_per_cat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defor_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">riskmap_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_file_defrate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'defrate_per_cat.csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/defrate_per_cat.html#defrate_per_cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.defrate_per_cat" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">defrate_per_cat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">riskmap_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'calibration'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tab_file_defrate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'defrate_per_cat.csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/defrate_per_cat.html#defrate_per_cat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.defrate_per_cat" title="Link to this definition">¶</a></dt>
 <dd><p>Compute deforestation rates per category of deforestation risk.</p>
 <p>This function computes the historical deforestation rates for each
 category of spatial deforestation risk.</p>
@@ -165,15 +165,13 @@ category of spatial deforestation risk.</p>
 dates (123). 1: first period deforestation, 2: second period
 deforestation, 3: remaining forest at the end of the second
 period. No data value must be 0 (zero).</p></li>
-<li><p><strong>defor_values</strong> – Raster values to consider for
-deforestation. Must correspond to either scalar 1 if first
-period, or list [1, 2] if both first and second period are
-considered.</p></li>
 <li><p><strong>riskmap_file</strong> – Input raster file with categories of
-spatial deforestation risk. This file is typically obtained
-with function <code class="docutils literal notranslate"><span class="pre">defor_cat()</span></code>.</p></li>
+spatial deforestation risk.</p></li>
 <li><p><strong>time_interval</strong> – Time interval (in years) for forest cover
 change observations.</p></li>
+<li><p><strong>period</strong> – Either “calibration” (from t1 to t2), “validation”
+(or “confirmation” from t2 to t3), or “historical” (full
+historical period from t1 to t3). Default to “calibration”.</p></li>
 <li><p><strong>tab_file_defrate</strong> – Path to the <code class="docutils literal notranslate"><span class="pre">.csv</span></code> output file with
 estimates of deforestation rates per category of deforestation
 risk.</p></li>
@@ -267,7 +265,7 @@ dist_thresh.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="riskmapjnr.local_defor_rate">
-<span class="sig-name descname"><span class="pre">local_defor_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defor_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ldefrate_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/local_defor_rate.html#local_defor_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.local_defor_rate" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">local_defor_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcc_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defor_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ldefrate_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale_min_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale_max_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/local_defor_rate.html#local_defor_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.local_defor_rate" title="Link to this definition">¶</a></dt>
 <dd><p>Computing the local deforestation rate using a moving window.</p>
 <p>This function computes the local deforestation rate using a moving
 window. SciPy is used for the focal analysis. The
@@ -293,6 +291,10 @@ considered.</p></li>
 cells. Must be an odd number lower or equal to <code class="docutils literal notranslate"><span class="pre">blk_rows</span></code>.</p></li>
 <li><p><strong>time_interval</strong> – Time interval (in years) for forest cover
 change observations.</p></li>
+<li><p><strong>rescale_min_val</strong> – Integer. Minimal value for rescaling. Down
+to 1. Default to 1.</p></li>
+<li><p><strong>rescale_max_val</strong> – Integer. Maximal value for rescaling. Up
+to 65535. Default to 10000.</p></li>
 <li><p><strong>blk_rows</strong> – Number of rows for block. Must be greater or
 equal to <code class="docutils literal notranslate"><span class="pre">win_size</span></code>. This is used to break lage raster files
 in several blocks of data that can be hold in memory.</p></li>
@@ -493,16 +495,18 @@ of the best risk map.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="riskmapjnr.set_defor_cat_zero">
 <span class="sig-name descname"><span class="pre">set_defor_cat_zero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ldefrate_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_thresh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ldefrate_with_zero_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ldefrate_with_zero.tif'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blk_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/riskmapjnr/set_defor_cat_zero.html#set_defor_cat_zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#riskmapjnr.set_defor_cat_zero" title="Link to this definition">¶</a></dt>
-<dd><p>Set a value of zero (0) to pixels with zero deforestation risk. A
-risk of deforestation of zero is assumed when distance to forest
-edge is greater than the distance threshold.</p>
+<dd><p>Set a value of one (1) to pixels with zero deforestation
+risk. A null risk of deforestation is assumed when distance to
+forest edge is greater than the distance threshold. NoData value
+is set to zero (0).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ldefrate_file</strong> – Input raster file of local deforestation
 rates. Deforestation rates are defined by integer values
-between 1 and 10000 (ten thousand). This file is typically
-obtained with function <code class="docutils literal notranslate"><span class="pre">local_defor_rate()</span></code>.</p></li>
+between rescale_min_val (e.g. 2) and rescale_max_val
+(e.g. 10000). This file is typically obtained with function
+<code class="docutils literal notranslate"><span class="pre">local_defor_rate()</span></code>.</p></li>
 <li><p><strong>dist_file</strong> – Path to the distance to forest edge raster file.</p></li>
 <li><p><strong>dist_thresh</strong> – The distance threshold. This distance
 threshold is used to identify pixels with zero deforestation
@@ -510,7 +514,7 @@ risk.</p></li>
 <li><p><strong>ldefrate_with_zero_file</strong> – Output raster file. Default to
 “ldefrate_with_zero.tif” in the current working
 directory. Pixels with zero deforestation risk are assigned a
-value of 0.</p></li>
+value of 1.</p></li>
 <li><p><strong>blk_rows</strong> – If &gt; 0, number of rows for computation by block.</p></li>
 <li><p><strong>verbose</strong> – Logical. Whether to print messages or not. Default
 to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
@@ -518,7 +522,7 @@ to <code class="docutils literal notranslate"><span class="pre">True</span></cod
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None. A raster file identifying pixels with zero risk of
-deforestation (value 0) will be created (see
+deforestation (value 1) will be created (see
 <code class="docutils literal notranslate"><span class="pre">ldefrate_with_zero_file</span></code>).</p>
 </dd>
 </dl>

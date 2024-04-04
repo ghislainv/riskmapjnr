@@ -258,7 +258,7 @@
     <span class="c1"># Total number of pixels</span>
     <span class="n">npixels_orig</span> <span class="o">=</span> <span class="n">ncol</span> <span class="o">*</span> <span class="n">nrow</span>
     <span class="c1"># Check number of pixels is inferior to maxpixels</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">npixels_orig</span> <span class="o">&gt;</span> <span class="n">maxpixels</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">npixels_orig</span> <span class="o">&gt;</span> <span class="n">maxpixels</span><span class="p">:</span>
         <span class="c1"># Remove potential existing external overviews</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">input_fcc_raster</span> <span class="o">+</span> <span class="s2">&quot;.ovr&quot;</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">input_fcc_raster</span> <span class="o">+</span> <span class="s2">&quot;.ovr&quot;</span><span class="p">)</span>
@@ -282,7 +282,7 @@
 
     <span class="c1"># Dereference driver</span>
     <span class="n">rasterB</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">del</span><span class="p">(</span><span class="n">rasterR</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">rasterR</span>
 
     <span class="c1"># Colormap</span>
     <span class="n">colors</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>  <span class="c1"># transparent white for 0</span>
@@ -321,8 +321,14 @@
     <span class="c1"># Save and return figure</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
-    <span class="k">return</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">fig</span></div>
 
+
+
+<span class="k">def</span> <span class="nf">rescale_zo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rescale on interval zero-one.&quot;&quot;&quot;</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">z</span>
 
 
 <span class="c1"># plot.riskmap</span>
@@ -370,7 +376,7 @@
     <span class="c1"># Total number of pixels</span>
     <span class="n">npixels_orig</span> <span class="o">=</span> <span class="n">ncol</span> <span class="o">*</span> <span class="n">nrow</span>
     <span class="c1"># Check number of pixels is inferior to maxpixels</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">npixels_orig</span> <span class="o">&gt;</span> <span class="n">maxpixels</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">npixels_orig</span> <span class="o">&gt;</span> <span class="n">maxpixels</span><span class="p">:</span>
         <span class="c1"># Remove potential existing external overviews</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">input_risk_map</span> <span class="o">+</span> <span class="s2">&quot;.ovr&quot;</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">input_risk_map</span> <span class="o">+</span> <span class="s2">&quot;.ovr&quot;</span><span class="p">)</span>
@@ -393,46 +399,54 @@
 
     <span class="c1"># Dereference driver</span>
     <span class="n">rasterB</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">del</span><span class="p">(</span><span class="n">rasterR</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">rasterR</span>
 
     <span class="c1"># Colormap</span>
     <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">cmax</span> <span class="o">=</span> <span class="mf">255.0</span>  <span class="c1"># float for division</span>
-    <span class="n">vmax</span> <span class="o">=</span> <span class="mf">30.0</span>  <span class="c1"># float for division</span>
+    <span class="n">vmin</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">vmax</span> <span class="o">=</span> <span class="mf">65535.0</span>  <span class="c1"># float for division</span>
     <span class="c1"># green</span>
-    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mi">34</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">139</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">34</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">rescale_zo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">),</span>
+                   <span class="p">(</span><span class="mi">34</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">139</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">34</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
     <span class="c1"># orange</span>
-    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="n">vmax</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">165</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">rescale_zo</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">),</span>
+                   <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">165</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
     <span class="c1"># red</span>
-    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">15</span> <span class="o">/</span> <span class="n">vmax</span><span class="p">,</span> <span class="p">(</span><span class="mi">227</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">26</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">28</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">rescale_zo</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">),</span>
+                   <span class="p">(</span><span class="mi">227</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">26</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">28</span> <span class="o">/</span> <span class="n">cmax</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
     <span class="c1"># black</span>
-    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
-    <span class="n">color_map</span> <span class="o">=</span> <span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;mycm&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span>
-                                                  <span class="n">N</span><span class="o">=</span><span class="mi">31</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-    <span class="c1"># Set transparent color for high out-of-range values.</span>
-    <span class="n">color_map</span><span class="o">.</span><span class="n">set_over</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">rescale_zo</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">),</span>
+                   <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">rescale_zo</span><span class="p">(</span><span class="mi">65535</span><span class="p">,</span> <span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">),</span>
+                   <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="n">color_map</span> <span class="o">=</span> <span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mycm&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">65535</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span>
+    <span class="p">)</span>
+    <span class="c1"># Set transparent color for lower out-of-range values.</span>
+    <span class="n">color_map</span><span class="o">.</span><span class="n">set_under</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
     <span class="c1"># Plot raster</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">ov_arr</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">color_map</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span>
-               <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+               <span class="n">vmin</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">65535</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">borders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">plot_layer</span><span class="p">(</span><span class="n">borders</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="s2">&quot;k-&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1"># Legend</span>
     <span class="k">if</span> <span class="n">legend</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">65535</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">ticks</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
                             <span class="n">shrink</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
-        <span class="n">vl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">vl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
 
     <span class="c1"># Save image</span>
     <span class="n">figure_as_image</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
 
     <span class="c1"># Return figure</span>
-    <span class="k">return</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">fig</span></div>
 
 
 <span class="c1"># EOF</span>
