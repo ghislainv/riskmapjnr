@@ -279,8 +279,8 @@ def dist_edge_threshold(fcc_file,
         dist_values(fcc_file, dist_file, values=0, verbose=verbose)
 
     # Create a table to save the results
-    data = {"distance": dist_bins[1:], "npix": 0, "area": 0,
-            "cum": 0, "perc": 0}
+    data = {"distance": dist_bins[1:], "npix": 0, "area": 0.0,
+            "cum": 0.0, "perc": 0.0}
     res_df = pd.DataFrame(data)
 
     # Total deforested pixels
@@ -321,14 +321,15 @@ def dist_edge_threshold(fcc_file,
         dist_cat = pd.cut(dist_def.flatten(), dist_bins, right=True)
         # Sum by category
         df = pd.DataFrame({"dist": dist_cat})
-        counts = df.groupby(df.dist).size()
+        counts = df.groupby(df.dist, observed=False).size()
         # Update data-frame
         res_df.loc[:, "npix"] += counts.values
 
     # Compute deforested areas
     gt = dist_ds.GetGeoTransform()
     pix_area = gt[1] * (-gt[5])
-    res_df.loc[:, "area"] = res_df["npix"].values * pix_area / 10000
+    area = res_df["npix"].values * pix_area / 10000
+    res_df.loc[:, "area"] = area
     tot_area_def = npix_def * pix_area / 10000
     # Cumulated deforestation
     res_df.loc[:, "cum"] = res_df["area"].cumsum().values

@@ -36,7 +36,7 @@ def invlogit(x):
     r = x
     r[x > 0] = 1.0 / (1.0 + np.exp(-x[x > 0]))
     r[x <= 0] = np.exp(x[x <= 0]) / (1 + np.exp(x[x <= 0]))
-    return (r)
+    return r
 
 
 # Function to make a directory
@@ -177,10 +177,39 @@ def progress_bar(niter, i):
     elif i % step == 0:
         sys.stdout.write("\r{}%".format((100 * i) // niter))
         sys.stdout.flush()
-    if (i == niter):
+    if i == niter:
         sys.stdout.write("\r100%\n")
         sys.stdout.flush()
-    return None
+
+
+# Rescale
+def rescale(value, min_val=1, max_val=10000):
+    """Rescale probability values to.
+
+    This function rescales probability values (float in [0, 1]) to
+    integer values in [min_val, max_val]. Raster data can then be of type
+    UInt16 with 0 as nodata value.
+
+    :param value: Numpy array of float values in [0, 1].
+
+    :param min_val: Integer. Minimal value for
+        rescaling. Down to 1. Default to 1.
+
+    :param max_val: Integer. Maximal value for
+        rescaling. Up to 65535. Default to 10000.
+
+    :return: Rescaled numpy array of integer values in [min_val, max_val].
+
+    """
+
+    # Transform to float (otherwise 1e-06 is set to 0)
+    value = value.astype(float)
+    # Avoid nodata value (0) for low proba
+    value[value < 1e-06] = 1e-06
+    # Rescale and round to nearest integer
+    r = ((value * 1e6 - 1) * (max_val - min_val) / 999999.0) + min_val
+    r = np.rint(r).astype(int)
+    return r
 
 
 # Tree

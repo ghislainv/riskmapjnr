@@ -20,7 +20,7 @@ from .dist_edge_threshold import dist_values, dist_edge_threshold
 from .get_ldefz_v import get_ldefz_v
 from .get_riskmap_v import get_riskmap_v
 from .local_defor_rate import local_defor_rate
-from .misc import countpix, invlogit, make_dir, tree
+from .misc import countpix, invlogit, make_dir, tree, rescale
 from .set_defor_cat_zero import set_defor_cat_zero
 from .validation import validation
 from .validation_fcc import validation_fcc

@@ -157,7 +157,7 @@ def fcc123(input_fcc_raster,
     # Total number of pixels
     npixels_orig = ncol * nrow
     # Check number of pixels is inferior to maxpixels
-    if (npixels_orig > maxpixels):
+    if npixels_orig > maxpixels:
         # Remove potential existing external overviews
         if os.path.isfile(input_fcc_raster + ".ovr"):
             os.remove(input_fcc_raster + ".ovr")
@@ -181,7 +181,7 @@ def fcc123(input_fcc_raster,
 
     # Dereference driver
     rasterB = None
-    del(rasterR)
+    del rasterR
 
     # Colormap
     colors = [(1, 1, 1, 0)]  # transparent white for 0
@@ -220,7 +220,13 @@ def fcc123(input_fcc_raster,
     # Save and return figure
     fig.tight_layout()
     fig.savefig(output_file, dpi="figure", bbox_inches="tight")
-    return(fig)
+    return fig
+
+
+def rescale_zo(x, xmin, xmax):
+    """Rescale on interval zero-one."""
+    z = (x - xmin) / (xmax - xmin)
+    return z
 
 
 # plot.riskmap
@@ -266,7 +272,7 @@ def riskmap(input_risk_map,
     # Total number of pixels
     npixels_orig = ncol * nrow
     # Check number of pixels is inferior to maxpixels
-    if (npixels_orig > maxpixels):
+    if npixels_orig > maxpixels:
         # Remove potential existing external overviews
         if os.path.isfile(input_risk_map + ".ovr"):
             os.remove(input_risk_map + ".ovr")
@@ -289,45 +295,53 @@ def riskmap(input_risk_map,
 
     # Dereference driver
     rasterB = None
-    del(rasterR)
+    del rasterR
 
     # Colormap
     colors = []
     cmax = 255.0  # float for division
-    vmax = 30.0  # float for division
+    vmin = 1.0
+    vmax = 65535.0  # float for division
     # green
-    colors.append((0, (34 / cmax, 139 / cmax, 34 / cmax, 1)))
+    colors.append((rescale_zo(1, vmin, vmax),
+                   (34 / cmax, 139 / cmax, 34 / cmax, 1)))
     # orange
-    colors.append((1 / vmax, (1, 165 / cmax, 0, 1)))
+    colors.append((rescale_zo(2, vmin, vmax),
+                   (1, 165 / cmax, 0, 1)))
     # red
-    colors.append((15 / vmax, (227 / cmax, 26 / cmax, 28 / cmax, 1)))
+    colors.append((rescale_zo(100, vmin, vmax),
+                   (227 / cmax, 26 / cmax, 28 / cmax, 1)))
     # black
-    colors.append((1, (0, 0, 0, 1)))
-    color_map = LinearSegmentedColormap.from_list(name="mycm", colors=colors,
-                                                  N=31, gamma=1.0)
-    # Set transparent color for high out-of-range values.
-    color_map.set_over(color=(1, 1, 1, 0))
+    colors.append((rescale_zo(10000, vmin, vmax),
+                   (0, 0, 0, 1)))
+    colors.append((rescale_zo(65535, vmin, vmax),
+                   (0, 0, 0, 1)))
+    color_map = LinearSegmentedColormap.from_list(
+        name="mycm", colors=colors, N=65535, gamma=1.0
+    )
+    # Set transparent color for lower out-of-range values.
+    color_map.set_under(color=(1, 1, 1, 0))
 
     # Plot raster
     fig = plt.figure(figsize=figsize, dpi=dpi)
     plt.subplot(111)
     plt.imshow(ov_arr, cmap=color_map, extent=extent,
-               vmin=0, vmax=30)
+               vmin=0.01, vmax=65535)
     if borders is not None:
         plot_layer(borders, symbol="k-", **kwargs)
 
     # Legend
     if legend is True:
-        t = np.linspace(0, 30, 7, endpoint=True)
+        t = np.linspace(0, 65535, 6, endpoint=True)
         cbar = plt.colorbar(ticks=t, orientation="vertical",
                             shrink=0.5, aspect=20)
-        vl = np.linspace(0, 30, 7, endpoint=True).astype(int)
+        vl = np.linspace(0, 1, 6, endpoint=True).astype(int)
         cbar.ax.set_yticklabels(vl)
 
     # Save image
     figure_as_image(fig, output_file)
 
     # Return figure
-    return(fig)
+    return fig
 
 # EOF

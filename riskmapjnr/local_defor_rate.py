@@ -16,12 +16,14 @@ from osgeo import gdal
 import scipy.ndimage
 
 # Local application imports
-from .misc import progress_bar
+from .misc import progress_bar, rescale
 
 
 # local_defor_rate
 def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
-                     time_interval, blk_rows=128, verbose=True):
+                     time_interval, rescale_min_val=2,
+                     rescale_max_val=10000, blk_rows=128,
+                     verbose=True):
     """Computing the local deforestation rate using a moving window.
 
     This function computes the local deforestation rate using a moving
@@ -51,6 +53,12 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
     :param time_interval: Time interval (in years) for forest cover
         change observations.
 
+    :param rescale_min_val: Integer. Minimal value for rescaling. Down
+        to 1. Default to 1.
+
+    :param rescale_max_val: Integer. Maximal value for rescaling. Up
+        to 65535. Default to 10000.
+
     :param blk_rows: Number of rows for block. Must be greater or
         equal to ``win_size``. This is used to break lage raster files
         in several blocks of data that can be hold in memory.
@@ -70,7 +78,7 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
     if (win_size % 2) == 0:
         msg = "'win_size' must be an odd number."
         raise ValueError(msg)
-    if (win_size > blk_rows):
+    if win_size > blk_rows:
         msg = "'win_size' must be lower or equal to 'blk_rows'."
         raise ValueError(msg)
 
@@ -90,7 +98,7 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
     out_ds.SetProjection(in_ds.GetProjection())
     out_ds.SetGeoTransform(in_ds.GetGeoTransform())
     out_band = out_ds.GetRasterBand(1)
-    out_band.SetNoDataValue(65535)
+    out_band.SetNoDataValue(0)
 
     # Iteration
     iter_block = 0
@@ -125,7 +133,7 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
         win_defor = scipy.ndimage.uniform_filter(
             defor_data, size=win_size, mode="constant", cval=0,
             output=float) * (win_size ** 2)
-        # Round to nearest inter to remove approximation due to float precision
+        # Round to nearest int to remove approximation due to float precision
         win_defor = np.rint(win_defor).astype(int)
         # for (start of first period)
         for_data = np.zeros(in_data.shape, int)
@@ -138,9 +146,10 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
         # Round to nearest inter to remove approximation due to float precision
         win_for = np.rint(win_for).astype(int)
         # Annual deforestation rate
-        out_data = np.ones(in_data.shape, int) * 65535
+        out_data = np.zeros(in_data.shape, int)
         theta = 1 - (1 - win_defor[w] / win_for[w]) ** (1 / time_interval)
-        out_data[w] = np.rint(9999 * theta + 1).astype(int)  # min=1, max=10000
+        # Rescale
+        out_data[w] = rescale(theta, rescale_min_val, rescale_max_val)
         if yoff == 0:
             out_band.WriteArray(out_data)
         else:
@@ -152,7 +161,6 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
     cb = gdal.TermProgress if verbose else 0
     out_band.ComputeStatistics(False, cb)
     del out_ds, in_ds
-    return None
 
 
 # # Test

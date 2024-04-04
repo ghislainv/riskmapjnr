@@ -35,8 +35,9 @@ def get_ldefz_v(ldefrate_file,
 
     :param ldefrate_file: Input raster file of local deforestation
         rates. Deforestation rates are defined by integer values
-        between 0 and 10000 (ten thousand). This file is typically
-        obtained with function ``local_defor_rate()``.
+        between rescale_min_val (e.g. 2) and rescale_max_val
+        (e.g. 10000). This file is typically obtained with function
+        ``local_defor_rate()``.
 
     :param dist_v_file: Input raster file of distance to forest edge
         at the beginning of the validation period. This file is
@@ -59,10 +60,10 @@ def get_ldefz_v(ldefrate_file,
     :param verbose: Logical. Whether to print messages or not. Default
         to ``True``.
 
-    :return: None. A raster files of local deforestation rate at the
-    beginning of the validation period is created (see
-    ``ldefrate_with_zero_v_file``). Data range from 0 to 10000. Raster
-    type is UInt16 ([0, 65535]). NoData value is set to 65535.
+    :return: None. A raster files of local deforestation risk at the
+        beginning of the validation period is created (see
+        ``ldefrate_with_zero_v_file``). Data range from 1 to 65535. Raster
+        type is UInt16 ([0, 65535]). NoData value is set to 0.
 
     """
 
@@ -91,7 +92,7 @@ def get_ldefz_v(ldefrate_file,
     ldefzv_ds.SetProjection(ldef_ds.GetProjection())
     ldefzv_ds.SetGeoTransform(ldef_ds.GetGeoTransform())
     ldefzv_band = ldefzv_ds.GetRasterBand(1)
-    ldefzv_band.SetNoDataValue(65535)
+    ldefzv_band.SetNoDataValue(0)
 
     # Make blocks
     blockinfo = makeblock(ldefrate_file, blk_rows=blk_rows)
@@ -115,9 +116,9 @@ def get_ldefz_v(ldefrate_file,
         distv_data = distv_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
         # Remove defor rate for fcc == 1 (corresponding to distv == 0)
         ldefzv_data = ldef_data
-        ldefzv_data[distv_data == 0] = 65535
-        # Set 0 risk beyond distance threshold
-        ldefzv_data[distv_data >= dist_thresh] = 0
+        ldefzv_data[distv_data == 0] = 0
+        # Set 1 for null risk beyond distance threshold
+        ldefzv_data[distv_data >= dist_thresh] = 1
         # Write to files
         ldefzv_band.WriteArray(ldefzv_data, x[px], y[py])
 
@@ -130,7 +131,6 @@ def get_ldefz_v(ldefrate_file,
     ldefzv_band = None
     del ldef_ds, distv_ds, ldefzv_ds
 
-    return None
 
 # # Test
 # ldefrate_file = "outputs_steps/ldefrate.tif"

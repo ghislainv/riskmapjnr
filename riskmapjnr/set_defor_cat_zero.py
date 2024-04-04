@@ -24,14 +24,16 @@ def set_defor_cat_zero(ldefrate_file,
                        ldefrate_with_zero_file="ldefrate_with_zero.tif",
                        blk_rows=128,
                        verbose=True):
-    """Set a value of zero (0) to pixels with zero deforestation risk. A
-    risk of deforestation of zero is assumed when distance to forest
-    edge is greater than the distance threshold.
+    """Set a value of one (1) to pixels with zero deforestation
+    risk. A null risk of deforestation is assumed when distance to
+    forest edge is greater than the distance threshold. NoData value
+    is set to zero (0).
 
     :param ldefrate_file: Input raster file of local deforestation
         rates. Deforestation rates are defined by integer values
-        between 1 and 10000 (ten thousand). This file is typically
-        obtained with function ``local_defor_rate()``.
+        between rescale_min_val (e.g. 2) and rescale_max_val
+        (e.g. 10000). This file is typically obtained with function
+        ``local_defor_rate()``.
 
     :param dist_file: Path to the distance to forest edge raster file.
 
@@ -42,7 +44,7 @@ def set_defor_cat_zero(ldefrate_file,
     :param ldefrate_with_zero_file: Output raster file. Default to
         "ldefrate_with_zero.tif" in the current working
         directory. Pixels with zero deforestation risk are assigned a
-        value of 0.
+        value of 1.
 
     :param blk_rows: If > 0, number of rows for computation by block.
 
@@ -50,7 +52,7 @@ def set_defor_cat_zero(ldefrate_file,
         to ``True``.
 
     :return: None. A raster file identifying pixels with zero risk of
-        deforestation (value 0) will be created (see
+        deforestation (value 1) will be created (see
         ``ldefrate_with_zero_file``).
 
     """
@@ -92,7 +94,7 @@ def set_defor_cat_zero(ldefrate_file,
     catzero_ds.SetProjection(ldefrate_ds.GetProjection())
     catzero_ds.SetGeoTransform(ldefrate_ds.GetGeoTransform())
     catzero_band = catzero_ds.GetRasterBand(1)
-    catzero_band.SetNoDataValue(65535)
+    catzero_band.SetNoDataValue(0)
 
     # Loop on blocks of data
     for b in range(nblock):
@@ -105,8 +107,8 @@ def set_defor_cat_zero(ldefrate_file,
         # Data
         catzero_data = ldefrate_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
         dist_data = dist_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
-        # Set 0 risk beyond distance threshold
-        catzero_data[dist_data >= dist_thresh] = 0
+        # Set 1 for zero risk of deforestation (beyond distance threshold)
+        catzero_data[dist_data >= dist_thresh] = 1
         catzero_band.WriteArray(catzero_data, x[px], y[py])
 
     # Compute statistics
