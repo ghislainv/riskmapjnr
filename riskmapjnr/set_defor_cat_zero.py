@@ -107,6 +107,8 @@ def set_defor_cat_zero(ldefrate_file,
         # Data
         catzero_data = ldefrate_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
         dist_data = dist_band.ReadAsArray(x[px], y[py], nx[px], ny[py])
+        # Ensure NoData when dist_data equals zero (especially for t2)
+        catzero_data[dist_data == 0] = 0
         # Set 1 for zero risk of deforestation (beyond distance threshold)
         catzero_data[dist_data >= dist_thresh] = 1
         catzero_band.WriteArray(catzero_data, x[px], y[py])

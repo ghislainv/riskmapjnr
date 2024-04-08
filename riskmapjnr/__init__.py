@@ -1,13 +1,16 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""
+riskmapjnr: mapping deforestation risk using the moving window approach.
+https://ecology.ghislainv.fr/riskmapknr/
+"""
 
-# ==============================================================================
-# author          :Ghislain Vieilledent
-# email           :ghislain.vieilledent@cirad.fr, ghislainv@gmail.com
-# web             :https://ecology.ghislainv.fr
-# python_version  :>=3
-# license         :GPLv3
-# ==============================================================================
+# Define double undescore variables
+# https://peps.python.org/pep-0008/#module-level-dunder-names
+__author__ = "Ghislain Vieilledent"
+__email__ = "ghislain.vieilledent@cirad.fr"
+__version__ = "1.2"
+
+# GDAL exceptions
+from osgeo import gdal
 
 # Standard library imports
 import os
@@ -27,5 +30,8 @@ from .validation_fcc import validation_fcc
 from .plot import fcc123, riskmap
 # Import makemap in last as it uses from . import
 from .makemap import makemap
+
+# GDAL exceptions
+gdal.UseExceptions()
 
 # EOF

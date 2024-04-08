@@ -9,7 +9,7 @@
 # license         :GPLv3
 # ==============================================================================
 
-__version__ = "1.2"
+import riskmapjnr as rmj
 
 
 def main():
@@ -20,9 +20,8 @@ def main():
     ``riskmapjnr`` Python package has been correctly imported.
 
     """
-    print("# riskmapjnr: Map of deforestation risk following JNR methodology.")
-    print("# https://ecology.ghislainv.fr/riskmapjnr")
-    print("# riskmapjnr version {}.".format(__version__))
-    return None
+
+    print(rmj.__doc__)
+    print(f"version {rmj.__version__}.")
 
 # End
