@@ -1,6 +1,14 @@
 Changelog
 =========
 
+riskmapjnr 1.2.1
+----------------
+
+* Bug corrections.
+* Set non-forest area as NoData in ``set_defor_cat_zero.py``.
+
+* This version is used by the Qgis Deforisk plugin.
+
 riskmapjnr 1.2
 --------------
 
