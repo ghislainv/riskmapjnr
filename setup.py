@@ -17,14 +17,11 @@ from setuptools import setup, find_packages
 
 # find_version
 def find_version():
-    with open('riskmapjnr/riskmapjnr.py') as f:
-        far = f.read()
-    version = re.search(
-        '^__version__\\s*=\\s*"(.*)"',
-        far,
-        re.M
-    ).group(1)
-    return version
+    """Finding package version."""
+    with open("riskmapjnr/__init__.py", encoding="utf-8") as init_file:
+        init_text = init_file.read()
+    far_version = re.search('^__version__\\s*=\\s*"(.*)"', init_text, re.M).group(1)
+    return far_version
 
 
 version = find_version()
