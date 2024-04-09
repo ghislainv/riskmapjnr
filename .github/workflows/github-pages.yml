@@ -25,10 +25,10 @@ jobs:
 
       - name: Installing Python packages
         run: |
-          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade pip setuptools
           # Install NumPy before GDAL
           python3 -m pip install numpy
-          python3 -m pip install --global-option=build_ext --global-option="-I/usr/include/gdal" gdal==$(gdal-config --version)
+          python3 -m pip install gdal==$(gdal-config --version)
           python3 -m pip install -r requirements.txt
           python3 -m pip install sphinx
           python3 -m pip install .

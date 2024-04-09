@@ -31,11 +31,11 @@ jobs:
         sudo apt-get install --yes libgdal-dev gdal-bin
     - name: Install Python dependencies
       run: |
-        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip setuptools
         python3 -m pip install flake8 pytest
         # Install NumPy before GDAL
         python3 -m pip install numpy
-        python3 -m pip install --global-option=build_ext --global-option="-I/usr/include/gdal" gdal==$(gdal-config --version)
+        python3 -m pip install gdal==$(gdal-config --version)
         python3 -m pip install -r requirements.txt
         python3 -m pip install .
     - name: Lint with flake8
