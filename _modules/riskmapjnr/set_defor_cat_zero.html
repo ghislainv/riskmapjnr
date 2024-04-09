@@ -208,6 +208,8 @@
         <span class="c1"># Data</span>
         <span class="n">catzero_data</span> <span class="o">=</span> <span class="n">ldefrate_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
         <span class="n">dist_data</span> <span class="o">=</span> <span class="n">dist_band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">],</span> <span class="n">nx</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">ny</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
+        <span class="c1"># Ensure NoData when dist_data equals zero (especially for t2)</span>
+        <span class="n">catzero_data</span><span class="p">[</span><span class="n">dist_data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># Set 1 for zero risk of deforestation (beyond distance threshold)</span>
         <span class="n">catzero_data</span><span class="p">[</span><span class="n">dist_data</span> <span class="o">&gt;=</span> <span class="n">dist_thresh</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">catzero_band</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">catzero_data</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">px</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">py</span><span class="p">])</span>
@@ -251,7 +253,7 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2022, Ghislain Vieilledent.
+      &#169;2024, Ghislain Vieilledent.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>

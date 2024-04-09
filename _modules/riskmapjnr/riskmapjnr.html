@@ -108,7 +108,7 @@
 <span class="c1"># license         :GPLv3</span>
 <span class="c1"># ==============================================================================</span>
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;1.2&quot;</span>
+<span class="kn">import</span> <span class="nn">riskmapjnr</span> <span class="k">as</span> <span class="nn">rmj</span>
 
 
 <div class="viewcode-block" id="main">
@@ -121,10 +121,9 @@
 <span class="sd">    ``riskmapjnr`` Python package has been correctly imported.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# riskmapjnr: Map of deforestation risk following JNR methodology.&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# https://ecology.ghislainv.fr/riskmapjnr&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# riskmapjnr version </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
-    <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">rmj</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;version </span><span class="si">{</span><span class="n">rmj</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
 
 
 <span class="c1"># End</span>
@@ -137,7 +136,7 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &#169;2022, Ghislain Vieilledent.
+      &#169;2024, Ghislain Vieilledent.
       
       |
       Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
