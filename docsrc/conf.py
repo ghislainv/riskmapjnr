@@ -13,21 +13,19 @@
 import os
 import sys
 import re  # Regular expression
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath(".."))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'riskmapjnr'
-copyright = '2022, Ghislain Vieilledent'
-author = 'Ghislain Vieilledent'
+project = "riskmapjnr"
+copyright = "2024, Ghislain Vieilledent"
+author = "Ghislain Vieilledent"
 
 # The full version, including alpha/beta/rc tags
-version = re.search(
-    '^__version__\s*=\s*"(.*)"',
-    open('../riskmapjnr/riskmapjnr.py').read(),
-    re.M
-).group(1)
+with open("../riskmapjnr/__init__.py", encoding="utf-8") as init_file:
+    init_text = init_file.read()
+version = re.search('^__version__\\s*=\\s*"(.*)"', init_text, re.M).group(1)
 release = version
 
 # -- Sphynx options ----------------------------------------------------------
