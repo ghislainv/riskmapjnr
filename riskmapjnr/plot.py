@@ -198,7 +198,8 @@ def fcc123(input_fcc_raster,
     ax1.set_frame_on(False)
     ax1.set_xticks([])
     ax1.set_yticks([])
-    plt.imshow(ov_arr, cmap=color_map, extent=extent)
+    plt.imshow(ov_arr, cmap=color_map, extent=extent,
+               resample=False, interpolation="nearest")
     if borders is not None:
         plot_layer(borders, symbol="k-", **kwargs)
     plt.axis("off")
@@ -211,7 +212,8 @@ def fcc123(input_fcc_raster,
         )
         ax1.add_patch(z)
         ax2 = plt.subplot(222)
-        plt.imshow(ov_arr, cmap=color_map, extent=extent)
+        plt.imshow(ov_arr, cmap=color_map, extent=extent,
+                   resample=False, interpolation="nearest")
         plt.xlim(zoom[0], zoom[1])
         plt.ylim(zoom[2], zoom[3])
         ax2.set_xticks([])
@@ -302,18 +304,19 @@ def riskmap(input_risk_map,
     cmax = 255.0  # float for division
     vmin = 1.0
     vmax = 65535.0  # float for division
-    # green
+    # dark green for no deforestation above dist threshold
     colors.append((rescale_zo(1, vmin, vmax),
+                   (25 / cmax, 110 / cmax, 25 / cmax, 1)))
+    # green
+    colors.append((rescale_zo(2, vmin, vmax),
                    (34 / cmax, 139 / cmax, 34 / cmax, 1)))
     # orange
-    colors.append((rescale_zo(2, vmin, vmax),
+    colors.append((rescale_zo(200, vmin, vmax),
                    (1, 165 / cmax, 0, 1)))
     # red
-    colors.append((rescale_zo(100, vmin, vmax),
+    colors.append((rescale_zo(2000, vmin, vmax),
                    (227 / cmax, 26 / cmax, 28 / cmax, 1)))
     # black
-    colors.append((rescale_zo(10000, vmin, vmax),
-                   (0, 0, 0, 1)))
     colors.append((rescale_zo(65535, vmin, vmax),
                    (0, 0, 0, 1)))
     color_map = LinearSegmentedColormap.from_list(
@@ -326,7 +329,8 @@ def riskmap(input_risk_map,
     fig = plt.figure(figsize=figsize, dpi=dpi)
     plt.subplot(111)
     plt.imshow(ov_arr, cmap=color_map, extent=extent,
-               vmin=0.01, vmax=65535)
+               vmin=0.01, vmax=65535,
+               resample=False, interpolation="nearest")
     if borders is not None:
         plot_layer(borders, symbol="k-", **kwargs)
 
