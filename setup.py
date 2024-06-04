@@ -16,15 +16,17 @@ from setuptools import setup, find_packages
 
 
 # find_version
-def find_version():
+def find_version(pkg_name):
     """Finding package version."""
-    with open("riskmapjnr/__init__.py", encoding="utf-8") as init_file:
+    with open(f"{pkg_name}/__init__.py", encoding="utf-8") as init_file:
         init_text = init_file.read()
-    far_version = re.search('^__version__\\s*=\\s*"(.*)"', init_text, re.M).group(1)
-    return far_version
+    _version = (re.search('^__version__\\s*=\\s*"(.*)"',
+                          init_text, re.M)
+                .group(1))
+    return _version
 
 
-version = find_version()
+version = find_version("riskmapjnr")
 
 # reStructuredText README file
 with io.open("README.rst", encoding="utf-8") as f:
@@ -57,7 +59,7 @@ setup(name="riskmapjnr",
                "redd risk tropics vcs",
       python_requires=">=3.6",
       packages=find_packages(),
-      package_dir={"riskmapjnr": "./riskmapjnr"},
+      package_dir={"riskmapjnr": "riskmapjnr"},
       package_data={
           "riskmapjnr": ["data/fcc123_GLP.tif",
                          "data/ctry_border_GLP.gpkg"]
@@ -66,8 +68,13 @@ setup(name="riskmapjnr",
       entry_points={
           "console_scripts": ["riskmapjnr = riskmapjnr.riskmapjnr:main"]
       },
-      install_requires=["gdal", "numpy", "matplotlib",
-                        "pandas", "scipy"],
+      install_requires=[
+          "gdal",
+          "numpy",
+          "matplotlib",
+          "pandas",
+          "scipy",
+      ],
       extras_require={
           "interactive": ["jupyter", "geopandas", "descartes", "folium",
                           "tabulate"]
