@@ -28,6 +28,7 @@ from .set_defor_cat_zero import set_defor_cat_zero
 from .validation import validation
 from .validation_fcc import validation_fcc
 from .plot import fcc123, riskmap
+from . import benchmark
 # Import makemap in last as it uses from . import
 from .makemap import makemap
 

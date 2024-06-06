@@ -1,61 +1,49 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Compute deforestation rates per vulnerability class."""
 
-# ==============================================================================
-# author          :Ghislain Vieilledent
-# email           :ghislain.vieilledent@cirad.fr, ghislainv@gmail.com
-# web             :https://ecology.ghislainv.fr
-# python_version  :>=3
-# license         :GPLv3
-# ==============================================================================
-
-
-# Third party imports
 import numpy as np
 from osgeo import gdal
 import pandas as pd
 
-# Local application imports
-from .misc import progress_bar, makeblock
+from ..misc import progress_bar, makeblock
 
 
-# defrate_per_cat
-def defrate_per_cat(fcc_file, riskmap_file, time_interval,
-                    period="calibration",
-                    tab_file_defrate="defrate_per_cat.csv",
-                    blk_rows=128, verbose=True):
-    """Compute deforestation rates per category of deforestation risk.
+def defrate_per_class_model(
+        fcc_file,
+        vulnerability_file,
+        time_interval,
+        period="calibration",
+        tab_file_defrate="defrate_per_class.csv",
+        blk_rows=128,
+        verbose=True):
+    """Compute deforestation rates per vulnerability class.
 
     This function computes the historical deforestation rates for each
-    category of spatial deforestation risk.
+    vulnerability class.
+
+    A ``.csv`` file with deforestation rates for each vulnerability
+    class is created (see ``tab_file_defrate``).
 
     :param fcc_file: Input raster file of forest cover change at three
         dates (123). 1: first period deforestation, 2: second period
         deforestation, 3: remaining forest at the end of the second
         period. No data value must be 0 (zero).
 
-    :param riskmap_file: Input raster file with categories of
-        spatial deforestation risk.
+    :param vulnerability_file: Input file with vulnerability classes.
 
     :param time_interval: Time interval (in years) for forest cover
         change observations.
 
-    :param period: Either "calibration" (from t1 to t2), "validation"
-        (or "confirmation" from t2 to t3), or "historical" (full
-        historical period from t1 to t3). Default to "calibration".
+    :param period: Either "calibration" (from t1 to t2), or
+        "historical" (full historical period from t1 to t3). Default
+        to "calibration".
 
     :param tab_file_defrate: Path to the ``.csv`` output file with
-        estimates of deforestation rates per category of deforestation
-        risk.
+        estimates of deforestation rates for each vulnerability class.
 
     :param blk_rows: If > 0, number of rows for computation by block.
 
     :param verbose: Logical. Whether to print messages or not. Default
         to ``True``.
-
-    :return: None. A ``.csv`` file with deforestation rates per
-        category of deforestation risk will be created (see
-        ``tab_file_defrate``).
 
     """
 
@@ -73,7 +61,7 @@ def defrate_per_cat(fcc_file, riskmap_file, time_interval,
     yres = -gt[5]
 
     # Get defor_cat raster data
-    defor_cat_ds = gdal.Open(riskmap_file)
+    defor_cat_ds = gdal.Open(vulnerability_file)
     defor_cat_band = defor_cat_ds.GetRasterBand(1)
 
     # Make blocks
@@ -90,8 +78,8 @@ def defrate_per_cat(fcc_file, riskmap_file, time_interval,
     # ==============================================
 
     # Number of deforestation categories
-    n_cat = 65535
-    cat = [c + 1 for c in range(n_cat)]
+    n_cat_max = 30999
+    cat = [c + 1 for c in range(n_cat_max)]
 
     # Create a table to save the results
     data = {"cat": cat, "nfor": 0, "ndefor": 0}
@@ -113,9 +101,6 @@ def defrate_per_cat(fcc_file, riskmap_file, time_interval,
         if period == "calibration":
             data_for = defor_cat_data[fcc_data > 0]
             data_defor = defor_cat_data[fcc_data == 1]
-        elif period in ["validation", "confirmation"]:
-            data_for = defor_cat_data[fcc_data > 1]
-            data_defor = defor_cat_data[fcc_data == 2]
         elif period == "historical":
             data_for = defor_cat_data[fcc_data > 0]
             data_defor = defor_cat_data[np.isin(fcc_data, [1, 2])]
@@ -126,32 +111,21 @@ def defrate_per_cat(fcc_file, riskmap_file, time_interval,
         cat_defor = pd.Categorical(data_defor.flatten(), categories=cat)
         df["ndefor"] += cat_defor.value_counts().values
 
+    # Remove classes with no forest
+    df = df[df["nfor"] != 0]
+
     # Time interval
     df["time_interval"] = time_interval
 
     # Annual deforestation rates per category
-    df["rate_obs"] = 1 - (1 - df["ndefor"] / df["nfor"]) ** (1 / time_interval)
-
-    # Relative spatial deforestation probability from model
-    df["rate_mod"] = ((df["cat"] - 1) * 999999 / 65534 + 1) * 1e-6
-    # Set proba of deforestation to 0 for category 1
-    df.loc[df["cat"] == 1, "rate_mod"] = 0
-
-    # Correction factor, either ndefor / sum_i p_i
-    # or theta * nfor / sum_i p_i
-    sum_ndefor = df["ndefor"].sum()
-    sum_pi = (df["nfor"] * df["rate_mod"]).sum()
-    correction_factor = sum_ndefor / sum_pi
-
-    # Absolute deforestation probability
-    df["rate_abs"] = df["rate_mod"] * correction_factor
+    df["rate_mod"] = 1 - (1 - df["ndefor"] / df["nfor"]) ** (1 / time_interval)
 
     # Pixel area
     pixel_area = xres * yres / 10000
     df["pixel_area"] = pixel_area
 
     # Deforestation density (ha/pixel/yr)
-    df["defor_dens"] = df["rate_abs"] * pixel_area / time_interval
+    df["defor_dens"] = df["rate_mod"] * pixel_area
 
     # Export the table of results
     df.to_csv(tab_file_defrate, sep=",", header=True,
@@ -162,17 +136,15 @@ def defrate_per_cat(fcc_file, riskmap_file, time_interval,
 
 
 # # Test
-# fcc_file = "data/fcc123.tif"
-# riskmap_file = "outputs/defor_cat.tif"
-# time_interval = 10
-# tab_file_defrate = "outputs/defrate_per_cat.csv"
-# blk_rows = 128
-
-# defrate_per_cat(fcc_file,
-#                 riskmap_file,
-#                 time_interval,
-#                 tab_file_defrate,
-#                 blk_rows=128,
-#                 verbose=True)
+# import os
+# os.chdir("/home/ghislain/deforisk/MTQ_2000_2010_2020_jrc_7221/")
+# defrate_per_class(
+#     fcc_file="data/forest/fcc123.tif",
+#     vulnerability_file="outputs/benchmark_model/vulnerability_classes.tif",
+#     time_interval=10,
+#     period="calibration",
+#     tab_file_defrate="outputs/benchmark_model/defrate_per_class.csv",
+#     blk_rows=128,
+#     verbose=True)
 
 # End

@@ -12,6 +12,7 @@ def defrate_per_class(
         vulnerability_file,
         time_interval,
         period="calibration",
+        rate_calibration=None,
         tab_file_defrate="defrate_per_class.csv",
         blk_rows=128,
         verbose=True):
@@ -36,6 +37,11 @@ def defrate_per_class(
     :param period: Either "calibration" (from t1 to t2), "validation"
         (or "confirmation" from t2 to t3), or "historical" (full
         historical period from t1 to t3). Default to "calibration".
+
+    :param rate_calibration: Path to the ``.csv`` input file with
+        deforestation rates per class from the calibration
+        period. Used for estimating deforestation for the validation
+        period after quantity adjustment.
 
     :param tab_file_defrate: Path to the ``.csv`` output file with
         estimates of deforestation rates for each vulnerability class.
@@ -82,8 +88,7 @@ def defrate_per_class(
     cat = [c + 1 for c in range(n_cat_max)]
 
     # Create a table to save the results
-    data = {"cat": cat, "nfor": 0, "ndefor": 0,
-            "rate_obs": 0.0, "rate_mod": 0.0}
+    data = {"cat": cat, "nfor": 0, "ndefor": 0}
     df = pd.DataFrame(data)
 
     # Loop on blocks of data
@@ -102,12 +107,12 @@ def defrate_per_class(
         if period == "calibration":
             data_for = defor_cat_data[fcc_data > 0]
             data_defor = defor_cat_data[fcc_data == 1]
-        elif period in ["validation", "confirmation"]:
-            data_for = defor_cat_data[fcc_data > 1]
-            data_defor = defor_cat_data[fcc_data == 2]
         elif period == "historical":
             data_for = defor_cat_data[fcc_data > 0]
             data_defor = defor_cat_data[np.isin(fcc_data, [1, 2])]
+        elif period in ["validation", "confirmation"]:
+            data_for = defor_cat_data[fcc_data > 1]
+            data_defor = defor_cat_data[fcc_data == 2]
         # nfor_per_cat
         cat_for = pd.Categorical(data_for.flatten(), categories=cat)
         df["nfor"] += cat_for.value_counts().values
@@ -118,14 +123,16 @@ def defrate_per_class(
     # Remove classes with no forest
     df = df[df["nfor"] != 0]
 
-    # Annual deforestation rates per category
-    df["rate_obs"] = 1 - (1 - df["ndefor"] / df["nfor"]) ** (1 / time_interval)
+    # Annual deforestation rates per category (just for info)
+    df["annual_rate_obs"] = (1 - (1 - df["ndefor"] / df["nfor"])
+                             ** (1 / time_interval))
 
-    # Relative spatial deforestation probability from model
-    df["rate_mod"] = df["rate_obs"]
-    # df["rate_mod"] = ((df["cat"] - 1) * 999999 / 65534 + 1) * 1e-6
-    # # Set proba of deforestation to 0 for category 1
-    # df.loc[df["cat"] == 1, "rate_mod"] = 0
+    # Relative deforestation rate from model (not annual)
+    if period in ["validation", "confirmation"]:
+        df_mod = pd.read_csv(rate_calibration)
+        df["rate_mod"] = (df_mod["ndefor"] / df_mod["nfor"]).values
+    else:
+        df["rate_mod"] = df["ndefor"] / df["nfor"]
 
     # Correction factor, either ndefor / sum_i p_i
     # or theta * nfor / sum_i p_i
@@ -134,6 +141,7 @@ def defrate_per_class(
     correction_factor = sum_ndefor / sum_pi
 
     # Absolute deforestation probability
+    # With quantity adjustment
     df["rate_abs"] = df["rate_mod"] * correction_factor
 
     # Time interval
