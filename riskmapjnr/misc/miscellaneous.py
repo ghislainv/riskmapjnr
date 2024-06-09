@@ -13,7 +13,6 @@
 from itertools import islice
 import os
 from pathlib import Path
-import sys
 
 # Third party imports
 import numpy as np
@@ -159,30 +158,43 @@ def make_square(rasterfile, square_size=33):
     return (nsquare, nsquare_x, nsquare_y, x, y, nx, ny)
 
 
-# Progress_bar
 def progress_bar(niter, i):
-    """ Draw progress_bar
+    """Draw progress_bar
+
+     See results of ``[(100 * i / niter) // 10 * 10 for i in
+     range(niter + 1)]`` to understand how it works.
 
     :param niter: Total number of iterations.
     :param i: Current number of iteration (starts at 1).
 
-    :return: This function does not return any value.
-
     """
 
-    step = 1 if niter <= 100 else niter // 100
-    if i == 1:
-        print("0%", end="", flush=True)
-        #sys.stdout.write("0%")
-        #sys.stdout.flush()
-    elif i % step == 0:
-        print(f"\r{(100 * i) // niter}%", end="", flush=True)
-        #sys.stdout.write("\r{}%".format((100 * i) // niter))
-        #sys.stdout.flush()
-    if i == niter:
-        print("\r100%", flush=True)
-        #sys.stdout.write("\r100%\n")
-        #sys.stdout.flush()
+    pkg_name = "riskmapjnr"
+
+    if niter >= 40:
+        perc_10 = 100 * i / niter // 10 * 10
+        perc_previous_10 = 100 * (i - 1) / niter // 10 * 10
+        perc_2_5 = 100 * i / niter // 2.5 * 2.5
+        perc_previous_2_5 = 100 * (i - 1) / niter // 2.5 * 2.5
+        if i == 1:
+            print(f"{pkg_name}: 0", end="", flush=True)
+        elif perc_10 != perc_previous_10:
+            if i == niter:
+                print("100 - done", end="\n", flush=True)
+            else:
+                print(f"{int(perc_10)}", end="", flush=True)
+        elif perc_2_5 != perc_previous_2_5:
+            print(".", end="", flush=True)
+    else:
+        perc_10 = 100 * i / niter // 10 * 10
+        perc_previous_10 = 100 * (i - 1) / niter // 10 * 10
+        if i == 0:
+            print(f"{pkg_name}: 0...", end="", flush=True)
+        elif perc_10 != perc_previous_10:
+            if i == niter:
+                print("100 - done", end="\n", flush=True)
+            else:
+                print(f"{int(perc_10)}...", end="", flush=True)
 
 
 # Rescale
