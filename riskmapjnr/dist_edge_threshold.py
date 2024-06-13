@@ -135,9 +135,9 @@ def dist_values(input_file,
     :param dist_file: Path to the distance raster file that is
         created.
 
-    :param values: Values of the raster to compute the distance to. If
-        several values, they must be separated with a comma in a
-        string (eg. '0,1'). Default to 0.
+    :param values: Values of the raster to compute the distance
+        to. Use list (e.g. [1, 2]) to specify several values. Default
+        to 0.
 
     :param verbose: Logical. Whether to print messages or not. Default
         to ``True``.
@@ -163,7 +163,8 @@ def dist_values(input_file,
     dstband = dst_ds.GetRasterBand(1)
 
     # Compute distance
-    val = "VALUES=" + str(values)
+    val_as_string = ",".join([str(i) for i in values])
+    val = "VALUES=" + val_as_string
     cb = gdal.TermProgress if verbose else 0
     gdal.ComputeProximity(srcband, dstband,
                           [val, "DISTUNITS=GEO"],
