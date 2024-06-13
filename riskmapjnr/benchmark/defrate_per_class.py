@@ -115,10 +115,12 @@ def defrate_per_class(
             data_for = defor_cat_data[fcc_data > 0]
             data_defor = defor_cat_data[np.isin(fcc_data, [1, 2])]
         # nfor_per_cat
-        cat_for = pd.Categorical(data_for.flatten(), categories=cat)
+        cat_for = pd.Categorical(data_for.flatten(),
+                                 categories=cat)
         df["nfor"] += cat_for.value_counts().values
         # ndefor_per_cat
-        cat_defor = pd.Categorical(data_defor.flatten(), categories=cat)
+        cat_defor = pd.Categorical(data_defor.flatten(),
+                                   categories=cat)
         df["ndefor"] += cat_defor.value_counts().values
 
     # Remove classes with no forest

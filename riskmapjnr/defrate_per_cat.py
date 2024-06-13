@@ -113,10 +113,10 @@ def defrate_per_cat(fcc_file, riskmap_file, time_interval,
         if period == "calibration":
             data_for = defor_cat_data[fcc_data > 0]
             data_defor = defor_cat_data[fcc_data == 1]
-        elif period in ["validation", "confirmation"]:
+        elif period == "validation":
             data_for = defor_cat_data[fcc_data > 1]
             data_defor = defor_cat_data[fcc_data == 2]
-        elif period == "historical":
+        elif period in ["historical", "forecast"]:
             data_for = defor_cat_data[fcc_data > 0]
             data_defor = defor_cat_data[np.isin(fcc_data, [1, 2])]
         # nfor_per_cat
