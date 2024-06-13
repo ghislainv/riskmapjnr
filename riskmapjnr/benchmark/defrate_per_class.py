@@ -12,7 +12,7 @@ def defrate_per_class(
         vulnerability_file,
         time_interval,
         period="calibration",
-        rate_calibration=None,
+        deforate_model=None,
         tab_file_defrate="defrate_per_class.csv",
         blk_rows=128,
         verbose=True):
@@ -38,9 +38,10 @@ def defrate_per_class(
         (or "confirmation" from t2 to t3), or "historical" (full
         historical period from t1 to t3). Default to "calibration".
 
-    :param rate_calibration: Path to the ``.csv`` input file with
-        deforestation rates per class from the calibration
-        period. Used for estimating deforestation for the validation
+    :param deforate_model: Path to the ``.csv`` input file with
+        deforestation rates per class from the model's period
+        (either "calibration" or "historical" period). Used for
+        estimating deforestation for the "validation" or "forecast"
         period after quantity adjustment.
 
     :param tab_file_defrate: Path to the ``.csv`` output file with
@@ -107,12 +108,12 @@ def defrate_per_class(
         if period == "calibration":
             data_for = defor_cat_data[fcc_data > 0]
             data_defor = defor_cat_data[fcc_data == 1]
-        elif period == "historical":
-            data_for = defor_cat_data[fcc_data > 0]
-            data_defor = defor_cat_data[np.isin(fcc_data, [1, 2])]
-        elif period in ["validation", "confirmation"]:
+        elif period == "validation":
             data_for = defor_cat_data[fcc_data > 1]
             data_defor = defor_cat_data[fcc_data == 2]
+        elif period in ["historical", "forecast"]:
+            data_for = defor_cat_data[fcc_data > 0]
+            data_defor = defor_cat_data[np.isin(fcc_data, [1, 2])]
         # nfor_per_cat
         cat_for = pd.Categorical(data_for.flatten(), categories=cat)
         df["nfor"] += cat_for.value_counts().values
@@ -128,8 +129,8 @@ def defrate_per_class(
                              ** (1 / time_interval))
 
     # Relative deforestation rate from model (not annual)
-    if period in ["validation", "confirmation"]:
-        df_mod = pd.read_csv(rate_calibration)
+    if period in ["validation", "forecast"]:
+        df_mod = pd.read_csv(deforate_model)
         df["rate_mod"] = (df_mod["ndefor"] / df_mod["nfor"]).values
     else:
         df["rate_mod"] = df["ndefor"] / df["nfor"]
