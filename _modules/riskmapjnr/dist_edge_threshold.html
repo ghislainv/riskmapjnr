@@ -234,9 +234,9 @@
 <span class="sd">    :param dist_file: Path to the distance raster file that is</span>
 <span class="sd">        created.</span>
 
-<span class="sd">    :param values: Values of the raster to compute the distance to. If</span>
-<span class="sd">        several values, they must be separated with a comma in a</span>
-<span class="sd">        string (eg. &#39;0,1&#39;). Default to 0.</span>
+<span class="sd">    :param values: Values of the raster to compute the distance</span>
+<span class="sd">        to. Use list (e.g. [1, 2]) to specify several values. Default</span>
+<span class="sd">        to 0.</span>
 
 <span class="sd">    :param verbose: Logical. Whether to print messages or not. Default</span>
 <span class="sd">        to ``True``.</span>
@@ -262,7 +262,8 @@
     <span class="n">dstband</span> <span class="o">=</span> <span class="n">dst_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Compute distance</span>
-    <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;VALUES=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">val_as_string</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">values</span><span class="p">])</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;VALUES=&quot;</span> <span class="o">+</span> <span class="n">val_as_string</span>
     <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
     <span class="n">gdal</span><span class="o">.</span><span class="n">ComputeProximity</span><span class="p">(</span><span class="n">srcband</span><span class="p">,</span> <span class="n">dstband</span><span class="p">,</span>
                           <span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;DISTUNITS=GEO&quot;</span><span class="p">],</span>
