@@ -111,7 +111,7 @@ def defrate_per_class(
         elif period == "validation":
             data_for = defor_cat_data[fcc_data > 1]
             data_defor = defor_cat_data[fcc_data == 2]
-        elif period in ["historical", "forecast"]:
+        else:  # historical or forecast
             data_for = defor_cat_data[fcc_data > 0]
             data_defor = defor_cat_data[np.isin(fcc_data, [1, 2])]
         # nfor_per_cat

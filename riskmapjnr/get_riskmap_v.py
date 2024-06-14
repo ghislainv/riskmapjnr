@@ -9,13 +9,12 @@
 # license         :GPLv3
 # ==============================================================================
 
+import os
 
-# Third party imports
 import numpy as np
 from osgeo import gdal
 import pandas as pd
 
-# Local application imports
 from .misc import progress_bar, makeblock
 
 
@@ -68,6 +67,8 @@ def get_riskmap_v(ldefrate_with_zero_v_file,
 
     # Create riskmap_v raster file
     driver = gdal.GetDriverByName("GTiff")
+    if os.path.isfile(riskmap_v_file):
+        os.remove(riskmap_v_file)
     riskv_ds = driver.Create(riskmap_v_file, xsize, ysize, 1,
                              gdal.GDT_Byte,
                              ["COMPRESS=LZW", "PREDICTOR=2",

@@ -9,13 +9,12 @@
 # license         :GPLv3
 # ==============================================================================
 
+import os
 
-# Third party imports
 import numpy as np
 from osgeo import gdal
 import scipy.ndimage
 
-# Local application imports
 from .misc import progress_bar, rescale
 
 
@@ -91,6 +90,8 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
 
     # Create output raster file
     driver = gdal.GetDriverByName("GTiff")
+    if os.path.isfile(ldefrate_file):
+        os.remove(ldefrate_file)
     out_ds = driver.Create(ldefrate_file, xsize, ysize, 1,
                            gdal.GDT_UInt16,
                            ["COMPRESS=LZW", "PREDICTOR=2",

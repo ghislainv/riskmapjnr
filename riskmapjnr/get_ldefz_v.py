@@ -9,11 +9,10 @@
 # license         :GPLv3
 # ==============================================================================
 
+import os
 
-# Third party imports
 from osgeo import gdal
 
-# Local application imports
 from .misc import progress_bar, makeblock
 
 
@@ -85,6 +84,8 @@ def get_ldefz_v(ldefrate_file,
 
     # Create ldefrate_with_zero_v raster file
     driver = gdal.GetDriverByName("GTiff")
+    if os.path.isfile(ldefrate_with_zero_v_file):
+        os.remove(ldefrate_with_zero_v_file)
     ldefzv_ds = driver.Create(ldefrate_with_zero_v_file, xsize, ysize, 1,
                               gdal.GDT_UInt16,
                               ["COMPRESS=LZW", "PREDICTOR=2",

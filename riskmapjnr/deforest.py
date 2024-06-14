@@ -10,6 +10,7 @@
 # ==============================================================================
 
 # Standard library imports
+import os
 import warnings
 
 # Third party imports
@@ -134,6 +135,8 @@ def deforest(input_raster,
     # Raster of predictions
     print("Create a raster file on disk for forest-cover change")
     driver = gdal.GetDriverByName("GTiff")
+    if os.path.isfile(output_file):
+        os.remove(output_file)
     fccR = driver.Create(output_file, ncol, nrow, 1,
                          gdal.GDT_Byte,
                          ["COMPRESS=LZW", "PREDICTOR=2", "BIGTIFF=YES"])

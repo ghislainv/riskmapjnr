@@ -9,13 +9,12 @@
 # license         :GPLv3
 # ==============================================================================
 
+import os
 
-# Third party imports
 import numpy as np
 from osgeo import gdal
 import pandas as pd
 
-# Local application imports
 from .misc import progress_bar, makeblock
 
 
@@ -94,6 +93,8 @@ def defor_cat(ldefrate_with_zero_file,
 
     # Create categorical (cat) raster file for deforestation risk
     driver = gdal.GetDriverByName("GTiff")
+    if os.path.isfile(riskmap_file):
+        os.remove(riskmap_file)
     cat_ds = driver.Create(riskmap_file, xsize, ysize, 1,
                            gdal.GDT_Byte,
                            ["COMPRESS=LZW", "PREDICTOR=2",
