@@ -108,13 +108,12 @@
 <span class="c1"># license         :GPLv3</span>
 <span class="c1"># ==============================================================================</span>
 
+<span class="kn">import</span> <span class="nn">os</span>
 
-<span class="c1"># Third party imports</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
 <span class="kn">import</span> <span class="nn">scipy.ndimage</span>
 
-<span class="c1"># Local application imports</span>
 <span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">progress_bar</span><span class="p">,</span> <span class="n">rescale</span>
 
 
@@ -192,6 +191,8 @@
 
     <span class="c1"># Create output raster file</span>
     <span class="n">driver</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="s2">&quot;GTiff&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ldefrate_file</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ldefrate_file</span><span class="p">)</span>
     <span class="n">out_ds</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">ldefrate_file</span><span class="p">,</span> <span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
                            <span class="n">gdal</span><span class="o">.</span><span class="n">GDT_UInt16</span><span class="p">,</span>
                            <span class="p">[</span><span class="s2">&quot;COMPRESS=LZW&quot;</span><span class="p">,</span> <span class="s2">&quot;PREDICTOR=2&quot;</span><span class="p">,</span>
