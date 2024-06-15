@@ -1,7 +1,5 @@
 """Resterizing subjurisdictions."""
 
-import os
-
 from osgeo import gdal
 
 
@@ -18,9 +16,6 @@ def rasterize_subjurisdictions(input_file, fcc_file, output_file,
 
     """
 
-    # Output dir
-    out_dir = os.path.dirname(output_file)
-
     # Callback
     cback = gdal.TermProgress if verbose else 0
 
@@ -36,9 +31,9 @@ def rasterize_subjurisdictions(input_file, fcc_file, output_file,
     extent = (xmin, ymin, xmax, ymax)
     proj = fcc_ds.GetProjectionRef()
 
-    # SQL statement to get id
+    # SQL statement to get id, use "subj" layer
     sql_statement = ("select *, row_number() over () "
-                     "as id from adm_adm_1")
+                     "as id from subj")
 
     # Rasterize
     param = gdal.RasterizeOptions(
