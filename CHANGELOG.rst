@@ -1,6 +1,14 @@
 Changelog
 =========
 
+riskmapjnr 1.3
+--------------
+
+* Adding functions for the benchmark model.
+* Update progress bar to mimic gdal outputs.
+* Bug corrections.
+* See changes: https://github.com/ghislainv/riskmapjnr/compare/v1.2.1...main
+
 riskmapjnr 1.2.1
 ----------------
 
