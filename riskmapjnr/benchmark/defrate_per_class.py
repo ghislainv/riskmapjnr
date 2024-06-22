@@ -127,8 +127,8 @@ def defrate_per_class(
     df = df[df["nfor"] != 0]
 
     # Annual deforestation rates per category (just for info)
-    df["annual_rate_obs"] = (1 - (1 - df["ndefor"] / df["nfor"])
-                             ** (1 / time_interval))
+    df["rate_obs"] = (1 - (1 - df["ndefor"] / df["nfor"])
+                      ** (1 / time_interval))
 
     # Relative deforestation rate from model (not annual)
     if period in ["validation", "forecast"]:
