@@ -133,7 +133,7 @@ def defrate_per_cat(fcc_file, riskmap_file, time_interval,
     df["rate_obs"] = 1 - (1 - df["ndefor"] / df["nfor"]) ** (1 / time_interval)
 
     # Relative spatial deforestation probability from model
-    df["rate_mod"] = ((df["cat"] - 1) * 999999 / 65534 + 1) * 1e-6
+    df["rate_mod"] = ((df["cat"] - 2) * 999999 / 65533 + 1) * 1e-6
     # Set proba of deforestation to 0 for category 1
     df.loc[df["cat"] == 1, "rate_mod"] = 0
 
