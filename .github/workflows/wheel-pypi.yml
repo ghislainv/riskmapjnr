@@ -1,54 +1,78 @@
-## Build wheel and upload to PyPI
+## Build wheel and upload to TestPyPI (!! not PyPI !!)
 ## https://github.com/joerick/cibuildwheel/blob/master/examples/github-deploy.yml
 ## https://scikit-hep.org/developer/gha_wheels
 
-name: Build wheel and upload to PyPI
-  
-# Publish when a (published) GitHub Release is created
+name: Build wheel and upload to PyPI or TestPyPI
+
+# When pushing with a tag (i.e. new version)
 on:
   push:
-    branches:
-    - main
-    tags:
-    - "v*"
-  release:
+    tags:        
+      - "*"
 
 jobs:
+
+  check-current-branch:
+    runs-on: ubuntu-latest
+    outputs:
+      branch: ${{ steps.check_step.outputs.branch }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get current branch
+        id: check_step
+        # 1. Get the list of branches ref where this tag exists
+        # 2. Remove 'origin/' from that result
+        # 3. Put that string in output
+        # => We can now use function 'contains(list, item)''
+        run: |
+          raw=$(git branch -r --contains ${{ github.ref }})
+          branch="$(echo ${raw//origin\//} | tr -d '\n')"
+          echo "{name}=branch" >> $GITHUB_OUTPUT
+          echo "Branches where this tag exists : $branch."
+
   build_wheels:
     name: Build universal wheels
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         name: Install Python
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install Python dependencies
         run: |
           python3 -m pip install --upgrade pip wheel setuptools       
       - name: Build wheels
         run: |
           python3 setup.py bdist_wheel --universal
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
+          name: rmj-wheels
           path: dist
 
   build_sdist:
     name: Build source
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         name: Install Python
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install Python dependencies
         run: |
           python3 -m pip install --upgrade pip setuptools
       - name: Build sdist
-        run: python3 setup.py sdist
-      - uses: actions/upload-artifact@v3
+        run: |
+          python3 setup.py sdist
+      - name: Upload artefact
+        uses: actions/upload-artifact@v4
         with:
+          name: rmj-sdist
           path: dist/*.tar.gz
 
   dist_check:
@@ -56,36 +80,59 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build_wheels, build_sdist]
     steps:
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         name: Install Python
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install Python dependencies
         run: |
           python3 -m pip install --upgrade pip
           pip install twine
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: artifact
+          pattern: rmj-*
           path: dist
+          merge-multiple: true
       - name: Check dist
         run: |
           twine check dist/*
         
   upload_pypi:
-    # upload to PyPI on every tag starting with 'v'
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
     name: Upload to PyPI
-    needs: [dist_check]
+    needs: [check-current-branch, build_wheels, build_sdist, check_dist]
     runs-on: ubuntu-latest
+    if: contains(${{ needs.check.outputs.branch }}, 'main')
+    environment:
+      name: pypi
+      url: https://pypi.org/p/riskmapjnr
+    permissions:
+      id-token: write  # Mandatory for trusted publishing.
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: artifact
+          pattern: rmj-*
           path: dist
+          merge-multiple: true
+      - uses: pypa/gh-action-pypi-publish@release/v1
+
+  upload_testpypi:
+    name: Upload to TestPyPI
+    needs: [check-current-branch, build_wheels, build_sdist, check_dist]
+    runs-on: ubuntu-latest
+    if: contains(${{ needs.check.outputs.branch }}, 'dev')
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/riskmapjnr
+    permissions:
+      id-token: write  # Mandatory for trusted publishing.
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: rmj-*
+          path: dist
+          merge-multiple: true
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
+          repository-url: https://test.pypi.org/legacy/
 
 # End
