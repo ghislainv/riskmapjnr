@@ -1,13 +1,19 @@
 Changelog
 =========
 
+riskmapjnr 1.3.1
+----------------
+
+* Replace ``gdal.TermProgress`` with ``gdal.TermProgress_nocb``.
+* See changes: https://github.com/ghislainv/riskmapjnr/compare/v1.3...v1.3.1
+
 riskmapjnr 1.3
 --------------
 
 * Adding functions for the benchmark model.
 * Update progress bar to mimic gdal outputs.
 * Bug corrections.
-* See changes: https://github.com/ghislainv/riskmapjnr/compare/v1.2.1...main
+* See changes: https://github.com/ghislainv/riskmapjnr/compare/v1.2...v1.2.1
 
 riskmapjnr 1.2.1
 ----------------
