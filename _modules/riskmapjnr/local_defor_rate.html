@@ -260,7 +260,7 @@
 
     <span class="c1"># Closing</span>
     <span class="n">out_band</span><span class="o">.</span><span class="n">FlushCache</span><span class="p">()</span>
-    <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress_nocb</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
     <span class="n">out_band</span><span class="o">.</span><span class="n">ComputeStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">cb</span><span class="p">)</span>
     <span class="k">del</span> <span class="n">out_ds</span><span class="p">,</span> <span class="n">in_ds</span></div>
 

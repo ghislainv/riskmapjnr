@@ -269,7 +269,7 @@
 
     <span class="c1"># Compute statistics</span>
     <span class="n">cat_band</span><span class="o">.</span><span class="n">FlushCache</span><span class="p">()</span>
-    <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress_nocb</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
     <span class="n">cat_band</span><span class="o">.</span><span class="n">ComputeStatistics</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">cb</span><span class="p">)</span>
 
     <span class="c1"># Dereference drivers</span>

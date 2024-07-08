@@ -264,7 +264,7 @@
     <span class="c1"># Compute distance</span>
     <span class="n">val_as_string</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">values</span><span class="p">])</span>
     <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;VALUES=&quot;</span> <span class="o">+</span> <span class="n">val_as_string</span>
-    <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">cb</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">TermProgress_nocb</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="mi">0</span>
     <span class="n">gdal</span><span class="o">.</span><span class="n">ComputeProximity</span><span class="p">(</span><span class="n">srcband</span><span class="p">,</span> <span class="n">dstband</span><span class="p">,</span>
                           <span class="p">[</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;DISTUNITS=GEO&quot;</span><span class="p">],</span>
                           <span class="n">callback</span><span class="o">=</span><span class="n">cb</span><span class="p">)</span>
