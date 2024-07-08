@@ -159,7 +159,7 @@ def local_defor_rate(fcc_file, defor_values, ldefrate_file, win_size,
 
     # Closing
     out_band.FlushCache()
-    cb = gdal.TermProgress if verbose else 0
+    cb = gdal.TermProgress_nocb if verbose else 0
     out_band.ComputeStatistics(False, cb)
     del out_ds, in_ds
 

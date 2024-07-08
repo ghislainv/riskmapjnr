@@ -108,7 +108,7 @@ def get_riskmap_v(ldefrate_with_zero_v_file,
 
     # Compute statistics
     riskv_band.FlushCache()
-    cb = gdal.TermProgress if verbose else 0
+    cb = gdal.TermProgress_nocb if verbose else 0
     riskv_band.ComputeStatistics(False, cb)
 
     # Dereference drivers

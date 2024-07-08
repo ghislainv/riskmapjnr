@@ -17,7 +17,7 @@ def rasterize_subjurisdictions(input_file, fcc_file, output_file,
     """
 
     # Callback
-    cback = gdal.TermProgress if verbose else 0
+    cback = gdal.TermProgress_nocb if verbose else 0
 
     # Raster info: extent, resolution, proj
     fcc_ds = gdal.Open(fcc_file, gdal.GA_ReadOnly)

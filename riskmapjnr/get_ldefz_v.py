@@ -125,7 +125,7 @@ def get_ldefz_v(ldefrate_file,
 
     # Compute statistics
     ldefzv_band.FlushCache()
-    cb = gdal.TermProgress if verbose else 0
+    cb = gdal.TermProgress_nocb if verbose else 0
     ldefzv_band.ComputeStatistics(False, cb)
 
     # Dereference drivers

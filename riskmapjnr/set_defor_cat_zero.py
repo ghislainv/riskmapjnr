@@ -119,7 +119,7 @@ def set_defor_cat_zero(ldefrate_file,
 
     # Compute statistics
     catzero_band.FlushCache()
-    cb = gdal.TermProgress if verbose else 0
+    cb = gdal.TermProgress_nocb if verbose else 0
     catzero_band.ComputeStatistics(False, cb)
 
     # Dereference drivers

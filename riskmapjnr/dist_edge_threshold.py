@@ -165,7 +165,7 @@ def dist_values(input_file,
     # Compute distance
     val_as_string = ",".join([str(i) for i in values])
     val = "VALUES=" + val_as_string
-    cb = gdal.TermProgress if verbose else 0
+    cb = gdal.TermProgress_nocb if verbose else 0
     gdal.ComputeProximity(srcband, dstband,
                           [val, "DISTUNITS=GEO"],
                           callback=cb)

@@ -168,7 +168,7 @@ def defor_cat(ldefrate_with_zero_file,
 
     # Compute statistics
     cat_band.FlushCache()
-    cb = gdal.TermProgress if verbose else 0
+    cb = gdal.TermProgress_nocb if verbose else 0
     cat_band.ComputeStatistics(False, cb)
 
     # Dereference drivers
