@@ -99,7 +99,7 @@ jobs:
         
   upload_pypi:
     name: Upload to PyPI
-    needs: [check-current-branch, build_wheels, build_sdist, check_dist]
+    needs: [check-current-branch, build_wheels, build_sdist, dist_check]
     runs-on: ubuntu-latest
     if: contains(${{ needs.check.outputs.branch }}, 'main')
     environment:
