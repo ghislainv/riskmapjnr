@@ -133,7 +133,9 @@ def defrate_per_class(
     # Relative deforestation rate from model (not annual)
     if period in ["validation", "forecast"]:
         df_mod = pd.read_csv(deforate_model)
-        df["rate_mod"] = (df_mod["ndefor"] / df_mod["nfor"]).values
+        # Some defor class might be missing in the future
+        # so we need to join the tables to get rate_mod.
+        df = df.merge(right=df_mod, on="cat", how="left", suffixes=(None, "_mod"))
     else:
         df["rate_mod"] = df["ndefor"] / df["nfor"]
 
