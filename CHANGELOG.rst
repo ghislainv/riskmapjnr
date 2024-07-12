@@ -1,6 +1,12 @@
 Changelog
 =========
 
+riskmapjnr 1.3.2
+----------------
+
+* Bug correction in ``benchmark/defrate_per_class.py`` due to missing classes when forecasting.
+* See changes: https://github.com/ghislainv/riskmapjnr/compare/v1.3.1..v1.3.2
+
 riskmapjnr 1.3.1
 ----------------
 

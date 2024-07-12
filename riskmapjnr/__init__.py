@@ -7,7 +7,7 @@ https://ecology.ghislainv.fr/riskmapknr/
 # https://peps.python.org/pep-0008/#module-level-dunder-names
 __author__ = "Ghislain Vieilledent"
 __email__ = "ghislain.vieilledent@cirad.fr"
-__version__ = "1.3.1"
+__version__ = "1.3.2"
 
 # GDAL exceptions
 from osgeo import gdal
